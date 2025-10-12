@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "https://pec-app-backend.vercel.app/api/deposit", // ✅ Deployed backend URL
+  baseURL: "https://partnersellerbackend.vercel.app/api/deposit", // ✅ Deployed backend URL
   // baseURL: "http://localhost:5000/api/deposit",
 });
 

@@ -2,7 +2,7 @@ import axios from "axios";
 
 const API = axios.create({
   // baseURL: "http://localhost:5000/api", // local dev
-  baseURL: "https://pec-app-backend.vercel.app/api", // prod
+  baseURL: "https://partnersellerbackend.vercel.app/api", // prod
 });
 
 /* ---------------------- USER WALLET APIs ---------------------- */
