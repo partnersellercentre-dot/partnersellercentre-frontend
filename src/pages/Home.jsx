@@ -36,7 +36,7 @@ function Home() {
             onClick={() => navigate("/register")}
             className="px-4 py-2 bg-black cursor-pointer text-white rounded-full hover:bg-gray-800 transition-colors"
           >
-            Sign up
+            Become Seller
           </button>
         </div>
       </header>

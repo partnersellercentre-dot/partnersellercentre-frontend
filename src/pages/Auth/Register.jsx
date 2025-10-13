@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useContext, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { FiBell, FiUser, FiEye, FiEyeOff } from "react-icons/fi";
 import { registerWithUsername, registerWithOtp, sendOtp } from "../../api/api";
 import { AuthContext } from "../../context/AuthContext";
@@ -10,6 +10,7 @@ import { toast } from "react-toastify";
 export default function Register() {
   const navigate = useNavigate();
   const { login } = useContext(AuthContext);
+  const location = useLocation();
 
   const [activeTab, setActiveTab] = useState("Account");
   const [showPassword, setShowPassword] = useState(false);
@@ -23,6 +24,17 @@ export default function Register() {
     password: "",
     invitationCode: "",
   });
+
+  useEffect(() => {
+    // Example: /ref/SCV07N
+    const parts = location.pathname.split("/");
+    if (parts[1] === "ref" && parts[2]) {
+      setFormData((prev) => ({
+        ...prev,
+        invitationCode: parts[2],
+      }));
+    }
+  }, [location]);
 
   const handleObtainCode = async () => {
     if (!formData.email) return toast.error("Enter your email first!");
@@ -46,7 +58,6 @@ export default function Register() {
 
     if (activeTab === "Email") {
       if (!otpSent) return toast.error("Obtain OTP first");
-
       if (!formData.verificationCode) return toast.error("Enter OTP");
       if (!formData.password) return toast.error("Set password");
       if (!agreed) return toast.error("Agree to terms");
@@ -56,12 +67,12 @@ export default function Register() {
           email: formData.email,
           otp: formData.verificationCode,
           password: formData.password,
-          referredBy: formData.invitationCode || null,
+          referralCode: formData.invitationCode || null, // <-- FIXED
         });
 
         toast.success("Registration successful!");
         login(res.data.token);
-        navigate("/products"); // Only user page navigation
+        navigate("/products");
       } catch (err) {
         toast.error("OTP verification failed");
       }
@@ -76,18 +87,17 @@ export default function Register() {
         const res = await registerWithUsername({
           username: formData.username,
           password: formData.password,
-          referredBy: formData.invitationCode || null,
+          invitationCode: formData.invitationCode || null, // <-- FIXED
         });
 
         toast.success("Account registration successful!");
         login(res.data.token);
-        navigate("/products"); // Only user page navigation
+        navigate("/products");
       } catch (err) {
         toast.error("Account registration failed");
       }
     }
   };
-
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col">
       {/* Header */}

@@ -10,10 +10,8 @@ export default function Referral() {
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
   const [openDetails, setOpenDetails] = useState({}); // Track open/close state
-
   const referralCode = user?.referralCode || "USER123";
-  const referralLink = `partnersellercenter.shop/ref/${referralCode}`;
-
+  const referralLink = `https://www.partnersellercentre.shop/ref/${referralCode}`;
   useEffect(() => {
     if (!token) return;
     getMyReferrals(token)
@@ -122,23 +120,28 @@ export default function Referral() {
                   <div className="w-full bg-white border border-green-100 rounded-lg p-3 text-left text-sm mt-2">
                     <div>
                       <span className="font-semibold">Store Name:</span>{" "}
-                      {referral.storeName || "N/A"}
+                      {referral.name || "N/A"}
                     </div>
                     <div>
                       <span className="font-semibold">Email:</span>{" "}
-                      {maskEmail(referral.email)}
+                      {maskEmail(referral.email) || "Not Provided"}
+                    </div>
+
+                    <div>
+                      <span className="font-semibold">Account Level:</span>{" "}
+                      {referral.accountLevel || "N/A"}
                     </div>
                     <div>
-                      <span className="font-semibold">Balance:</span>{" "}
-                      {referral.balance != null
-                        ? `Rs. ${referral.balance}`
-                        : "N/A"}
+                      <span className="font-semibold">Account Status:</span>{" "}
+                      {referral.accountStatus || "N/A"}
                     </div>
                     <div>
-                      <span className="font-semibold">Recharge:</span>{" "}
-                      {referral.rechargeAmount != null
-                        ? `Rs. ${referral.rechargeAmount}`
-                        : "N/A"}
+                      <span className="font-semibold">Verified:</span>{" "}
+                      {referral.isVerified ? "Yes" : "No"}
+                    </div>
+                    <div>
+                      <span className="font-semibold">Phone:</span>{" "}
+                      {referral.phone || "Not Provided"}
                     </div>
                   </div>
                 )}

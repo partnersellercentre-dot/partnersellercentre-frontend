@@ -36,6 +36,7 @@ import Success from "./pages/Success";
 import Fail from "./pages/Fail";
 import Benefits from "./pages/Benefits";
 import Userdetails from "./pages/Admin/Userdetails";
+import ReferralLanding from "./pages/ReferralLanding";
 
 // Lazy load components
 const Home = lazy(() => import("./pages/Home"));
@@ -118,6 +119,8 @@ function App() {
                 </ProtectedRoute>
               }
             />
+
+            <Route path="/ref/:code" element={<ReferralLanding />} />
 
             <Route
               path="/products"
