@@ -10,7 +10,7 @@ export function ProductsProvider({ children }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
+  console.log(products);
   // fetch products whenever category changes
   useEffect(() => {
     const fetchProducts = async () => {

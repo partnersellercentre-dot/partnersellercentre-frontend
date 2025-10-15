@@ -8,6 +8,8 @@ function CreateProduct() {
     name: "",
     price: "",
     category: "",
+    stock: "", // <-- add this
+    rating: "",
     image: null,
   });
 
@@ -39,6 +41,8 @@ function CreateProduct() {
     productFormData.append("name", formData.name);
     productFormData.append("price", formData.price);
     productFormData.append("category", formData.category);
+    productFormData.append("stock", formData.stock); // <-- add this
+    productFormData.append("rating", formData.rating); // <-- add this
     if (formData.image) {
       productFormData.append("image", formData.image);
     }
@@ -103,6 +107,44 @@ function CreateProduct() {
               name="price"
               value={formData.price}
               onChange={handleChange}
+              className="w-full p-2 bg-gray-100 text-gray-700 rounded-lg border border-gray-300"
+              required
+            />
+          </div>
+
+          <div className="mb-6">
+            <label
+              htmlFor="stock"
+              className="block text-gray-700 text-lg font-semibold mb-2"
+            >
+              Stock
+            </label>
+            <input
+              type="number"
+              id="stock"
+              name="stock"
+              value={formData.stock}
+              onChange={handleChange}
+              className="w-full p-2 bg-gray-100 text-gray-700 rounded-lg border border-gray-300"
+              required
+            />
+          </div>
+          <div className="mb-6">
+            <label
+              htmlFor="rating"
+              className="block text-gray-700 text-lg font-semibold mb-2"
+            >
+              Rating
+            </label>
+            <input
+              type="number"
+              id="rating"
+              name="rating"
+              value={formData.rating}
+              onChange={handleChange}
+              min="0"
+              max="5"
+              step="0.1"
               className="w-full p-2 bg-gray-100 text-gray-700 rounded-lg border border-gray-300"
               required
             />

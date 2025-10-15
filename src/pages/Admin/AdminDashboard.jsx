@@ -30,7 +30,6 @@ function AdminDashboard() {
         const userRes = await getUsers(token); // Pass the token to API
         setTotalUsers(userRes?.data?.users?.length); // Access the  const revenueRes = await getTotalRevenue(token);
         const revenueRes = await getTotalRevenue(token);
-        console.log(revenueRes);
         setRevenue(revenueRes?.data?.totalRevenue || 0);
       } catch (error) {
         console.error("Error fetching data:", error);
