@@ -11,6 +11,7 @@ import WithdrawModal from "../components/WithdrawModal"; // <-- import your new 
 import { AuthContext } from "../context/AuthContext";
 import { getMyTransactions } from "../api/paymentApi";
 import { initDeposit } from "../api/deposit";
+import { createNowPayment } from "../api/nowpaymentsApi";
 
 export default function Wallet() {
   const { user, token } = useContext(AuthContext);
@@ -72,30 +73,50 @@ export default function Wallet() {
   };
 
   const handleConfirmPayment = async (selectedPayment) => {
-    if (selectedPayment === "trc20" || selectedPayment === "bep20") {
-      try {
-        const res = await initDeposit({
-          userId: user._id,
-          amount: depositAmount,
-          network: selectedPayment, // <-- send network
-        });
-
-        const { orderId, wallet } = res.data;
-
-        setPaymentDetails({
-          amount: depositAmount,
-          orderNumber: orderId,
-          address: wallet,
-        });
-
-        setShowPaymentModal(false);
-        setShowQRCode(true);
-      } catch (err) {
-        console.error("Deposit init failed:", err);
-        alert("Failed to initiate deposit");
+    try {
+      let pay_currency = "";
+      if (selectedPayment === "trc20") {
+        pay_currency = "usdttrc20";
+      } else if (selectedPayment === "bep20") {
+        pay_currency = "usdtbsc";
+      } else if (selectedPayment === "card") {
+        alert("Card payments are not implemented yet.");
+        return;
+      } else {
+        alert("Please select a valid payment method.");
+        return;
       }
-    } else {
-      alert("Other methods not implemented yet.");
+
+      // Initiate automated payment via NOWPayments based on selection
+      const res = await createNowPayment(token, {
+        amount: depositAmount,
+        pay_currency,
+      });
+
+      if (res.data.success) {
+        const paymentData = res.data.data;
+        if (paymentData.invoice_url) {
+          // Redirect to NOWPayments invoice page if available
+          window.location.href = paymentData.invoice_url;
+        } else if (paymentData.pay_address) {
+          // Show QR code for direct payment if address is provided
+          setPaymentDetails({
+            amount: depositAmount,
+            orderNumber: paymentData.order_id,
+            address: paymentData.pay_address,
+            network: selectedPayment.toUpperCase(), // Store selected network
+          });
+          setShowPaymentModal(false);
+          setShowQRCode(true);
+        }
+      } else {
+        alert("Failed to create payment request via NOWPayments.");
+      }
+    } catch (err) {
+      console.error("Payment confirmation error:", err);
+      alert(
+        "An error occurred while processing your payment. Please try again."
+      );
     }
   };
 
@@ -122,6 +143,11 @@ export default function Wallet() {
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
       <main className="flex-grow py-6 pb-20 w-full max-w-full mx-auto">
+        <div className="px-1 mb-4">
+          <h2 className="text-xl font-bold text-gray-800">
+            Welcome, {user?.name || "User"}
+          </h2>
+        </div>
         {/* My Assets Section */}
         <div className="bg-green-500 rounded-3xl shadow-sm p-6 mb-6">
           <h2 className="text-lg font-semibold text-white mb-4 flex items-center">
@@ -187,78 +213,31 @@ export default function Wallet() {
 
             {activeTab === "deposit" && (
               <>
-                {transactions.length === 0 ? (
+                {transactions.filter(
+                  (txn) => txn.type?.toLowerCase() === "deposit"
+                ).length === 0 ? (
                   <div className="text-center text-gray-500">
                     No deposit records yet
                   </div>
                 ) : (
-                  transactions.map((txn) => (
-                    <div
-                      key={txn._id}
-                      className="bg-white rounded-lg shadow-md border-l-4 border-green-500 p-4"
-                    >
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="flex items-center">
-                          <div className="w-3 h-3 bg-green-500 rounded-full mr-3"></div>
-                          <span className="text-sm text-gray-600">
-                            {txn.type}
-                          </span>
-                        </div>
-                        <span className="text-sm font-medium text-gray-900">
-                          {new Date(txn.createdAt).toLocaleDateString()}
-                        </span>
-                      </div>
-
-                      <div className="ml-0 md:ml-4">
-                        <div className="text-lg font-bold text-gray-900 mb-1">
-                          {txn.status}
-                        </div>
-                        <div className="flex justify-between text-sm text-gray-600 mb-1">
-                          <span>Operation amount</span>
-                          <span
-                            className={
-                              txn.amount < 0 ? "text-red-500" : "text-green-500"
-                            }
-                          >
-                            {txn.amount > 0 ? "+" : ""}
-                            {txn.amount}
-                          </span>
-                        </div>
-                        <div className="flex justify-between text-sm text-gray-600">
-                          <span>Method</span>
-                          <span>{txn.method}</span>
-                        </div>
-                      </div>
-                    </div>
-                  ))
-                )}
-              </>
-            )}
-
-            {activeTab === "withdrawal" && (
-              <>
-                {transactions.filter((txn) => txn.type === "withdraw")
-                  .length === 0 ? (
-                  <div className="text-center text-gray-500">
-                    No withdrawal records yet
-                  </div>
-                ) : (
                   transactions
-                    .filter((txn) => txn.type === "withdraw")
+                    .filter((txn) => txn.type?.toLowerCase() === "deposit")
                     .map((txn) => (
                       <div
                         key={txn._id}
-                        className="bg-white rounded-lg shadow-md border-l-4 border-yellow-500 p-4"
+                        className="bg-white rounded-lg shadow-md border-l-4 border-green-500 p-4"
                       >
                         <div className="flex items-center justify-between mb-2">
                           <div className="flex items-center">
-                            <div className="w-3 h-3 bg-yellow-500 rounded-full mr-3"></div>
+                            <div className="w-3 h-3 bg-green-500 rounded-full mr-3"></div>
                             <span className="text-sm text-gray-600">
-                              {txn.method || "N/A"}
+                              {txn.type}
                             </span>
                           </div>
                           <span className="text-sm font-medium text-gray-900">
-                            {new Date(txn.createdAt).toLocaleDateString()}
+                            {txn.createdAt
+                              ? new Date(txn.createdAt).toLocaleDateString()
+                              : "N/A"}
                           </span>
                         </div>
 
@@ -272,13 +251,88 @@ export default function Wallet() {
                                 : "text-yellow-600"
                             }`}
                           >
-                            {txn.status.charAt(0).toUpperCase() +
-                              txn.status.slice(1)}
+                            {(txn.status || "pending").charAt(0).toUpperCase() +
+                              (txn.status || "pending").slice(1)}
+                          </div>
+                          <div className="flex justify-between text-sm text-gray-600 mb-1">
+                            <span>Operation amount</span>
+                            <span
+                              className={
+                                (txn.amount || 0) < 0
+                                  ? "text-red-500"
+                                  : "text-green-500"
+                              }
+                            >
+                              {(txn.amount || 0) >= 0 ? "+" : ""}
+                              {txn.amount || 0}
+                            </span>
+                          </div>
+                          <div className="flex justify-between text-sm text-gray-600 mb-1">
+                            <span>Method</span>
+                            <span>{txn.method || "N/A"}</span>
+                          </div>
+                          {txn.orderId && (
+                            <div className="flex justify-between text-sm text-gray-600">
+                              <span>Order ID</span>
+                              <span className="text-xs">{txn.orderId}</span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    ))
+                )}
+              </>
+            )}
+
+            {activeTab === "withdrawal" && (
+              <>
+                {transactions.filter(
+                  (txn) => txn.type?.toLowerCase() === "withdraw"
+                ).length === 0 ? (
+                  <div className="text-center text-gray-500">
+                    No withdrawal records yet
+                  </div>
+                ) : (
+                  transactions
+                    .filter((txn) => txn.type?.toLowerCase() === "withdraw")
+                    .map((txn) => (
+                      <div
+                        key={txn._id}
+                        className="bg-white rounded-lg shadow-md border-l-4 border-yellow-500 p-4"
+                      >
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center">
+                            <div className="w-3 h-3 bg-yellow-500 rounded-full mr-3"></div>
+                            <span className="text-sm text-gray-600">
+                              {txn.method || "N/A"}
+                            </span>
+                          </div>
+                          <span className="text-sm font-medium text-gray-900">
+                            {txn.createdAt
+                              ? new Date(txn.createdAt).toLocaleDateString()
+                              : "N/A"}
+                          </span>
+                        </div>
+
+                        <div className="ml-0 md:ml-4">
+                          <div
+                            className={`text-lg font-bold mb-1 ${
+                              txn.status === "approved"
+                                ? "text-green-600"
+                                : txn.status === "rejected"
+                                ? "text-red-600"
+                                : "text-yellow-600"
+                            }`}
+                          >
+                            {(txn.status || "pending").charAt(0).toUpperCase() +
+                              (txn.status || "pending").slice(1)}
                           </div>
 
                           <div className="flex justify-between text-sm text-gray-600 mb-1">
                             <span>Withdrawal amount</span>
-                            <span className="text-red-500">- {txn.amount}</span>
+                            <span className="text-red-500">
+                              - {txn.amount || 0}
+                            </span>
                           </div>
 
                           <div className="flex justify-between text-sm text-gray-600 mb-1">
@@ -371,6 +425,7 @@ export default function Wallet() {
           amount={paymentDetails.amount}
           orderNumber={paymentDetails.orderNumber}
           address={paymentDetails.address}
+          network={paymentDetails.network}
           onClose={handleQRCodeClose}
         />
       )}

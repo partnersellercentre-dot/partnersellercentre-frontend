@@ -7,6 +7,7 @@ export default function PaymentQRCode({
   amount,
   orderNumber,
   address,
+  network,
   onClose,
 }) {
   const [copied, setCopied] = useState(false);
@@ -28,14 +29,14 @@ export default function PaymentQRCode({
         </button>
 
         <h2 className="text-lg font-semibold text-gray-900 mb-4">
-          Complete your TRC20 Payment
+          Complete your {network || "TRC20"} Payment
         </h2>
 
         {/* QR Code */}
         <div className="flex justify-center mb-4">
           <img
             src={`https://api.qrserver.com/v1/create-qr-code/?data=${address}&size=200x200`}
-            alt="TRC20 QR Code"
+            alt={`${network || "TRC20"} QR Code`}
             className="rounded-lg border p-2"
           />
         </div>

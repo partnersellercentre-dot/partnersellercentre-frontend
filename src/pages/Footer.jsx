@@ -7,7 +7,7 @@ function Footer() {
         {/* Top Section */}
         <div className="text-center mb-8">
           <h2 className="text-2xl font-bold text-green-500">
-            partner seller centre
+            Partner Seller Centre
           </h2>
         </div>
 
@@ -79,7 +79,7 @@ function Footer() {
         {/* Copyright */}
         <div className="mt-10 text-start sm:text-center text-gray-600 text-sm">
           © {new Date().getFullYear()} - All rights reserved by
-          partnersellercenter.shop
+          partnersellercentre.shop
         </div>
       </div>
     </footer>

@@ -147,7 +147,7 @@ export default function PaymentConfirmationModal({
                     className="w-16 h-auto"
                   />
                 </div>
-                {selectedPayment === "tether-trc20" && (
+                {selectedPayment === "trc20" && (
                   <div className="absolute top-2 right-2">
                     <FaCheckCircle className="text-white" size={20} />
                   </div>
@@ -169,12 +169,12 @@ export default function PaymentConfirmationModal({
                   <div className="w-8 h-8 border-2 border-white rounded flex items-center justify-center text-black text-xs">
                     <img
                       src="/bdep.webp" // Existing logo
-                      alt="USDT TRC20"
+                      alt="USDT BEP20"
                       className="w-32 "
                     />{" "}
                   </div>
                 </div>
-                {selectedPayment === "tether-bep20" && (
+                {selectedPayment === "bep20" && (
                   <div className="absolute top-2 right-2">
                     <FaCheckCircle className="text-white" size={20} />
                   </div>
@@ -184,7 +184,7 @@ export default function PaymentConfirmationModal({
               {/* Card Options */}
               <div
                 onClick={() => setSelectedPayment("card")}
-                className={`relative bg-gray-100 p-4 cursor-pointer transition-all ${
+                className={`relative bg-gray-100 p-4 mb-3 cursor-pointer transition-all ${
                   selectedPayment === "card" ? "ring-2 ring-green-600" : ""
                 }`}
               >
