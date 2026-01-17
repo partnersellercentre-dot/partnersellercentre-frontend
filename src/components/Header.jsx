@@ -139,7 +139,7 @@ export default function Header() {
                     </h4>
                   </Link>
                   <p className="text-sm text-gray-500">
-                    {user?.isVerified ? "Verified User" : "Unverified"}
+                    {user?.isKycApproved ? "Verified User" : "Unverified"}
                   </p>
                 </div>
               </div>

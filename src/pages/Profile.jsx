@@ -125,7 +125,7 @@ export default function Profile() {
     },
     {
       label: "Verified",
-      value: user.isVerified ? "Yes" : "No",
+      value: user.isKycApproved ? "Yes" : "No",
       icon: <FaCheckCircle />,
     },
   ];
@@ -165,7 +165,7 @@ export default function Profile() {
               {user.name}
             </h2>
             <p className="text-gray-500 text-sm">
-              {user.isVerified ? "Verified User" : "Unverified"}
+              {user.isKycApproved ? "Verified User" : "Unverified"}
             </p>
           </div>
         </div>

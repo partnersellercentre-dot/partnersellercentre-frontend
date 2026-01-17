@@ -24,6 +24,9 @@ export const registerWithUsername = (data) =>
 export const loginWithUsername = (data) =>
   API.post("/auth/login-username", data); // { username, password }
 
+export const forgotPassword = (data) => API.post("/auth/forgot-password", data); // { username, email }
+export const resetPassword = (data) => API.post("/auth/reset-password", data); // { username, otp, newPassword }
+
 // Get user profile (after authentication)
 export const getProfile = (token) =>
   API.get("/auth/me", { headers: { Authorization: `Bearer ${token}` } });

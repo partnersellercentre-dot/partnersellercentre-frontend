@@ -137,7 +137,7 @@ export default function Referral() {
                     </div>
                     <div>
                       <span className="font-semibold">Verified:</span>{" "}
-                      {referral.isVerified ? "Yes" : "No"}
+                      {referral.isKycApproved ? "Yes" : "No"}
                     </div>
                     <div>
                       <span className="font-semibold">Phone:</span>{" "}

@@ -7,6 +7,7 @@ import {
   FiTruck,
   FiDollarSign,
   FiCheckCircle,
+  FiXCircle,
   FiTrendingUp,
 } from "react-icons/fi";
 import Footer from "./Footer";
@@ -17,7 +18,7 @@ function Home() {
   return (
     <div className="min-h-screen bg-green-50 flex flex-col w-full">
       {/* Header */}
-      <header className="flex items-center justify-between p-4 md:p-6 w-full">
+      <header className="sticky top-0 z-50 flex items-center justify-between p-4 md:p-6 w-full border-b border-gray-200 bg-white">
         <div className="flex items-center space-x-2">
           <div className="w-8 h-8 bg-green-500 rounded flex items-center justify-center">
             <span className="text-white font-bold text-sm">◊</span>
@@ -54,7 +55,7 @@ function Home() {
 
           <button
             onClick={() => navigate("/dashboard")}
-            className="w-full md:w-auto px-8 py-4 bg-black text-white rounded-full text-lg font-medium hover:bg-gray-800 transition-colors mb-12"
+            className="w-full md:w-auto px-8 py-4 bg-black text-white cursor-pointer rounded-full text-lg font-medium hover:bg-gray-800 transition-colors mb-12"
           >
             Start your operation
           </button>
@@ -94,7 +95,10 @@ function Home() {
               desc: "Earn commissions on every sale.",
             },
           ].map((item, i) => (
-            <div key={i} className="flex flex-col items-center">
+            <div
+              key={i}
+              className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 flex flex-col items-center border border-gray-100"
+            >
               <div className="text-green-600 text-3xl mb-3">{item.icon}</div>
               <h3 className="font-semibold text-lg mb-1">{item.title}</h3>
               <p className="text-sm text-gray-600">{item.desc}</p>
@@ -136,7 +140,10 @@ function Home() {
               desc: "Monitor sales, earnings, and growth.",
             },
           ].map((item, i) => (
-            <div key={i} className="flex flex-col items-center">
+            <div
+              key={i}
+              className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 flex flex-col items-center border border-gray-100"
+            >
               <div className="text-green-600 text-3xl mb-3">{item.icon}</div>
               <h3 className="font-semibold text-lg mb-1">{item.title}</h3>
               <p className="text-sm text-gray-600">{item.desc}</p>
@@ -151,22 +158,50 @@ function Home() {
           Why Choose Us?
         </h2>
         <div className="grid sm:grid-cols-2 gap-8">
-          <div>
-            <h3 className="text-xl font-semibold mb-4">Our Platform</h3>
-            <ul className="space-y-2 text-gray-700">
-              <li>✅ Competitive commission rates</li>
-              <li>✅ Wide product range</li>
-              <li>✅ Reliable & fast shipping</li>
-              <li>✅ Dedicated customer support</li>
+          <div className="bg-green-50 p-6 rounded-xl border border-green-100">
+            <h3 className="text-xl font-semibold mb-4 text-green-800">
+              Our Platform
+            </h3>
+            <ul className="space-y-3 text-gray-700">
+              <li className="flex items-center space-x-2">
+                <FiCheckCircle className="text-green-500 flex-shrink-0" />
+                <span>Competitive commission rates</span>
+              </li>
+              <li className="flex items-center space-x-2">
+                <FiCheckCircle className="text-green-500 flex-shrink-0" />
+                <span>Wide product range</span>
+              </li>
+              <li className="flex items-center space-x-2">
+                <FiCheckCircle className="text-green-500 flex-shrink-0" />
+                <span>Reliable & fast shipping</span>
+              </li>
+              <li className="flex items-center space-x-2">
+                <FiCheckCircle className="text-green-500 flex-shrink-0" />
+                <span>Dedicated customer support</span>
+              </li>
             </ul>
           </div>
-          <div>
-            <h3 className="text-xl font-semibold mb-4">Other Platforms</h3>
-            <ul className="space-y-2 text-gray-700">
-              <li>❌ Higher commissions</li>
-              <li>❌ Limited product selection</li>
-              <li>❌ Slower & unreliable shipping</li>
-              <li>❌ Minimal support</li>
+          <div className="bg-gray-50 p-6 rounded-xl border border-gray-100">
+            <h3 className="text-xl font-semibold mb-4 text-gray-800">
+              Other Platforms
+            </h3>
+            <ul className="space-y-3 text-gray-700">
+              <li className="flex items-center space-x-2">
+                <FiXCircle className="text-red-500 flex-shrink-0" />
+                <span>Higher commissions</span>
+              </li>
+              <li className="flex items-center space-x-2">
+                <FiXCircle className="text-red-500 flex-shrink-0" />
+                <span>Limited product selection</span>
+              </li>
+              <li className="flex items-center space-x-2">
+                <FiXCircle className="text-red-500 flex-shrink-0" />
+                <span>Slower & unreliable shipping</span>
+              </li>
+              <li className="flex items-center space-x-2">
+                <FiXCircle className="text-red-500 flex-shrink-0" />
+                <span>Minimal support</span>
+              </li>
             </ul>
           </div>
         </div>

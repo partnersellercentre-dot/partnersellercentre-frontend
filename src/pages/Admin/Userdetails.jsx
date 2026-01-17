@@ -112,10 +112,10 @@ function Userdetails() {
           <span className="font-semibold text-green-300">Status:</span>{" "}
           <span
             className={`${
-              user.isVerified ? "text-green-400" : "text-red-400"
+              user.isKycApproved ? "text-green-400" : "text-red-400"
             } font-medium`}
           >
-            {user.isVerified ? "Active" : "Inactive"}
+            {user.isKycApproved ? "KYC Verified" : "KYC Unverified"}
           </span>
         </div>
         <div>

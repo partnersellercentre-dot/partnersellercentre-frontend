@@ -3,12 +3,14 @@
 import { useState, useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { FiBell, FiUser } from "react-icons/fi";
+import { FiBell, FiUser, FiEye, FiEyeOff } from "react-icons/fi";
 import {
   sendOtp,
   loginWithOtp,
   loginWithUsername,
   loginAdmin,
+  forgotPassword,
+  resetPassword,
 } from "../../api/api";
 import { toast } from "react-toastify";
 
@@ -20,12 +22,18 @@ export default function Login() {
   const [agreed, setAgreed] = useState(false);
   const [otpSent, setOtpSent] = useState(false);
   const [role, setRole] = useState("user");
+  const [showForgot, setShowForgot] = useState(false);
+  const [resetStep, setResetStep] = useState(1); // 1: send otp, 2: reset password
+  const [showPassword, setShowPassword] = useState(false);
 
   const [formData, setFormData] = useState({
     email: "",
     verificationCode: "",
     username: "",
     password: "",
+    newPassword: "",
+    resetOtp: "",
+    resetEmail: "",
   });
 
   // Step 1: Obtain OTP
@@ -108,6 +116,36 @@ export default function Login() {
     }
   };
 
+  const handleForgotSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await forgotPassword({
+        username: formData.username,
+        email: formData.resetEmail,
+      });
+      toast.success("Reset OTP sent to your email!");
+      setResetStep(2);
+    } catch (err) {
+      toast.error(err.response?.data?.error || "Failed to send reset OTP");
+    }
+  };
+
+  const handleResetSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await resetPassword({
+        username: formData.username,
+        otp: formData.resetOtp,
+        newPassword: formData.newPassword,
+      });
+      toast.success("Password reset successful! Please login.");
+      setShowForgot(false);
+      setResetStep(1);
+    } catch (err) {
+      toast.error(err.response?.data?.error || "Failed to reset password");
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col">
       {/* Header */}
@@ -132,28 +170,30 @@ export default function Login() {
       <main className="px-4 py-6 flex-1 w-full">
         <div className="max-w-7xl mx-auto w-full p-8">
           <h1 className="text-2xl font-bold text-green-700 mb-6 text-center">
-            Login to Your Account
+            {showForgot ? "Reset Your Password" : "Login to Your Account"}
           </h1>
 
           {/* Tabs */}
-          <div className="flex mb-6">
-            {["Account", "Mobile", "Email"].map((tab) => (
-              <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                className={`flex-1 py-2 text-center border-b-2 transition-colors ${
-                  activeTab === tab
-                    ? "border-green-500 text-green-600 font-medium"
-                    : "border-gray-200 text-gray-500"
-                }`}
-              >
-                {tab}
-              </button>
-            ))}
-          </div>
+          {!showForgot && (
+            <div className="flex mb-6">
+              {["Account", "Email"].map((tab) => (
+                <button
+                  key={tab}
+                  onClick={() => setActiveTab(tab)}
+                  className={`flex-1 py-2 text-center border-b-2 transition-colors ${
+                    activeTab === tab
+                      ? "border-green-500 text-green-600 font-medium"
+                      : "border-gray-200 text-gray-500"
+                  }`}
+                >
+                  {tab}
+                </button>
+              ))}
+            </div>
+          )}
 
           {/* Account Login */}
-          {activeTab === "Account" && (
+          {activeTab === "Account" && !showForgot && (
             <form onSubmit={handleSubmit} className="space-y-4 w-full">
               {/* Username */}
               <div>
@@ -177,16 +217,40 @@ export default function Login() {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Password
                 </label>
-                <input
-                  type="password"
-                  value={formData.password}
-                  onChange={(e) =>
-                    setFormData({ ...formData, password: e.target.value })
-                  }
-                  placeholder="Enter your password"
-                  className="w-full px-3 py-3 bg-gray-50 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:bg-white"
-                  required
-                />
+                <div className="relative">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    value={formData.password}
+                    onChange={(e) =>
+                      setFormData({ ...formData, password: e.target.value })
+                    }
+                    placeholder="Enter your password"
+                    className="w-full px-3 py-3 bg-gray-50 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:bg-white pr-10"
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-3.5 text-gray-400 hover:text-gray-600"
+                  >
+                    {showPassword ? (
+                      <FiEyeOff size={18} />
+                    ) : (
+                      <FiEye size={18} />
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              {/* Forgot Password Link */}
+              <div className="text-right">
+                <button
+                  type="button"
+                  onClick={() => setShowForgot(true)}
+                  className="text-sm text-green-600 hover:text-green-700 font-medium"
+                >
+                  Forgot Password?
+                </button>
               </div>
 
               {/* Role */}
@@ -297,6 +361,119 @@ export default function Login() {
                 Login
               </button>
             </form>
+          )}
+
+          {/* Forgot Password Flow */}
+          {showForgot && (
+            <div className="space-y-6">
+              {resetStep === 1 ? (
+                <form onSubmit={handleForgotSubmit} className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Username
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.username}
+                      onChange={(e) =>
+                        setFormData({ ...formData, username: e.target.value })
+                      }
+                      placeholder="Enter your username"
+                      className="w-full px-3 py-3 bg-gray-50 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:bg-white"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Email Address
+                    </label>
+                    <input
+                      type="email"
+                      value={formData.resetEmail}
+                      onChange={(e) =>
+                        setFormData({ ...formData, resetEmail: e.target.value })
+                      }
+                      placeholder="Enter the email linked to your account"
+                      className="w-full px-3 py-3 bg-gray-50 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:bg-white"
+                      required
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    className="w-full py-3 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors font-medium"
+                  >
+                    Send Reset OTP
+                  </button>
+                </form>
+              ) : (
+                <form onSubmit={handleResetSubmit} className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      OTP Code
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.resetOtp}
+                      onChange={(e) =>
+                        setFormData({ ...formData, resetOtp: e.target.value })
+                      }
+                      placeholder="Enter OTP from your email"
+                      className="w-full px-3 py-3 bg-gray-50 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:bg-white"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      New Password
+                    </label>
+                    <div className="relative">
+                      <input
+                        type={showPassword ? "text" : "password"}
+                        value={formData.newPassword}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            newPassword: e.target.value,
+                          })
+                        }
+                        placeholder="Enter your new password"
+                        className="w-full px-3 py-3 bg-gray-50 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:bg-white pr-10"
+                        required
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-3 top-3.5 text-gray-400 hover:text-gray-600"
+                      >
+                        {showPassword ? (
+                          <FiEyeOff size={18} />
+                        ) : (
+                          <FiEye size={18} />
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                  <button
+                    type="submit"
+                    className="w-full py-3 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors font-medium"
+                  >
+                    Reset Password
+                  </button>
+                </form>
+              )}
+              <div className="text-center">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowForgot(false);
+                    setResetStep(1);
+                  }}
+                  className="text-sm text-gray-500 hover:text-gray-700"
+                >
+                  Back to Login
+                </button>
+              </div>
+            </div>
           )}
         </div>
       </main>

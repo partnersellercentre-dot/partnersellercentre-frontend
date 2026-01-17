@@ -1,12 +1,14 @@
 "use client";
 
 import { useContext, useState } from "react";
-import { FaTimes, FaMoneyBillWave } from "react-icons/fa";
+import { FaTimes, FaMoneyBillWave, FaCheckCircle } from "react-icons/fa";
+import { SiTether, SiVisa, SiMastercard } from "react-icons/si";
 import { AuthContext } from "../context/AuthContext";
 import { withdrawRequest } from "../api/paymentApi";
 
 export default function WithdrawModal({ isOpen, onClose, onSuccess }) {
   const { token } = useContext(AuthContext);
+  const [selectedPayment, setSelectedPayment] = useState(null);
   const [form, setForm] = useState({
     accountName: "",
     accountNumber: "",
@@ -150,27 +152,60 @@ export default function WithdrawModal({ isOpen, onClose, onSuccess }) {
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Select Withdrawal Method
             </label>
-            <div className="grid grid-cols-3 gap-3">
-              {withdrawalMethods.map((m) => (
-                <div
-                  key={m.id}
-                  onClick={() => setForm({ ...form, method: m.name })}
-                  className={`border rounded-lg p-3 flex flex-col items-center justify-center cursor-pointer transition-all ${
-                    form.method === m.name
-                      ? "ring-2 ring-green-500 bg-green-50"
-                      : "hover:ring-2 hover:ring-green-300"
-                  }`}
-                >
+            <div className="space-y-3">
+              {/* Tether TRC20 Option */}
+              <div
+                onClick={() => {
+                  setSelectedPayment("trc20");
+                  setForm({ ...form, method: "USDT (TRC20)" });
+                }}
+                className={`relative bg-green-500 rounded-md p-4 cursor-pointer transition-all ${
+                  selectedPayment === "trc20" ? "ring-2 ring-green-600" : ""
+                }`}
+              >
+                <div className="flex items-center justify-between text-white">
+                  <div>
+                    <div className="font-semibold text-lg">Tether</div>
+                    <div className="text-sm opacity-90">USDT (TRC20)</div>
+                  </div>
                   <img
-                    src={m.img}
-                    alt={m.name}
-                    className="w-10 h-10 object-contain mb-2"
+                    src="/tether-usdt-logo.png"
+                    alt="USDT TRC20"
+                    className="w-16 h-auto"
                   />
-                  <span className="text-xs font-medium text-gray-700 text-center">
-                    {m.name}
-                  </span>
                 </div>
-              ))}
+                {selectedPayment === "trc20" && (
+                  <div className="absolute top-2 right-2">
+                    <FaCheckCircle className="text-white" size={20} />
+                  </div>
+                )}
+              </div>
+
+              {/* Tether BEP20 Option */}
+              <div
+                onClick={() => {
+                  setSelectedPayment("bep20");
+                  setForm({ ...form, method: "USDT (BEP20)" });
+                }}
+                className={`relative border text-green-500 border-green-500 p-4 rounded-md cursor-pointer transition-all ${
+                  selectedPayment === "bep20" ? "ring-2 ring-green-600" : ""
+                }`}
+              >
+                <div className="flex items-center justify-between text-black">
+                  <div>
+                    <div className="font-semibold text-lg">Tether</div>
+                    <div className="text-sm opacity-90">USDT (BEP20)</div>
+                  </div>
+                  <div className="w-8 h-8 border-2 border-white rounded flex items-center justify-center text-black text-xs">
+                    <img src="/bdep.webp" alt="USDT BEP20" className="w-32" />
+                  </div>
+                </div>
+                {selectedPayment === "bep20" && (
+                  <div className="absolute top-2 right-2">
+                    <FaCheckCircle className="text-white" size={20} />
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 

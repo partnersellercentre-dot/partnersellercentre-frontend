@@ -142,7 +142,7 @@ export default function Wallet() {
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
-      <main className="flex-grow py-6 pb-20 w-full max-w-full mx-auto">
+      <main className="flex-grow pb-20 w-full max-w-full mx-auto">
         <div className="px-1 mb-4">
           <h2 className="text-xl font-bold text-gray-800">
             Welcome, {user?.name || "User"}
@@ -155,7 +155,7 @@ export default function Wallet() {
           </h2>
           <div className="grid grid-cols-2 gap-6 mb-6 text-white">
             <div>
-              <div className="text-3xl font-bold">${userBalance}</div>
+              <div className="text-3xl font-bold">${userBalance.toFixed(2)}</div>
               <div className="text-sm">Available Amount</div>
             </div>
             <div>
