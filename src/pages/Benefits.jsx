@@ -1,5 +1,5 @@
 import React from "react";
-import { FaChartLine, FaUsers } from "react-icons/fa";
+import { FaChartLine, FaUsers, FaCircle } from "react-icons/fa";
 import Footer from "./Footer";
 
 export default function Benefits() {
@@ -107,11 +107,26 @@ export default function Benefits() {
                   {tier.level}
                 </h3>
                 <ul className="space-y-2 text-gray-700 font-medium">
-                  <li>• {tier.friends}</li>
-                  <li>• {tier.friendFunds}</li>
-                  <li>• {tier.yourFunds}</li>
-                  <li>• {tier.commission}</li>
-                  <li>• {tier.salary}</li>
+                  <li className="flex items-center">
+                    <FaCircle className="mr-2 text-green-500" size={8} />{" "}
+                    {tier.friends}
+                  </li>
+                  <li className="flex items-center">
+                    <FaCircle className="mr-2 text-green-500" size={8} />{" "}
+                    {tier.friendFunds}
+                  </li>
+                  <li className="flex items-center">
+                    <FaCircle className="mr-2 text-green-500" size={8} />{" "}
+                    {tier.yourFunds}
+                  </li>
+                  <li className="flex items-center">
+                    <FaCircle className="mr-2 text-green-500" size={8} />{" "}
+                    {tier.commission}
+                  </li>
+                  <li className="flex items-center">
+                    <FaCircle className="mr-2 text-green-500" size={8} />{" "}
+                    {tier.salary}
+                  </li>
                 </ul>
               </div>
             ))}
@@ -125,9 +140,11 @@ export default function Benefits() {
               <FaChartLine className="text-green-600" /> Key Performance
               Indicators (KPIs)
             </h2>
-            <ul className="list-disc list-inside space-y-2 text-gray-800">
+            <ul className="space-y-2 text-gray-800">
               {kpis.map((kpi, index) => (
-                <li key={index}>{kpi}</li>
+                <li key={index} className="flex items-center">
+                  <FaCircle className="mr-2 text-green-500" size={8} /> {kpi}
+                </li>
               ))}
             </ul>
           </div>
@@ -148,9 +165,12 @@ export default function Benefits() {
                 <FaUsers className="text-green-500" /> This Structure
                 Incentivizes You To:
               </h2>
-              <ul className="list-disc list-inside space-y-2 font-bold text-gray-700">
+              <ul className="space-y-2 font-bold text-gray-700">
                 {incentives.map((point, index) => (
-                  <li key={index}>{point}</li>
+                  <li key={index} className="flex items-center">
+                    <FaCircle className="mr-2 text-green-500" size={8} />{" "}
+                    {point}
+                  </li>
                 ))}
               </ul>
             </div>

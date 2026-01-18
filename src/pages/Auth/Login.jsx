@@ -284,7 +284,7 @@ export default function Login() {
 
               <button
                 type="submit"
-                className="w-full py-3 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors font-medium mt-6"
+                className="w-full py-3 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors font-medium mt-6 cursor-pointer"
               >
                 Login
               </button>

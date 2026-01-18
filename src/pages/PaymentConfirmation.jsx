@@ -1,6 +1,6 @@
 "use client";
 
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import { FaTimes, FaCheckCircle } from "react-icons/fa";
 import { SiTether, SiVisa, SiMastercard } from "react-icons/si";
 import { useNavigate } from "react-router-dom"; // ✅ for navigation
@@ -19,6 +19,29 @@ export default function PaymentConfirmationModal({
   const navigate = useNavigate();
   const { token } = useContext(AuthContext);
 
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [isOpen]);
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") {
+        onClose();
+      }
+    };
+    if (isOpen) {
+      document.addEventListener("keydown", handleKeyDown);
+    }
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isOpen, onClose]);
   if (!isOpen) return null;
 
   const handlePayment = () => {
@@ -69,8 +92,14 @@ export default function PaymentConfirmationModal({
     }
   };
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-md mx-4">
+    <div
+      className="fixed inset-0 flex items-center justify-center bg-black/50 z-50 p-4"
+      onClick={onClose}
+    >
+      <div
+        className="bg-white rounded-lg shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b">
           <h2 className="text-lg font-semibold text-gray-900">
@@ -181,6 +210,33 @@ export default function PaymentConfirmationModal({
                 )}
               </div>
 
+              {/* TRX Option */}
+              <div
+                onClick={() => setSelectedPayment("trx")}
+                className={`relative border text-green-500 border-green-500 p-4 rounded-md mb-3 cursor-pointer transition-all ${
+                  selectedPayment === "trx" ? "ring-2 ring-green-600" : ""
+                }`}
+              >
+                <div className="flex items-center justify-between text-black">
+                  <div>
+                    <div className="font-semibold text-lg">TRX</div>
+                    <div className="text-sm opacity-90">Tron</div>
+                  </div>
+                  <div className="w-8 h-8 border-2 border-white rounded flex items-center justify-center text-black text-xs">
+                    <img
+                      src="/trx.png" // Existing logo
+                      alt="USDT BEP20"
+                      className="w-32 "
+                    />{" "}
+                  </div>
+                </div>
+                {selectedPayment === "trx" && (
+                  <div className="absolute top-2 right-2">
+                    <FaCheckCircle className="text-white" size={20} />
+                  </div>
+                )}
+              </div>
+
               {/* Card Options */}
               <div
                 onClick={() => setSelectedPayment("card")}
@@ -202,7 +258,7 @@ export default function PaymentConfirmationModal({
               {/* Confirm Button */}
               <button
                 onClick={() => handlePayment(selectedPayment)}
-                className="w-full mt-4 py-3 font-medium bg-green-500 text-white hover:bg-green-600 transition-colors"
+                className="w-full mt-4 py-3 font-medium bg-green-500 text-white hover:bg-green-600 transition-colors cursor-pointer"
               >
                 Continue
               </button>

@@ -79,6 +79,8 @@ export default function Wallet() {
         pay_currency = "usdttrc20";
       } else if (selectedPayment === "bep20") {
         pay_currency = "usdtbsc";
+      } else if (selectedPayment === "trx") {
+        pay_currency = "trx";
       } else if (selectedPayment === "card") {
         alert("Card payments are not implemented yet.");
         return;
@@ -144,7 +146,7 @@ export default function Wallet() {
     <div className="flex flex-col min-h-screen bg-gray-50">
       <main className="flex-grow pb-20 w-full max-w-full mx-auto">
         <div className="px-1 mb-4">
-          <h2 className="text-xl font-bold text-gray-800">
+          <h2 className="text-1xl font-bold text-gray-800">
             Welcome, {user?.name || "User"}
           </h2>
         </div>
@@ -155,11 +157,13 @@ export default function Wallet() {
           </h2>
           <div className="grid grid-cols-2 gap-6 mb-6 text-white">
             <div>
-              <div className="text-3xl font-bold">${userBalance.toFixed(2)}</div>
+              <div className="text-2xl font-bold">
+                ${userBalance.toFixed(2)}
+              </div>
               <div className="text-sm">Available Amount</div>
             </div>
             <div>
-              <div className="text-3xl font-bold">
+              <div className="text-2xl font-bold">
                 ${inTransaction.toFixed(2)}
               </div>
               <div className="text-sm">In transaction</div>

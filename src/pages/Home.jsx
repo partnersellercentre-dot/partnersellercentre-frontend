@@ -43,7 +43,7 @@ function Home() {
       </header>
 
       {/* Hero Section */}
-      <main className="flex-1 flex flex-col justify-center px-4 md:px-6 w-full">
+      <main className="flex flex-col justify-center px-4 md:px-6 w-full h-screen">
         <div className="text-center md:text-left w-full">
           <h1 className="text-4xl sm:text-6xl font-bold text-black leading-tight mb-6">
             Global TOP1 brand dropshipping one-stop solution.

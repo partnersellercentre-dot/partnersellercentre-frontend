@@ -47,7 +47,7 @@ export default function Header() {
       href: "/cancellations",
       icon: <FaTimesCircle />,
     },
-    { name: "Account Setting", href: "/settings", icon: <FaCog /> },
+    { name: "Account Settings", href: "/settings", icon: <FaCog /> },
     { name: "Policies", href: "/privacypolicy", icon: <FaFileAlt /> },
     { name: "Feedback", href: "/feedback", icon: <FaCommentDots /> },
     { name: "Help", href: "/help", icon: <FaQuestionCircle /> },

@@ -60,10 +60,16 @@ function Footer() {
           <div>
             <h3 className="font-semibold text-gray-800 mb-3">Payment</h3>
             <div className="flex flex-wrap justify-start gap-3 sm:justify-start">
-              <img
-                src="/50d1c8a7-9005-42ef-ad39-535ba26647ab.png"
-                alt="Payment method"
-              />
+              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(
+                (num) => (
+                  <img
+                    key={num}
+                    src={`/payments/${num}(2).png`}
+                    alt={`Payment method ${num}`}
+                    className="w-18 h-12 cursor-pointer"
+                  />
+                )
+              )}
             </div>
           </div>
         </div>
@@ -71,8 +77,18 @@ function Footer() {
         {/* Social Section */}
         <div className="mt-10 text-start">
           <h3 className="font-semibold text-gray-800 mb-3">Social</h3>
-          <div className="flex justify-start gap-4">
-            <img src="/36d4a14e-dcf8-4adf-a8e4-fa3242d8be8c.png" alt="Social" />
+          <div className="grid grid-cols-10 gap-4">
+            {[
+              1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+              20,
+            ].map((num) => (
+              <img
+                key={num}
+                src={`/social-media/${num}.png`}
+                alt={`Social ${num}`}
+                className="w-12 h-20 rounded cursor-pointer"
+              />
+            ))}
           </div>
         </div>
 
