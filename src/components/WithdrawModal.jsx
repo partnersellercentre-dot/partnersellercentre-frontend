@@ -7,11 +7,10 @@ import { AuthContext } from "../context/AuthContext";
 import { withdrawRequest } from "../api/paymentApi";
 
 export default function WithdrawModal({ isOpen, onClose, onSuccess }) {
-  const { token } = useContext(AuthContext);
+  const { token, user } = useContext(AuthContext);
   const [selectedPayment, setSelectedPayment] = useState(null);
   const [form, setForm] = useState({
-    accountName: "",
-    accountNumber: "",
+    withdrawalAddress: "",
     amount: "",
     method: "",
   });
@@ -38,9 +37,9 @@ export default function WithdrawModal({ isOpen, onClose, onSuccess }) {
   };
 
   const handleWithdraw = async () => {
-    const { accountName, accountNumber, amount, method } = form;
+    const { withdrawalAddress, amount, method } = form;
 
-    if (!accountName || !accountNumber || !amount || !method) {
+    if (!withdrawalAddress || !amount || !method) {
       alert("Please fill in all fields before submitting.");
       return;
     }
@@ -55,8 +54,8 @@ export default function WithdrawModal({ isOpen, onClose, onSuccess }) {
       await withdrawRequest(token, {
         amount: Number(amount),
         method,
-        accountName,
-        accountNumber,
+        accountName: "Crypto Wallet",
+        accountNumber: withdrawalAddress,
       });
       alert("Withdrawal request submitted successfully");
       onClose();
@@ -87,40 +86,25 @@ export default function WithdrawModal({ isOpen, onClose, onSuccess }) {
 
         {/* Form Content */}
         <div className="p-4 space-y-4">
-          {/* Account Name */}
+          {/* Withdrawal Address */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Account Holder Name
+              Withdrawal Address
             </label>
             <input
               type="text"
-              name="accountName"
-              value={form.accountName}
+              name="withdrawalAddress"
+              value={form.withdrawalAddress}
               onChange={handleChange}
-              placeholder="Enter account name"
-              className="w-full border rounded-md px-3 py-2 outline-none focus:ring-2 focus:ring-green-400"
-            />
-          </div>
-
-          {/* Account Number */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Account Number
-            </label>
-            <input
-              type="text"
-              name="accountNumber"
-              value={form.accountNumber}
-              onChange={handleChange}
-              placeholder="Enter account number"
-              className="w-full border rounded-md px-3 py-2 outline-none focus:ring-2 focus:ring-green-400"
+              placeholder="Enter your wallet address"
+              className="w-full border rounded-md px-3 py-2 outline-none text-gray-900"
             />
           </div>
 
           {/* Amount */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Withdraw Amount
+              Withdraw Amount (Available: ${user?.balance || 0})
             </label>
             <div className="flex items-center border rounded-md px-3 py-2">
               <span className="mr-2 text-gray-500">$</span>
@@ -152,7 +136,7 @@ export default function WithdrawModal({ isOpen, onClose, onSuccess }) {
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Select Withdrawal Method
             </label>
-            <div className="space-y-3">
+            <div className="grid grid-cols-2 gap-3">
               {/* Tether TRC20 Option */}
               <div
                 onClick={() => {
@@ -202,7 +186,7 @@ export default function WithdrawModal({ isOpen, onClose, onSuccess }) {
                 </div>
                 {selectedPayment === "bep20" && (
                   <div className="absolute top-2 right-2">
-                    <FaCheckCircle className="text-white" size={20} />
+                    <FaCheckCircle className="text-green-600" size={20} />
                   </div>
                 )}
               </div>

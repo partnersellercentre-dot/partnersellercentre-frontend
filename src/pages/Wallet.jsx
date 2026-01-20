@@ -12,6 +12,7 @@ import { AuthContext } from "../context/AuthContext";
 import { getMyTransactions } from "../api/paymentApi";
 import { initDeposit } from "../api/deposit";
 import { createNowPayment } from "../api/nowpaymentsApi";
+import { getMyPurchases } from "../api/purchaseApi";
 
 export default function Wallet() {
   const { user, token } = useContext(AuthContext);
@@ -26,6 +27,7 @@ export default function Wallet() {
   const [currentOrderNumber, setCurrentOrderNumber] = useState("");
   const [userBalance, setUserBalance] = useState(0);
   const [transactions, setTransactions] = useState([]);
+  const [purchases, setPurchases] = useState([]);
 
   const inTransaction = transactions
     .filter(
@@ -37,7 +39,7 @@ export default function Wallet() {
     .reduce((sum, txn) => sum + txn.amount, 0);
 
   useEffect(() => {
-    const fetchBalance = async () => {
+    const fetchData = async () => {
       try {
         const res = await getMyTransactions(token);
 
@@ -48,11 +50,14 @@ export default function Wallet() {
         if (Array.isArray(res.data.transactions)) {
           setTransactions(res.data.transactions);
         }
+
+        const purchaseRes = await getMyPurchases(token);
+        setPurchases(purchaseRes.data.purchases || []);
       } catch (err) {
-        console.error("Failed to fetch transactions", err);
+        console.error("Failed to fetch data", err);
       }
     };
-    fetchBalance();
+    fetchData();
   }, [token, showPaymentModal, showDepositModal, showWithdrawModal]);
 
   const handleDeposit = () => {
@@ -145,8 +150,8 @@ export default function Wallet() {
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
       <main className="flex-grow pb-20 w-full max-w-full mx-auto">
-        <div className="px-1 mb-4">
-          <h2 className="text-1xl font-bold text-gray-800">
+        <div className="px-1">
+          <h2 className="text-lg text-gray-500">
             Welcome, {user?.name || "User"}
           </h2>
         </div>
@@ -210,9 +215,60 @@ export default function Wallet() {
 
           <div className="p-4 flex flex-col space-y-6">
             {activeTab === "account" && (
-              <div className="text-center text-gray-500">
-                Account details coming soon
-              </div>
+              <>
+                {purchases.length === 0 ? (
+                  <div className="text-center text-gray-500">No orders yet</div>
+                ) : (
+                  purchases.map((purchase) => (
+                    <div
+                      key={purchase._id}
+                      className="bg-white rounded-lg shadow-md border-l-4 border-blue-500 p-4 mb-4"
+                    >
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center">
+                          <div className="w-3 h-3 bg-blue-500 rounded-full mr-3"></div>
+                          <span className="text-sm text-gray-600">Order</span>
+                        </div>
+                        <span className="text-sm font-medium text-gray-900">
+                          {purchase.createdAt
+                            ? new Date(purchase.createdAt).toLocaleDateString()
+                            : "N/A"}
+                        </span>
+                      </div>
+
+                      <div className="ml-0 md:ml-4">
+                        <div className="text-lg font-bold mb-1 text-gray-900">
+                          {purchase.product?.name || "N/A"}
+                        </div>
+                        <div className="flex justify-between text-sm text-gray-600 mb-1">
+                          <span>Amount</span>
+                          <span>
+                            ${purchase.product?.price?.toFixed(2) || "0.00"}
+                          </span>
+                        </div>
+                        <div className="flex justify-between text-sm text-gray-600 mb-1">
+                          <span>Price</span>
+                          <span>
+                            ${purchase.product?.price?.toFixed(2) || "0.00"}
+                          </span>
+                        </div>
+                        <div className="flex justify-between text-sm text-gray-600">
+                          <span>Claimed</span>
+                          <span
+                            className={
+                              purchase.status === "paid"
+                                ? "text-green-600"
+                                : "text-yellow-600"
+                            }
+                          >
+                            {purchase.status === "paid" ? "Yes" : "No"}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </>
             )}
 
             {activeTab === "deposit" && (
