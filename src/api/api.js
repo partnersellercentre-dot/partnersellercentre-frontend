@@ -78,6 +78,16 @@ export const updateUserStatus = (token, userId, status) =>
     { headers: { Authorization: `Bearer ${token}` } },
   );
 
+export const getSystemSettings = (token) =>
+  API.get("/admin/settings", {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+export const updateSystemSettings = (token, data) =>
+  API.put("/admin/settings", data, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
 // Update user profile (name + email + profile image)
 export const updateProfile = (token, data) => {
   console.log("API updateProfile called with data:", data);

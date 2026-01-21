@@ -222,11 +222,11 @@ export default function Wallet() {
                   purchases.map((purchase) => (
                     <div
                       key={purchase._id}
-                      className="bg-white rounded-lg shadow-md border-l-4 border-blue-500 p-4 mb-4"
+                      className="bg-white rounded-lg shadow-md border-l-4 border-green-600 p-4 mb-4"
                     >
                       <div className="flex items-center justify-between mb-2">
                         <div className="flex items-center">
-                          <div className="w-3 h-3 bg-blue-500 rounded-full mr-3"></div>
+                          <div className="w-3 h-3 bg-green-500 rounded-full mr-3"></div>
                           <span className="text-sm text-gray-600">Order</span>
                         </div>
                         <span className="text-sm font-medium text-gray-900">

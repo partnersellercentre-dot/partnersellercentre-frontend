@@ -18,6 +18,7 @@ export default function OrderCenter() {
   const [purchases, setPurchases] = useState([]);
   const [loading, setLoading] = useState(true);
   const [claiming, setClaiming] = useState(null);
+  const [transferring, setTransferring] = useState(null);
   const [timer, setTimer] = useState(0);
   const navigate = useNavigate();
   const { token } = useContext(AuthContext);
@@ -55,7 +56,7 @@ export default function OrderCenter() {
     const purchaseTime = new Date(purchase.createdAt);
     const now = new Date();
     const secondsSincePurchase = (now - purchaseTime) / 1000;
-    return secondsSincePurchase >= 30 && purchase.status === "to_be_paid";
+    return secondsSincePurchase >= 172800 && purchase.status === "to_be_paid";
   };
 
   const handleDetailsClick = (purchase) => {
@@ -65,6 +66,7 @@ export default function OrderCenter() {
   };
 
   const handleTransfer = async (purchase) => {
+    setTransferring(purchase._id);
     try {
       if (!purchase.buyerEscrowTransactionId) {
         toast.error("Escrow transaction not found for this order.");
@@ -72,14 +74,18 @@ export default function OrderCenter() {
       }
       const res = await releaseBuyerEscrow(
         token,
-        purchase.buyerEscrowTransactionId
+        purchase.buyerEscrowTransactionId,
       );
       toast.success(res.data.message || "Funds transferred to your wallet!");
-      // Optionally refresh wallet
+      // Refresh purchases to update transfer button status
+      const refreshed = await getMyPurchases(token);
+      setPurchases(refreshed.data.purchases || []);
     } catch (err) {
       toast.error(
-        err.response?.data?.message || "Failed to transfer funds. Try again."
+        err.response?.data?.message || "Failed to transfer funds. Try again.",
       );
+    } finally {
+      setTransferring(null);
     }
   };
 
@@ -94,7 +100,7 @@ export default function OrderCenter() {
     } catch (err) {
       toast.error(
         err.response?.data?.message ||
-          "Failed to claim profit. Please try again."
+          "Failed to claim profit. Please try again.",
       );
     } finally {
       setClaiming(null);
@@ -105,7 +111,7 @@ export default function OrderCenter() {
     <div className="min-h-screen bg-gray-50 p-2 sm:p-3 w-full">
       <div className="mb-4">
         <h1 className="text-sm sm:text-base font-semibold text-gray-900 leading-tight">
-          Dropshipping in progress — your product is expected to sell within 72
+          Dropshipping in progress — your product is expected to sell within 48
           hours.
         </h1>
       </div>
@@ -120,7 +126,7 @@ export default function OrderCenter() {
             const purchaseTime = new Date(purchase.createdAt);
             const now = new Date();
             const secondsSincePurchase = (now - purchaseTime) / 1000;
-            const remainingSeconds = Math.ceil(30 - secondsSincePurchase);
+            const remainingSeconds = Math.ceil(172800 - secondsSincePurchase);
 
             return (
               <div
@@ -169,9 +175,22 @@ export default function OrderCenter() {
 
                   <button
                     onClick={() => handleTransfer(purchase)}
-                    className="flex-1 py-1 px-2 border border-gray-300 font-medium text-gray-700 hover:bg-gray-50 transition-colors rounded"
+                    disabled={
+                      purchase.escrowStatus === "approved" ||
+                      transferring === purchase._id
+                    }
+                    className={`flex-1 py-1 px-2 border border-gray-300 font-medium transition-colors rounded ${
+                      purchase.escrowStatus === "approved" ||
+                      transferring === purchase._id
+                        ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                        : "text-gray-700 hover:bg-gray-50"
+                    }`}
                   >
-                    Transfer
+                    {transferring === purchase._id
+                      ? "Transferring..."
+                      : purchase.escrowStatus === "approved"
+                        ? "Transferred"
+                        : "Transfer"}
                   </button>
 
                   {canClaimProfit(purchase) ? (
