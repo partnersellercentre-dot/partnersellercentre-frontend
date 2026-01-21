@@ -80,12 +80,18 @@ export default function Register() {
 
     if (activeTab === "Account") {
       if (!formData.username) return toast.error("Enter username");
+      if (!formData.email) return toast.error("Enter email");
+      // Basic email validation
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(formData.email))
+        return toast.error("Please enter a valid email address");
       if (!formData.password) return toast.error("Enter password");
       if (!agreed) return toast.error("Agree to terms");
 
       try {
         const res = await registerWithUsername({
           username: formData.username,
+          email: formData.email,
           password: formData.password,
           invitationCode: formData.invitationCode || null, // <-- FIXED
         });
@@ -152,6 +158,23 @@ export default function Register() {
                       setFormData({ ...formData, username: e.target.value })
                     }
                     placeholder="Enter your username"
+                    className="w-full px-3 py-3 bg-gray-50 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:bg-white"
+                    required
+                  />
+                </div>
+
+                {/* Email */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Email
+                  </label>
+                  <input
+                    type="email"
+                    value={formData.email}
+                    onChange={(e) =>
+                      setFormData({ ...formData, email: e.target.value })
+                    }
+                    placeholder="Enter your email"
                     className="w-full px-3 py-3 bg-gray-50 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:bg-white"
                     required
                   />

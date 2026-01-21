@@ -18,7 +18,7 @@ export const loginWithOtp = (data) => API.post("/auth/login-otp", data); // { em
 
 // Register using username + password
 export const registerWithUsername = (data) =>
-  API.post("/auth/register-username", data); // { username, password, invitationCode }
+  API.post("/auth/register-username", data); // { username, password, invitationCode, email }
 
 // Login using username + password
 export const loginWithUsername = (data) =>
@@ -75,19 +75,25 @@ export const updateUserStatus = (token, userId, status) =>
   API.put(
     `/admin/users/${userId}/status`,
     { status },
-    { headers: { Authorization: `Bearer ${token}` } }
+    { headers: { Authorization: `Bearer ${token}` } },
   );
 
-// Update user profile (name + profile image)
+// Update user profile (name + email + profile image)
 export const updateProfile = (token, data) => {
+  console.log("API updateProfile called with data:", data);
   const formData = new FormData();
   if (data.name) formData.append("name", data.name);
+  if (data.email) formData.append("email", data.email);
   if (data.profileImage) formData.append("profileImage", data.profileImage);
+
+  console.log("FormData being sent:");
+  for (let [key, value] of formData.entries()) {
+    console.log(`${key}: ${value}`);
+  }
 
   return API.put("/auth/update-profile", formData, {
     headers: {
       Authorization: `Bearer ${token}`,
-      "Content-Type": "multipart/form-data",
     },
   });
 };
@@ -192,7 +198,7 @@ export const verifyOrRejectKYC = (token, id, status) =>
     { status },
     {
       headers: { Authorization: `Bearer ${token}` },
-    }
+    },
   );
 
 /* ---------------------- Announcements APIs ---------------------- */
@@ -227,7 +233,7 @@ export const markNotificationRead = (token, id) =>
     {},
     {
       headers: { Authorization: `Bearer ${token}` },
-    }
+    },
   );
 
 // ✅ Delete a notification

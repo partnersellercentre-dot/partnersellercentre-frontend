@@ -16,6 +16,8 @@ export default function Profile() {
   const { user, token, setUser } = useContext(AuthContext);
   const [isEditing, setIsEditing] = useState(false);
   const [name, setName] = useState(user?.name || "");
+  const [email, setEmail] = useState(user?.email || "");
+  const [isEditingEmail, setIsEditingEmail] = useState(false);
   const [profileImage, setProfileImage] = useState(null);
   const [loading, setLoading] = useState(false);
   if (!user) {
@@ -35,7 +37,7 @@ export default function Profile() {
     } catch (err) {
       console.error("Image upload error:", err);
       alert(
-        "Error uploading image: " + (err.response?.data?.error || err.message)
+        "Error uploading image: " + (err.response?.data?.error || err.message),
       );
     } finally {
       setLoading(false);
@@ -51,14 +53,33 @@ export default function Profile() {
     try {
       setLoading(true);
       const { data } = await updateProfile(token, { name, profileImage });
-      setUser(data.user); // update AuthContext
-      setIsEditing(false);
+      setUser(data.user); // update AuthContext      setName(data.user.name); // sync local state      setIsEditing(false);
       alert("Profile updated!");
     } catch (err) {
       console.error("Update profile error:", err);
 
       alert(
-        "Error updating profile: " + err.response?.data?.error || err.message
+        "Error updating profile: " + err.response?.data?.error || err.message,
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSaveEmail = async () => {
+    console.log("Attempting to update email to:", email);
+    try {
+      setLoading(true);
+      const { data } = await updateProfile(token, { email });
+      console.log("Update success response:", data);
+      setUser(data.user);
+      setEmail(data.user.email); // sync local state
+      setIsEditingEmail(false);
+      alert("Email updated!");
+    } catch (err) {
+      console.error("Detailed update email error:", err);
+      alert(
+        "Error updating email: " + (err.response?.data?.error || err.message),
       );
     } finally {
       setLoading(false);
@@ -97,7 +118,37 @@ export default function Profile() {
       ),
       icon: <FaUser />,
     },
-    { label: "Email", value: user.email || user.name, icon: <FaEnvelope /> },
+    {
+      label: "Email",
+      value: isEditingEmail ? (
+        <div className="flex items-center gap-2">
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="border px-2 py-1 rounded-md text-sm w-full"
+          />
+          <button
+            onClick={handleSaveEmail}
+            disabled={loading}
+            className="px-3 py-1 text-white bg-green-600 hover:bg-green-700 rounded-md text-sm"
+          >
+            {loading ? "Saving..." : "Save"}
+          </button>
+        </div>
+      ) : (
+        <div className="flex items-center gap-2">
+          <span>{user.email}</span>
+          <button
+            onClick={() => setIsEditingEmail(true)}
+            className="text-green-600 hover:text-green-700"
+          >
+            <FaEdit />
+          </button>
+        </div>
+      ),
+      icon: <FaEnvelope />,
+    },
     {
       label: "Account Level",
       value: user.accountLevel,
