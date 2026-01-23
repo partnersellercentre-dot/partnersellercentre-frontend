@@ -26,22 +26,13 @@ export default function Register() {
   });
 
   useEffect(() => {
-    // 1. Check URL: example /ref/SCV07N
-    const parts = location.pathname.split("/");
-    if (parts[1] === "ref" && parts[2]) {
+    const searchParams = new URLSearchParams(location.search);
+    const refParam = searchParams.get("ref");
+    if (refParam) {
       setFormData((prev) => ({
         ...prev,
-        invitationCode: parts[2],
+        invitationCode: refParam,
       }));
-    } else {
-      // 2. Check localStorage (saved by ReferralLanding.jsx)
-      const storedCode = localStorage.getItem("referralCode");
-      if (storedCode) {
-        setFormData((prev) => ({
-          ...prev,
-          invitationCode: storedCode,
-        }));
-      }
     }
   }, [location]);
 
@@ -81,7 +72,6 @@ export default function Register() {
 
         toast.success("Registration successful!");
         login(res.data.token);
-        localStorage.removeItem("referralCode");
         navigate("/products");
       } catch (err) {
         toast.error("OTP verification failed");
@@ -108,7 +98,6 @@ export default function Register() {
 
         toast.success("Account registration successful!");
         login(res.data.token);
-        localStorage.removeItem("referralCode");
         navigate("/products");
       } catch (err) {
         toast.error("Account registration failed");

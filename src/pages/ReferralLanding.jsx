@@ -7,12 +7,8 @@ export default function ReferralLanding() {
 
   useEffect(() => {
     if (code) {
-      // ✅ Save referral code locally
-      localStorage.setItem("referralCode", code);
-      console.log("Referral code saved:", code);
-
-      // ✅ Redirect after saving (to signup, or homepage)
-      setTimeout(() => navigate("/register"), 1000);
+      // ✅ Redirect to signup with referral code in query parameters
+      navigate(`/register?ref=${code}`, { replace: true });
     }
   }, [code, navigate]);
 

@@ -21,8 +21,8 @@ export default function Referral() {
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
   const [openDetails, setOpenDetails] = useState({}); // Track open/close state
-  const referralCode = user?.referralCode || "USER123";
-  const referralLink = `https://www.partnersellercentre.shop/ref/${referralCode}`;
+  const referralCode = user?.referralCode || "1234567890";
+  const referralLink = `${window.location.origin}/register?ref=${referralCode}`;
 
   const rewardTiers = [
     {
