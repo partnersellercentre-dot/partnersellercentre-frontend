@@ -39,7 +39,7 @@ export default function Header() {
     { name: "My Cart", href: "/cart", icon: <FaShoppingBag /> },
     { name: "Partner Stores", href: "/referral", icon: <FaUsers /> },
     { name: "Store KYC Verification", href: "/kyc", icon: <FaCheckCircle /> },
-    { name: "Chat with Us", href: "/chat", icon: <FaComments /> },
+    { name: "Chat with Us", href: "/chat-support", icon: <FaComments /> },
     { name: "Announce", href: "/messages", icon: <FaEnvelope /> },
     { name: "My Returns", href: "/returns", icon: <FaUndo /> },
     {

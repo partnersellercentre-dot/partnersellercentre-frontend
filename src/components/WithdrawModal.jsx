@@ -2,7 +2,12 @@
 
 import { useContext, useState } from "react";
 import { toast } from "react-toastify";
-import { FaTimes, FaMoneyBillWave, FaCheckCircle } from "react-icons/fa";
+import {
+  FaTimes,
+  FaMoneyBillWave,
+  FaCheckCircle,
+  FaChevronDown,
+} from "react-icons/fa";
 import { SiTether, SiVisa, SiMastercard } from "react-icons/si";
 import { AuthContext } from "../context/AuthContext";
 import { withdrawRequest } from "../api/paymentApi";
@@ -23,15 +28,6 @@ export default function WithdrawModal({ isOpen, onClose, onSuccess }) {
     ? Math.round((Number(form.amount) - fee) * 100) / 100
     : 0;
   if (!isOpen) return null;
-
-  const withdrawalMethods = [
-    { id: 1, name: "Bank Transfer", img: "/bank.png" },
-    { id: 2, name: "Easypaisa", img: "/Easypaisa-logo.png" },
-    { id: 3, name: "JazzCash", img: "/new-Jazzcash-logo.png" },
-    { id: 4, name: "Bkash", img: "/bkash.webp" },
-    { id: 5, name: "Nagad", img: "/nagad.png" },
-    { id: 6, name: "UPI", img: "/upi.jpg" },
-  ];
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -98,8 +94,14 @@ export default function WithdrawModal({ isOpen, onClose, onSuccess }) {
               Withdrawal Guidelines
             </h3>
             <ul className="text-sm text-yellow-700 space-y-1">
-              <li>• Minimum withdrawal amount: 30 USDT</li>
-              <li>• Network handling fees: 3.8%</li>
+              <li className="flex items-center gap-2">
+                <FaCheckCircle className="text-yellow-500 shrink-0" size={12} />
+                <span>Minimum withdrawal amount: 30 USDT</span>
+              </li>
+              <li className="flex items-center gap-2">
+                <FaCheckCircle className="text-yellow-500 shrink-0" size={12} />
+                <span>Network handling fees: 3.8%</span>
+              </li>
             </ul>
           </div>
 
@@ -130,9 +132,9 @@ export default function WithdrawModal({ isOpen, onClose, onSuccess }) {
                 name="amount"
                 value={form.amount}
                 onChange={handleChange}
-                placeholder="0.00"
+                placeholder="30"
                 className="w-full outline-none text-gray-900"
-                min="1"
+                min="30"
               />
             </div>
             {form.amount && Number(form.amount) > 0 && (
@@ -199,7 +201,11 @@ export default function WithdrawModal({ isOpen, onClose, onSuccess }) {
                     <div className="text-sm opacity-90">USDT (BEP20)</div>
                   </div>
                   <div className="w-8 h-8 border-2 border-white rounded flex items-center justify-center text-black text-xs">
-                    <img src="/bdep.webp" alt="USDT BEP20" className="w-32" />
+                    <img
+                      src="/bdep.webp"
+                      alt="USDT BEP20"
+                      className="w-32 "
+                    />{" "}
                   </div>
                 </div>
                 {selectedPayment === "bep20" && (

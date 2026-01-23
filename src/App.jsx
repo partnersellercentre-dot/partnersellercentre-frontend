@@ -31,6 +31,7 @@ import RechargeHistory from "./pages/Admin/RechargeHistory";
 import WithdrawHistory from "./pages/Admin/WithdrawHistory";
 import Bonus from "./pages/Admin/Bonus";
 import AdminMessages from "./pages/Admin/AdminMessages";
+import AdminChat from "./pages/Admin/AdminChat";
 import AdminKYC from "./pages/Admin/AdminKYC";
 import Success from "./pages/Success";
 import Fail from "./pages/Fail";
@@ -96,6 +97,7 @@ function App() {
               <Route path="withdraw-history" element={<WithdrawHistory />} />
               <Route path="bonus" element={<Bonus />} />
               <Route path="admin-messages" element={<AdminMessages />} />
+              <Route path="support-chat" element={<AdminChat />} />
             </Route>
 
             {/* Dashboard Routes */}
@@ -248,7 +250,7 @@ function App() {
               element={
                 <ProtectedRoute allowedRoles={["user"]}>
                   <DashboardLayout>
-                    <Chat />
+                    <ChatSupport />
                   </DashboardLayout>
                 </ProtectedRoute>
               }

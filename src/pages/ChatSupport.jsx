@@ -1,120 +1,177 @@
-import React, { useEffect } from "react";
-import { Crisp } from "crisp-sdk-web";
+import React, { useEffect, useState, useContext, useRef } from "react";
+import { AuthContext } from "../context/AuthContext";
+import { getUserMessages, sendMessageToAdmin } from "../api/api";
+import Pusher from "pusher-js";
 
 function ChatSupport() {
-  useEffect(() => {
-    const crispId = import.meta.env.VITE_CRISP_WEBSITE_ID;
+  const { token, user } = useContext(AuthContext);
+  const [messages, setMessages] = useState([]);
+  const [newMessage, setNewMessage] = useState("");
+  const messagesEndRef = useRef(null);
 
-    if (!crispId) {
-      console.error("Crisp website ID is not set!");
-      return;
-    }
-
-    Crisp.configure(crispId);
-  }, []);
-
-  const openChat = () => {
-    Crisp.chat.open();
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  const steps = [
-    {
-      title: "Initiate Recharge Request",
-      details: [
-        "Visit our website and fill out the recharge request form.",
-        "Contact our customer support team via phone, email, or live chat.",
-      ],
-    },
-    {
-      title: "Provide Required Details",
-      details: [
-        "Account number/username",
-        "Recharge amount",
-        "Payment method (bank deposit, cash payment, cheque/money order)",
-      ],
-    },
-    {
-      title: "Make Payment",
-      details: [
-        "Bank Deposit: Deposit cash into our designated bank account:",
-        "  - Bank Name: [Insert Bank Name]",
-        "  - Account Number: [Insert Account Number]",
-        "  - Branch: [Insert Branch]",
-        "Cash Payment: Visit our physical location or authorized payment agent.",
-        "Cheque/Money Order: Send to our office address: [Insert Address]",
-      ],
-    },
-    {
-      title: "Payment Confirmation",
-      details: [
-        "Wait for our customer support team to verify your payment.",
-        "Receive recharge credit in your account once payment is confirmed.",
-      ],
-    },
-  ];
+  useEffect(() => {
+    fetchMessages();
+    scrollToBottom();
+  }, []);
 
-  const importantDetails = [
-    "Minimum/Maximum Recharge Limit: PKR [Insert Amount] to PKR [Insert Amount]",
-    "Recharge Fees: [Insert Fee Details]",
-    "Refund Policy: [Insert Refund Policy]",
-    "Recharge Timeframe: Recharge credits will be updated within [Insert Timeframe] hours after payment confirmation",
-  ];
+  useEffect(() => {
+    if (user?._id) {
+      const pusher = new Pusher(import.meta.env.VITE_PUSHER_APP_KEY, {
+        cluster: import.meta.env.VITE_PUSHER_APP_CLUSTER,
+      });
 
-  const additionalRequirements = [
-    "Transaction ID: Provide transaction ID or payment receipt to our customer support team.",
-    "Payment Receipt: Keep a copy of payment receipt for future reference.",
-  ];
+      const channel = pusher.subscribe(`user-chat-${user._id}`);
+      channel.bind("new-message", (data) => {
+        setMessages((prev) => [...prev, data.message]);
+      });
+
+      return () => {
+        pusher.unsubscribe(`user-chat-${user._id}`);
+      };
+    }
+  }, [user]);
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
+  const fetchMessages = async () => {
+    try {
+      const res = await getUserMessages(token);
+      setMessages(res.data.messages);
+    } catch (err) {
+      console.error("Failed to fetch messages", err);
+    }
+  };
+
+  const handleSendMessage = async (e) => {
+    e.preventDefault();
+    if (!newMessage.trim()) return;
+
+    try {
+      const res = await sendMessageToAdmin(token, newMessage);
+      setMessages((prev) => [...prev, res.data.message]);
+      setNewMessage("");
+    } catch (err) {
+      console.error("Failed to send message", err);
+    }
+  };
 
   return (
-    <div className="max-w-3xl mx-auto p-6 bg-white rounded-xl shadow-lg border border-green-200">
-      <h2 className="text-2xl font-bold text-green-600 mb-6 text-start">
-        Offline Recharge Instructions
-      </h2>
-
-      {steps.map((step, index) => (
-        <div
-          key={index}
-          className="bg-green-50 border-l-4 border-green-600 p-4 rounded-lg mb-4 shadow-sm"
-        >
-          <h3 className="text-lg font-semibold text-green-700 mb-2">
-            {index + 1}. {step.title}
-          </h3>
-          <ul className="list-disc list-inside text-gray-800 space-y-1">
-            {step.details.map((detail, i) => (
-              <li key={i}>{detail}</li>
-            ))}
-          </ul>
+    <div className="flex flex-col h-[calc(100vh-160px)] max-w-4xl mx-auto bg-white rounded-2xl shadow-xl border border-green-100 overflow-hidden">
+      {/* Header */}
+      <div className="bg-green-600 p-4 flex justify-between items-center text-white shadow-md">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
+            <svg
+              className="w-6 h-6 text-white"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z"
+              />
+            </svg>
+          </div>
+          <div>
+            <h3 className="text-lg font-bold leading-tight">
+              Customer Support
+            </h3>
+            <p className="text-xs text-green-100">
+              Online | We usually reply in minutes
+            </p>
+          </div>
         </div>
-      ))}
-
-      <div className="bg-green-50 border-l-4 border-green-600 p-4 rounded-lg mb-4 shadow-sm">
-        <h3 className="text-lg font-semibold text-green-700 mb-2">
-          Important Details
-        </h3>
-        <ul className="list-disc list-inside text-gray-800 space-y-1">
-          {importantDetails.map((item, i) => (
-            <li key={i}>{item}</li>
-          ))}
-        </ul>
       </div>
 
-      <div className="bg-green-50 border-l-4 border-green-600 p-4 rounded-lg mb-6 shadow-sm">
-        <h3 className="text-lg font-semibold text-green-700 mb-2">
-          Additional Requirements
-        </h3>
-        <ul className="list-disc list-inside text-gray-800 space-y-1">
-          {additionalRequirements.map((item, i) => (
-            <li key={i}>{item}</li>
-          ))}
-        </ul>
+      {/* Messages Area */}
+      <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50 flex flex-col">
+        {messages.length === 0 ? (
+          <div className="flex flex-col items-center justify-center h-full text-center p-6 bg-white rounded-xl shadow-sm m-4 italic text-gray-400">
+            <p className="mb-2">No messages yet.</p>
+            <p className="text-sm">
+              Start the conversation below! Our team is ready to help you.
+            </p>
+          </div>
+        ) : (
+          messages.map((msg, idx) => (
+            <div
+              key={msg._id || idx}
+              className={`flex ${!msg.isAdmin ? "justify-end" : "justify-start"}`}
+            >
+              <div
+                className={`max-w-[85%] p-3 rounded-2xl shadow-sm ${
+                  !msg.isAdmin
+                    ? "bg-green-600 text-white rounded-tr-none"
+                    : "bg-white text-gray-800 rounded-tl-none border border-green-100"
+                }`}
+              >
+                <p className="text-sm whitespace-pre-wrap">{msg.message}</p>
+                <span
+                  className={`text-[10px] block mt-1 ${
+                    !msg.isAdmin ? "text-green-100" : "text-gray-400"
+                  }`}
+                >
+                  {new Date(msg.timestamp).toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                </span>
+              </div>
+            </div>
+          ))
+        )}
+        <div ref={messagesEndRef} />
       </div>
 
-      <button
-        onClick={openChat}
-        className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-4 rounded-lg transition-all shadow-md"
+      {/* Input Area */}
+      <form
+        onSubmit={handleSendMessage}
+        className="p-4 border-t border-gray-100 bg-white"
       >
-        Chat with Support
-      </button>
+        <div className="flex gap-2 items-end">
+          <textarea
+            value={newMessage}
+            onChange={(e) => setNewMessage(e.target.value)}
+            placeholder="Type your message..."
+            rows="1"
+            className="flex-1 bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 focus:ring-2 focus:ring-green-500 outline-none transition resize-none text-gray-800"
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                handleSendMessage(e);
+              }
+            }}
+          />
+          <button
+            type="submit"
+            disabled={!newMessage.trim()}
+            className="bg-green-600 hover:bg-green-700 disabled:bg-gray-300 text-white p-3 rounded-full transition shadow-md"
+          >
+            <svg
+              className="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M12 19l9-2-9-18-9 18 9-2zm0 0v-8"
+              />
+            </svg>
+          </button>
+        </div>
+      </form>
     </div>
   );
 }

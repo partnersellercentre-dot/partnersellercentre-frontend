@@ -65,6 +65,34 @@ export const getTotalRevenue = (token) =>
     headers: { Authorization: `Bearer ${token}` },
   });
 
+/* ---------------------- Chat APIs ---------------------- */
+export const getUserMessages = (token) =>
+  API.get("/chat", { headers: { Authorization: `Bearer ${token}` } });
+
+export const sendMessageToAdmin = (token, message) =>
+  API.post(
+    "/chat",
+    { message },
+    { headers: { Authorization: `Bearer ${token}` } },
+  );
+
+export const getChatUsers = (token) =>
+  API.get("/chat/admin/users", {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+export const getAdminUserMessages = (token, userId) =>
+  API.get(`/chat/admin/${userId}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+export const replyToUser = (token, userId, message) =>
+  API.post(
+    `/chat/admin/${userId}/reply`,
+    { message },
+    { headers: { Authorization: `Bearer ${token}` } },
+  );
+
 export const deleteUser = (token, userId) =>
   API.delete(`/admin/users/${userId}`, {
     headers: { Authorization: `Bearer ${token}` },

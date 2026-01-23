@@ -77,12 +77,12 @@ export default function Referral() {
   ];
 
   const investmentCommissions = [
-    { level: "Lv1", rate: "5%" },
-    { level: "Lv2", rate: "4.2%" },
-    { level: "Lv3", rate: "3.2%" },
-    { level: "Lv4", rate: "2.5%" },
-    { level: "Lv5", rate: "1.5%" },
-    { level: "Lv6", rate: "0.7%" },
+    { level: "Level 1", rate: "5%", locked: "200$" },
+    { level: "Level 2", rate: "4.2%", locked: "400$" },
+    { level: "Level 3", rate: "3.2%", locked: "600$" },
+    { level: "Level 4", rate: "2.5%", locked: "800$" },
+    { level: "Level 5", rate: "1.5%", locked: "1000$" },
+    { level: "Level 6", rate: "0.7%", locked: "1200$" },
   ];
 
   useEffect(() => {
@@ -203,6 +203,15 @@ export default function Referral() {
                 <div className="space-y-0.5">
                   <p className="font-bold text-gray-800 text-sm">{item.rate}</p>
                 </div>
+              </div>
+
+              <div className="bg-gray-50 rounded-xl p-2 flex justify-between items-center px-3 mt-auto">
+                <span className="text-gray-500 text-xs flex items-center gap-1">
+                  Locked 🔐
+                </span>
+                <span className="font-bold text-gray-800 text-sm">
+                  {item.locked}
+                </span>
               </div>
             </div>
           ))}
