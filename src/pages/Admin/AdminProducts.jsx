@@ -6,6 +6,7 @@ import {
   updateProduct,
 } from "../../api/productsApi";
 import Table from "./Table";
+import Spinner from "../../components/Spinner";
 
 function AdminProducts() {
   const [products, setProducts] = useState([]);
@@ -70,14 +71,14 @@ function AdminProducts() {
       const updatedProduct = await updateProduct(
         productToEdit._id,
         formData,
-        token
+        token,
       );
 
       // Replace the old product in the state with the updated product
       setProducts((prev) =>
         prev.map((product) =>
-          product._id === productToEdit._id ? updatedProduct.data : product
-        )
+          product._id === productToEdit._id ? updatedProduct.data : product,
+        ),
       );
 
       handleCloseModal();
@@ -102,7 +103,7 @@ function AdminProducts() {
           </button>
         </div>
 
-        {loading && <p>Loading products...</p>}
+        {loading && <Spinner />}
         {error && <p className="text-red-500">{error}</p>}
 
         <div className="overflow-x-auto bg-white shadow-md rounded-lg">

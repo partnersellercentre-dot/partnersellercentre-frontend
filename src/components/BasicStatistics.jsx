@@ -3,6 +3,7 @@ import StatCard from "./StatCard";
 import { FaDiamond, FaChartPie, FaMoneyBill, FaTag } from "react-icons/fa6";
 import { getBasicStats } from "../api/api";
 import { AuthContext } from "../context/AuthContext"; // Adjust path as needed
+import Spinner from "./Spinner";
 
 export default function BasicStatistics() {
   const { token } = useContext(AuthContext);
@@ -19,7 +20,7 @@ export default function BasicStatistics() {
       .catch(() => setLoading(false));
   }, [token]);
 
-  if (loading) return <div>Loading statistics...</div>;
+  if (loading) return <Spinner />;
   if (!stats) return <div>Failed to load statistics.</div>;
 
   const profitPercent =

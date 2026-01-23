@@ -12,6 +12,7 @@ import { getMyPurchases, claimProfit } from "../api/purchaseApi";
 import { toast } from "react-toastify";
 import { AuthContext } from "../context/AuthContext";
 import { releaseBuyerEscrow } from "../api/paymentApi";
+import Spinner from "../components/Spinner";
 
 export default function OrderCenter() {
   const [currentPage, setCurrentPage] = useState(1);
@@ -118,7 +119,7 @@ export default function OrderCenter() {
 
       <div className="space-y-3 mb-6">
         {loading ? (
-          <p className="text-gray-500 text-center text-sm">Loading...</p>
+          <Spinner />
         ) : purchases.length === 0 ? (
           <p className="text-gray-500 text-center text-sm">No orders yet.</p>
         ) : (

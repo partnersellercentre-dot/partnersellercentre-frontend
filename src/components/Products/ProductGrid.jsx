@@ -1,11 +1,11 @@
 import { useProducts } from "../../context/ProductsContext";
 import ProductCard from "../Products/ProductCard";
+import Spinner from "../Spinner";
 
 export default function ProductGrid() {
   const { products, loading, error } = useProducts();
 
-  if (loading)
-    return <p className="text-gray-600 text-center">Loading products...</p>;
+  if (loading) return <Spinner />;
   if (error) return <p className="text-red-500 text-center">{error}</p>;
 
   return (

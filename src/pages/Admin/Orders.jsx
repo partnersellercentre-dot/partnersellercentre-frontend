@@ -4,6 +4,7 @@ import React, { useEffect, useState, useContext } from "react";
 import { FaTrashAlt, FaCheck, FaTimes } from "react-icons/fa";
 import { getAllPurchases, deletePurchase } from "../../api/purchaseApi";
 import { AuthContext } from "../../context/AuthContext";
+import Spinner from "../../components/Spinner";
 
 function Table({ orders, onDelete }) {
   return (
@@ -110,8 +111,7 @@ export default function Orders() {
     }
   };
 
-  if (loading)
-    return <p className="text-center mt-10 text-gray-300">Loading...</p>;
+  if (loading) return <Spinner fullScreen={true} />;
 
   if (error)
     return (

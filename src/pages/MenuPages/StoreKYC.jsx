@@ -3,6 +3,7 @@ import { FaCheckCircle, FaIdCard } from "react-icons/fa";
 import { createKYC, getMyKYC } from "../../api/api";
 import { toast } from "react-toastify";
 import { AuthContext } from "../../context/AuthContext";
+import Spinner from "../../components/Spinner";
 
 export default function StoreKYC() {
   const [loading, setLoading] = useState(false);
@@ -55,7 +56,7 @@ export default function StoreKYC() {
               toast.error(
                 `❌ Your KYC was rejected. Reason: ${
                   myKYC.rejectionReason || "Not provided"
-                }`
+                }`,
               );
               break;
             default:
@@ -118,11 +119,7 @@ export default function StoreKYC() {
   };
 
   if (loadingKYC) {
-    return (
-      <div className="flex justify-center items-center h-full">
-        <p className="text-gray-500">Loading KYC status...</p>
-      </div>
-    );
+    return <Spinner fullScreen={true} />;
   }
 
   return (

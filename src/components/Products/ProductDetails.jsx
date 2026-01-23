@@ -14,6 +14,7 @@ import {
   FaProjectDiagram,
 } from "react-icons/fa";
 import { AuthContext } from "../../context/AuthContext";
+import Spinner from "../Spinner";
 
 export default function ProductDetails() {
   const { id } = useParams();
@@ -38,7 +39,7 @@ export default function ProductDetails() {
     fetchPurchase();
   }, [id, token]);
 
-  if (loading) return <p className="text-center mt-10">Loading...</p>;
+  if (loading) return <Spinner fullScreen={true} />;
   if (error) return <p className="text-center mt-10 text-red-500">{error}</p>;
   if (!purchase || !purchase.product)
     return <p className="text-center mt-10">Order not found.</p>;

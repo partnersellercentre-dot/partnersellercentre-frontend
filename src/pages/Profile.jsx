@@ -1,6 +1,8 @@
 import { useContext, useState } from "react";
+import { toast } from "react-toastify";
 import { AuthContext } from "../context/AuthContext";
 import { updateProfile } from "../api/api";
+import Spinner from "../components/Spinner";
 import {
   FaUser,
   FaEnvelope,
@@ -21,7 +23,7 @@ export default function Profile() {
   const [profileImage, setProfileImage] = useState(null);
   const [loading, setLoading] = useState(false);
   if (!user) {
-    return <p className="text-center mt-10">Loading profile...</p>;
+    return <Spinner fullScreen={true} />;
   }
 
   const handleImageUpload = async (e) => {
@@ -33,10 +35,10 @@ export default function Profile() {
       const { data } = await updateProfile(token, { profileImage: file });
       setUser(data.user); // update context with new image
       setProfileImage(null);
-      alert("Profile image updated!");
+      toast.success("Profile image updated!");
     } catch (err) {
       console.error("Image upload error:", err);
-      alert(
+      toast.error(
         "Error uploading image: " + (err.response?.data?.error || err.message),
       );
     } finally {
@@ -46,7 +48,7 @@ export default function Profile() {
 
   const handleCopyReferral = () => {
     navigator.clipboard.writeText(user.referralCode || "N/A");
-    alert("Referral code copied to clipboard!");
+    toast.success("Referral code copied to clipboard!");
   };
 
   const handleSaveName = async () => {
@@ -54,12 +56,12 @@ export default function Profile() {
       setLoading(true);
       const { data } = await updateProfile(token, { name, profileImage });
       setUser(data.user); // update AuthContext      setName(data.user.name); // sync local state      setIsEditing(false);
-      alert("Profile updated!");
+      toast.success("Profile updated!");
     } catch (err) {
       console.error("Update profile error:", err);
 
-      alert(
-        "Error updating profile: " + err.response?.data?.error || err.message,
+      toast.error(
+        "Error updating profile: " + (err.response?.data?.error || err.message),
       );
     } finally {
       setLoading(false);
@@ -75,10 +77,10 @@ export default function Profile() {
       setUser(data.user);
       setEmail(data.user.email); // sync local state
       setIsEditingEmail(false);
-      alert("Email updated!");
+      toast.success("Email updated!");
     } catch (err) {
       console.error("Detailed update email error:", err);
-      alert(
+      toast.error(
         "Error updating email: " + (err.response?.data?.error || err.message),
       );
     } finally {

@@ -1,8 +1,7 @@
 import axios from "axios";
 
 const API = axios.create({
-  // baseURL: "http://localhost:5000/api", // local dev
-  baseURL: "https://partnersellerbackend.vercel.app/api", // prod
+  baseURL: import.meta.env.VITE_API_URL || "http://localhost:5000/api",
 });
 
 /* ---------------------- USER WALLET APIs ---------------------- */
@@ -32,14 +31,14 @@ export const approveDeposit = (token, transactionId, amount) =>
   API.post(
     "/wallet/deposit/approve",
     amount !== undefined ? { transactionId, amount } : { transactionId },
-    { headers: { Authorization: `Bearer ${token}` } }
+    { headers: { Authorization: `Bearer ${token}` } },
   );
 // Reject deposit
 export const rejectDeposit = (token, transactionId) =>
   API.post(
     "/wallet/deposit/reject",
     { transactionId },
-    { headers: { Authorization: `Bearer ${token}` } }
+    { headers: { Authorization: `Bearer ${token}` } },
   );
 
 // Approve withdraw
@@ -47,7 +46,7 @@ export const approveWithdraw = (token, transactionId) =>
   API.post(
     "/wallet/withdraw/approve",
     { transactionId },
-    { headers: { Authorization: `Bearer ${token}` } }
+    { headers: { Authorization: `Bearer ${token}` } },
   );
 
 // Reject withdraw
@@ -55,7 +54,7 @@ export const rejectWithdraw = (token, transactionId) =>
   API.post(
     "/wallet/withdraw/reject",
     { transactionId },
-    { headers: { Authorization: `Bearer ${token}` } }
+    { headers: { Authorization: `Bearer ${token}` } },
   );
 
 // Get all transactions (admin view)
@@ -77,5 +76,5 @@ export const releaseBuyerEscrow = (token, transactionId) =>
   API.post(
     "/wallet/release-buyer-escrow",
     { transactionId },
-    { headers: { Authorization: `Bearer ${token}` } }
+    { headers: { Authorization: `Bearer ${token}` } },
   );

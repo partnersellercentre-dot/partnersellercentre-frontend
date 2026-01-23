@@ -1,12 +1,23 @@
 import React, { useContext, useEffect, useState } from "react";
+import { toast } from "react-toastify";
 import { getPendingTransactions, approveDeposit } from "../../api/paymentApi";
 import { AuthContext } from "../../context/AuthContext";
+import ConfirmationModal from "../../components/ConfirmationModal";
+import Spinner from "../../components/Spinner";
 
 function PendingDeposit() {
   const [pendingDeposits, setPendingDeposits] = useState([]);
   const [loading, setLoading] = useState(false);
   const { token } = useContext(AuthContext);
   const [editAmounts, setEditAmounts] = useState({}); // { [id]: value }
+
+  const [confirmConfig, setConfirmConfig] = useState({
+    isOpen: false,
+    title: "",
+    message: "",
+    type: "danger",
+    onConfirm: () => {},
+  });
 
   useEffect(() => {
     const fetchPending = async () => {
@@ -15,39 +26,63 @@ function PendingDeposit() {
         const res = await getPendingTransactions(token);
         setPendingDeposits(res.data.transactions || []);
       } catch (err) {
-        alert("Failed to fetch pending deposits");
+        toast.error("Failed to fetch pending deposits");
       }
       setLoading(false);
     };
     fetchPending();
   }, [token]);
 
-  const handleApprove = async (id) => {
-    try {
-      const editedAmount = editAmounts[id];
-      await approveDeposit(
-        token,
-        id,
-        editedAmount !== undefined ? Number(editedAmount) : undefined
-      );
-      setPendingDeposits((prev) => prev.filter((t) => t._id !== id));
-      alert("Deposit approved!");
-    } catch (err) {
-      alert("Failed to approve deposit");
-    }
+  const handleApprove = (id) => {
+    setConfirmConfig({
+      isOpen: true,
+      title: "Approve Deposit",
+      message: "Are you sure you want to approve this deposit request?",
+      type: "success",
+      onConfirm: async () => {
+        try {
+          const editedAmount = editAmounts[id];
+          await approveDeposit(
+            token,
+            id,
+            editedAmount !== undefined ? Number(editedAmount) : undefined,
+          );
+          setPendingDeposits((prev) => prev.filter((t) => t._id !== id));
+          toast.success("Deposit approved!");
+        } catch (err) {
+          toast.error("Failed to approve deposit");
+        }
+      },
+    });
   };
 
   const handleReject = (id) => {
-    // here you would call rejectDeposit API
-    setPendingDeposits((prev) => prev.filter((t) => t._id !== id));
-    alert("Deposit rejected!");
+    setConfirmConfig({
+      isOpen: true,
+      title: "Reject Deposit",
+      message: "Are you sure you want to reject this deposit?",
+      type: "danger",
+      onConfirm: () => {
+        // here you would call rejectDeposit API
+        setPendingDeposits((prev) => prev.filter((t) => t._id !== id));
+        toast.info("Deposit rejected!");
+      },
+    });
   };
 
   return (
     <div className="text-black w-full h-screen p-4 sm:p-8">
+      <ConfirmationModal
+        isOpen={confirmConfig.isOpen}
+        onClose={() => setConfirmConfig({ ...confirmConfig, isOpen: false })}
+        onConfirm={confirmConfig.onConfirm}
+        title={confirmConfig.title}
+        message={confirmConfig.message}
+        type={confirmConfig.type}
+      />
       <h2 className="text-2xl font-bold mb-6">Pending Deposits</h2>
       {loading ? (
-        <div>Loading...</div>
+        <Spinner />
       ) : pendingDeposits.length === 0 ? (
         <div>No pending deposits.</div>
       ) : (

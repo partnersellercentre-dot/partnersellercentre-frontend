@@ -1,6 +1,7 @@
 "use client";
 
 import { useContext, useState } from "react";
+import { toast } from "react-toastify";
 import { FaTimes, FaMoneyBillWave, FaCheckCircle } from "react-icons/fa";
 import { SiTether, SiVisa, SiMastercard } from "react-icons/si";
 import { AuthContext } from "../context/AuthContext";
@@ -16,7 +17,7 @@ export default function WithdrawModal({ isOpen, onClose, onSuccess }) {
   });
   const [loading, setLoading] = useState(false);
   const fee = form.amount
-    ? Math.round(Number(form.amount) * 0.05 * 100) / 100
+    ? Math.round(Number(form.amount) * 0.038 * 100) / 100
     : 0;
   const netAmount = form.amount
     ? Math.round((Number(form.amount) - fee) * 100) / 100
@@ -40,12 +41,17 @@ export default function WithdrawModal({ isOpen, onClose, onSuccess }) {
     const { withdrawalAddress, amount, method } = form;
 
     if (!withdrawalAddress || !amount || !method) {
-      alert("Please fill in all fields before submitting.");
+      toast.warning("Please fill in all fields before submitting.");
       return;
     }
 
     if (Number(amount) <= 0) {
-      alert("Please enter a valid amount");
+      toast.warning("Please enter a valid amount");
+      return;
+    }
+
+    if (Number(amount) < 30) {
+      toast.warning("Minimum withdrawal amount is 30 USDT");
       return;
     }
 
@@ -57,12 +63,12 @@ export default function WithdrawModal({ isOpen, onClose, onSuccess }) {
         accountName: "Crypto Wallet",
         accountNumber: withdrawalAddress,
       });
-      alert("Withdrawal request submitted successfully");
+      toast.success("Withdrawal request submitted successfully");
       onClose();
       if (onSuccess) onSuccess();
     } catch (err) {
       console.error(err);
-      alert("Failed to submit withdrawal request");
+      toast.error("Failed to submit withdrawal request");
     } finally {
       setLoading(false);
     }
@@ -86,6 +92,17 @@ export default function WithdrawModal({ isOpen, onClose, onSuccess }) {
 
         {/* Form Content */}
         <div className="p-4 space-y-4">
+          {/* Guidelines */}
+          <div className="bg-yellow-50 border border-yellow-200 rounded-md p-3">
+            <h3 className="text-sm font-medium text-yellow-800 mb-2">
+              Withdrawal Guidelines
+            </h3>
+            <ul className="text-sm text-yellow-700 space-y-1">
+              <li>• Minimum withdrawal amount: 30 USDT</li>
+              <li>• Network handling fees: 3.8%</li>
+            </ul>
+          </div>
+
           {/* Withdrawal Address */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -121,7 +138,8 @@ export default function WithdrawModal({ isOpen, onClose, onSuccess }) {
             {form.amount && Number(form.amount) > 0 && (
               <div className="mt-2 text-sm text-gray-600">
                 <div>
-                  Fee (5%): <span className="text-red-500">${fee}</span>
+                  Network handling fees (3.8%):{" "}
+                  <span className="text-red-500">${fee}</span>
                 </div>
                 <div>
                   Net Amount:{" "}

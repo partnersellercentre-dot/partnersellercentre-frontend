@@ -2,7 +2,7 @@
 
 import { useState, useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { FiBell, FiUser, FiEye, FiEyeOff } from "react-icons/fi";
 import {
   sendOtp,
@@ -473,6 +473,21 @@ export default function Login() {
                   Back to Login
                 </button>
               </div>
+            </div>
+          )}
+
+          {/* Register Link */}
+          {!showForgot && (
+            <div className="mt-8 text-center border-t border-gray-100 pt-6">
+              <p className="text-gray-600">
+                I'm new here,{" "}
+                <Link
+                  to="/register"
+                  className="text-green-600 hover:text-green-700 font-bold"
+                >
+                  Become seller
+                </Link>
+              </p>
             </div>
           )}
         </div>

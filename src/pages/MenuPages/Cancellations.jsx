@@ -7,6 +7,7 @@ import {
 } from "react-icons/fa";
 import { getMyPurchases } from "../../api/purchaseApi";
 import { AuthContext } from "../../context/AuthContext";
+import Spinner from "../../components/Spinner";
 
 export default function Cancellations() {
   const [orders, setOrders] = useState([]);
@@ -20,7 +21,7 @@ export default function Cancellations() {
         const res = await getMyPurchases(token);
         // Only keep orders with status "cancelled"
         const cancelledOrders = (res.data.purchases || []).filter(
-          (order) => order.status === "cancelled"
+          (order) => order.status === "cancelled",
         );
         setOrders(cancelledOrders);
       } catch (err) {
@@ -42,7 +43,7 @@ export default function Cancellations() {
       {/* Cancelled Orders */}
       <div className="bg-white shadow-md rounded-lg p-6 border border-gray-100">
         {loading ? (
-          <p className="text-gray-500 text-center">Loading...</p>
+          <Spinner />
         ) : orders.length === 0 ? (
           <p className="text-gray-600 text-sm">No cancelled orders found.</p>
         ) : (
@@ -73,7 +74,7 @@ export default function Cancellations() {
                     <p className="text-gray-500 text-sm">
                       Cancelled on{" "}
                       {new Date(
-                        order.updatedAt || order.createdAt
+                        order.updatedAt || order.createdAt,
                       ).toLocaleDateString()}
                     </p>
                     {/* Optionally, show a reason if you store it */}

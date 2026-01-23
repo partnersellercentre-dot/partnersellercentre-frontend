@@ -2,6 +2,7 @@ import React, { useEffect, useState, useContext } from "react";
 import { FaEnvelope, FaTrashAlt, FaCalendarAlt } from "react-icons/fa";
 import { AuthContext } from "../../context/AuthContext";
 import { getAnnouncements } from "../../api/api";
+import Spinner from "../../components/Spinner";
 
 export default function Messages() {
   const [announcements, setAnnouncements] = useState([]);
@@ -31,7 +32,7 @@ export default function Messages() {
       </h1>
 
       {loading ? (
-        <p className="text-gray-600">Loading announcements...</p>
+        <Spinner />
       ) : announcements.length === 0 ? (
         <p className="text-gray-600">No announcements available.</p>
       ) : (

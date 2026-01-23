@@ -1,8 +1,7 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "https://partnersellerbackend.vercel.app/api",
-  // baseURL: "http://localhost:5000/api", // Use local backend for dev
+  baseURL: import.meta.env.VITE_API_URL || "http://localhost:5000/api",
 });
 
 // Create a new product (Admin only)

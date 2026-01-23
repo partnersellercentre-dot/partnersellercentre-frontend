@@ -1,8 +1,9 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "https://partnersellerbackend.vercel.app/api/deposit", // ✅ Deployed backend URL
-  // baseURL: "http://localhost:5000/api/deposit",
+  baseURL:
+    `${import.meta.env.VITE_API_URL}/deposit` ||
+    "http://localhost:5000/api/deposit",
 });
 
 // 🪙 1. Initialize a deposit (generate address)

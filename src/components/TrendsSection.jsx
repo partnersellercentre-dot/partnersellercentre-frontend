@@ -5,6 +5,7 @@ import { Pie } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { getBasicStats } from "../api/api"; // Adjust path if needed
 import { AuthContext } from "../context/AuthContext";
+import Spinner from "./Spinner";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -61,7 +62,7 @@ export default function TrendsSection() {
       </div>
       <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-100 h-64 w-full flex items-center justify-center">
         {loading ? (
-          <p className="text-gray-500">Loading chart...</p>
+          <Spinner />
         ) : stats ? (
           <Pie data={data} options={options} />
         ) : (

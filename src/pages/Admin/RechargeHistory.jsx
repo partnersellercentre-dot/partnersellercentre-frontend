@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { getAllTransactions } from "../../api/paymentApi";
 import { AuthContext } from "../../context/AuthContext";
+import Spinner from "../../components/Spinner";
 
 export default function RechargeHistory() {
   const [transactions, setTransactions] = useState([]);
@@ -14,7 +15,7 @@ export default function RechargeHistory() {
 
         // ✅ Show only approved deposits
         const approvedDeposits = (res.transactions || []).filter(
-          (tx) => tx.status === "approved" && tx.type === "deposit"
+          (tx) => tx.status === "approved" && tx.type === "deposit",
         );
 
         setTransactions(approvedDeposits);
@@ -52,7 +53,7 @@ export default function RechargeHistory() {
             {loading ? (
               <tr>
                 <td colSpan={6} className="px-6 py-6 text-center text-gray-400">
-                  Loading...
+                  <Spinner />
                 </td>
               </tr>
             ) : transactions.length === 0 ? (

@@ -2,6 +2,7 @@ import React, { useEffect, useState, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getUsers, deleteUser, updateUserStatus } from "../../api/api";
 import { AuthContext } from "../../context/AuthContext";
+import Spinner from "../../components/Spinner";
 
 function Userdetails() {
   const { id } = useParams();
@@ -63,8 +64,8 @@ function Userdetails() {
 
   if (loading)
     return (
-      <div className="text-center mt-10 text-gray-200 animate-pulse">
-        Loading...
+      <div className="text-center mt-10 text-gray-200">
+        <Spinner fullScreen={true} />
       </div>
     );
 

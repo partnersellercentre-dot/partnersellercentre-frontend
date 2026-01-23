@@ -1,6 +1,7 @@
 "use client";
 
 import { useContext, useEffect, useState } from "react";
+import { toast } from "react-toastify";
 import { FaMoneyBillWave } from "react-icons/fa";
 import { PiHandDepositFill } from "react-icons/pi";
 import { MdAccountBalance } from "react-icons/md";
@@ -34,7 +35,7 @@ export default function Wallet() {
       (txn) =>
         txn.type === "escrow" &&
         txn.status === "pending" &&
-        txn.direction === "out"
+        txn.direction === "out",
     )
     .reduce((sum, txn) => sum + txn.amount, 0);
 
@@ -62,7 +63,7 @@ export default function Wallet() {
 
   const handleDeposit = () => {
     if (!depositAmount || Number(depositAmount) <= 0) {
-      alert("Please enter a valid amount");
+      toast.warning("Please enter a valid amount");
       return;
     }
 
@@ -87,10 +88,10 @@ export default function Wallet() {
       } else if (selectedPayment === "trx") {
         pay_currency = "trx";
       } else if (selectedPayment === "card") {
-        alert("Card payments are not implemented yet.");
+        toast.info("Card payments are not implemented yet.");
         return;
       } else {
-        alert("Please select a valid payment method.");
+        toast.error("Please select a valid payment method.");
         return;
       }
 
@@ -117,26 +118,26 @@ export default function Wallet() {
           setShowQRCode(true);
         }
       } else {
-        alert("Failed to create payment request via NOWPayments.");
+        toast.error("Failed to create payment request via NOWPayments.");
       }
     } catch (err) {
       console.error("Payment confirmation error:", err);
-      alert(
-        "An error occurred while processing your payment. Please try again."
+      toast.error(
+        "An error occurred while processing your payment. Please try again.",
       );
     }
   };
 
   const generateOrderNumber = () => {
     return `${new Date().getFullYear()}${String(
-      new Date().getMonth() + 1
+      new Date().getMonth() + 1,
     ).padStart(2, "0")}${String(new Date().getDate()).padStart(2, "0")}${String(
-      new Date().getHours()
+      new Date().getHours(),
     ).padStart(2, "0")}${String(new Date().getMinutes()).padStart(
       2,
-      "0"
+      "0",
     )}${String(new Date().getSeconds()).padStart(2, "0")}${Math.floor(
-      Math.random() * 10000
+      Math.random() * 10000,
     )}`;
   };
 
@@ -207,8 +208,8 @@ export default function Wallet() {
                 {tab === "account"
                   ? "Account details"
                   : tab === "deposit"
-                  ? "Deposit record"
-                  : "Cash withdrawal records"}
+                    ? "Deposit record"
+                    : "Cash withdrawal records"}
               </button>
             ))}
           </div>
@@ -222,11 +223,21 @@ export default function Wallet() {
                   purchases.map((purchase) => (
                     <div
                       key={purchase._id}
-                      className="bg-white rounded-lg shadow-md border-l-4 border-green-600 p-4 mb-4"
+                      className={`bg-white rounded-lg shadow-md border-l-4 p-4 mb-4 ${
+                        purchase.status === "paid"
+                          ? "border-green-600"
+                          : "border-yellow-500"
+                      }`}
                     >
                       <div className="flex items-center justify-between mb-2">
                         <div className="flex items-center">
-                          <div className="w-3 h-3 bg-green-500 rounded-full mr-3"></div>
+                          <div
+                            className={`w-3 h-3 rounded-full mr-3 ${
+                              purchase.status === "paid"
+                                ? "bg-green-500"
+                                : "bg-yellow-500"
+                            }`}
+                          ></div>
                           <span className="text-sm text-gray-600">Order</span>
                         </div>
                         <span className="text-sm font-medium text-gray-900">
@@ -274,7 +285,7 @@ export default function Wallet() {
             {activeTab === "deposit" && (
               <>
                 {transactions.filter(
-                  (txn) => txn.type?.toLowerCase() === "deposit"
+                  (txn) => txn.type?.toLowerCase() === "deposit",
                 ).length === 0 ? (
                   <div className="text-center text-gray-500">
                     No deposit records yet
@@ -285,11 +296,25 @@ export default function Wallet() {
                     .map((txn) => (
                       <div
                         key={txn._id}
-                        className="bg-white rounded-lg shadow-md border-l-4 border-green-500 p-4"
+                        className={`bg-white rounded-lg shadow-md border-l-4 p-4 ${
+                          txn.status === "approved"
+                            ? "border-green-500"
+                            : txn.status === "rejected"
+                              ? "border-red-500"
+                              : "border-yellow-500"
+                        }`}
                       >
                         <div className="flex items-center justify-between mb-2">
                           <div className="flex items-center">
-                            <div className="w-3 h-3 bg-green-500 rounded-full mr-3"></div>
+                            <div
+                              className={`w-3 h-3 rounded-full mr-3 ${
+                                txn.status === "approved"
+                                  ? "bg-green-500"
+                                  : txn.status === "rejected"
+                                    ? "bg-red-500"
+                                    : "bg-yellow-500"
+                              }`}
+                            ></div>
                             <span className="text-sm text-gray-600">
                               {txn.type}
                             </span>
@@ -307,8 +332,8 @@ export default function Wallet() {
                               txn.status === "approved"
                                 ? "text-green-600"
                                 : txn.status === "rejected"
-                                ? "text-red-600"
-                                : "text-yellow-600"
+                                  ? "text-red-600"
+                                  : "text-yellow-600"
                             }`}
                           >
                             {(txn.status || "pending").charAt(0).toUpperCase() +
@@ -347,7 +372,7 @@ export default function Wallet() {
             {activeTab === "withdrawal" && (
               <>
                 {transactions.filter(
-                  (txn) => txn.type?.toLowerCase() === "withdraw"
+                  (txn) => txn.type?.toLowerCase() === "withdraw",
                 ).length === 0 ? (
                   <div className="text-center text-gray-500">
                     No withdrawal records yet
@@ -358,11 +383,25 @@ export default function Wallet() {
                     .map((txn) => (
                       <div
                         key={txn._id}
-                        className="bg-white rounded-lg shadow-md border-l-4 border-yellow-500 p-4"
+                        className={`bg-white rounded-lg shadow-md border-l-4 p-4 ${
+                          txn.status === "approved"
+                            ? "border-green-500"
+                            : txn.status === "rejected"
+                              ? "border-red-500"
+                              : "border-yellow-500"
+                        }`}
                       >
                         <div className="flex items-center justify-between mb-2">
                           <div className="flex items-center">
-                            <div className="w-3 h-3 bg-yellow-500 rounded-full mr-3"></div>
+                            <div
+                              className={`w-3 h-3 rounded-full mr-3 ${
+                                txn.status === "approved"
+                                  ? "bg-green-500"
+                                  : txn.status === "rejected"
+                                    ? "bg-red-500"
+                                    : "bg-yellow-500"
+                              }`}
+                            ></div>
                             <span className="text-sm text-gray-600">
                               {txn.method || "N/A"}
                             </span>
@@ -380,8 +419,8 @@ export default function Wallet() {
                               txn.status === "approved"
                                 ? "text-green-600"
                                 : txn.status === "rejected"
-                                ? "text-red-600"
-                                : "text-yellow-600"
+                                  ? "text-red-600"
+                                  : "text-yellow-600"
                             }`}
                           >
                             {(txn.status || "pending").charAt(0).toUpperCase() +
@@ -389,9 +428,27 @@ export default function Wallet() {
                           </div>
 
                           <div className="flex justify-between text-sm text-gray-600 mb-1">
-                            <span>Withdrawal amount</span>
+                            <span>Requested amount</span>
                             <span className="text-red-500">
-                              - {txn.amount || 0}
+                              - ${txn.amount || 0}
+                            </span>
+                          </div>
+
+                          <div className="flex justify-between text-sm text-gray-600 mb-1">
+                            <span>Fee (3.8%)</span>
+                            <span className="text-red-400">
+                              - ${txn.fee || (txn.amount * 0.038).toFixed(2)}
+                            </span>
+                          </div>
+
+                          <div className="flex justify-between text-sm font-semibold text-gray-900 mb-1 border-t border-gray-100 pt-1">
+                            <span>Expected Payout</span>
+                            <span className="text-green-600">
+                              $
+                              {txn.netAmount ||
+                                (
+                                  txn.amount - (txn.fee || txn.amount * 0.038)
+                                ).toFixed(2)}
                             </span>
                           </div>
 

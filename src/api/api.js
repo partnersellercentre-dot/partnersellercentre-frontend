@@ -3,8 +3,7 @@ import axios from "axios";
 
 // Create an axios instance to manage requests to the backend
 const API = axios.create({
-  baseURL: "https://partnersellerbackend.vercel.app/api",
-  // baseURL: "http://localhost:5000/api", // use this for local dev
+  baseURL: import.meta.env.VITE_API_URL || "http://localhost:5000/api",
 });
 
 // Send OTP to email

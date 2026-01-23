@@ -1,6 +1,7 @@
 "use client";
 
 import { useContext, useState, useEffect } from "react";
+import { toast } from "react-toastify";
 import { FaTimes, FaCheckCircle } from "react-icons/fa";
 import { SiTether, SiVisa, SiMastercard } from "react-icons/si";
 import { useNavigate } from "react-router-dom"; // ✅ for navigation
@@ -46,7 +47,7 @@ export default function PaymentConfirmationModal({
 
   const handlePayment = () => {
     if (!selectedPayment) {
-      alert("Please select a payment method");
+      toast.warning("Please select a payment method");
       return;
     }
     onConfirm(selectedPayment);
@@ -88,9 +89,10 @@ export default function PaymentConfirmationModal({
         state: { method: opt.name, amount },
       });
     } catch (error) {
-      alert("Failed to create deposit request. Please try again.");
+      toast.error("Failed to create deposit request. Please try again.");
     }
   };
+
   return (
     <div
       className="fixed inset-0 flex items-center justify-center bg-black/50 z-50 p-4"

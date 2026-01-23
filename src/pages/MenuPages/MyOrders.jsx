@@ -2,6 +2,7 @@ import React, { useEffect, useState, useContext } from "react";
 import { FaBox, FaCalendarAlt, FaDollarSign, FaTruck } from "react-icons/fa";
 import { getMyPurchases } from "../../api/purchaseApi";
 import { AuthContext } from "../../context/AuthContext";
+import Spinner from "../../components/Spinner";
 
 export default function MyOrders() {
   const [orders, setOrders] = useState([]);
@@ -15,7 +16,7 @@ export default function MyOrders() {
         const res = await getMyPurchases(token);
         // Only keep orders with status "paid"
         const paidOrders = (res.data.purchases || []).filter(
-          (order) => order.status === "paid"
+          (order) => order.status === "paid",
         );
         setOrders(paidOrders);
       } catch (err) {
@@ -39,7 +40,7 @@ export default function MyOrders() {
 
       <div className="space-y-4">
         {loading ? (
-          <p className="text-gray-500 text-center">Loading...</p>
+          <Spinner />
         ) : orders.length === 0 ? (
           <p className="text-gray-500 text-center">No paid orders yet.</p>
         ) : (

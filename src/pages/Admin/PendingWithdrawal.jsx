@@ -7,11 +7,21 @@ import {
   rejectWithdraw,
 } from "../../api/paymentApi";
 import { toast } from "react-toastify";
+import ConfirmationModal from "../../components/ConfirmationModal";
+import Spinner from "../../components/Spinner";
 
 function PendingWithdrawal() {
   const [withdrawals, setWithdrawals] = useState([]);
   const [loading, setLoading] = useState(false);
   const { token } = useContext(AuthContext);
+
+  const [confirmConfig, setConfirmConfig] = useState({
+    isOpen: false,
+    title: "",
+    message: "",
+    type: "danger",
+    onConfirm: () => {},
+  });
 
   useEffect(() => {
     fetchPendingWithdrawals();
@@ -35,37 +45,62 @@ function PendingWithdrawal() {
   };
 
   // ✅ Approve handler
-  const handleApprove = async (id) => {
-    try {
-      await approveWithdraw(token, id);
-      toast.success("Withdrawal approved successfully!");
-      fetchPendingWithdrawals();
-    } catch (error) {
-      console.error("Approve error:", error);
-      toast.error("Failed to approve withdrawal");
-    }
+  const handleApprove = (id) => {
+    setConfirmConfig({
+      isOpen: true,
+      title: "Approve Withdrawal",
+      message: "Are you sure you want to approve this withdrawal request?",
+      type: "success",
+      onConfirm: async () => {
+        try {
+          await approveWithdraw(token, id);
+          toast.success("Withdrawal approved successfully!");
+          fetchPendingWithdrawals();
+        } catch (error) {
+          console.error("Approve error:", error);
+          toast.error("Failed to approve withdrawal");
+        }
+      },
+    });
   };
 
   // ✅ Reject handler
-  const handleReject = async (id) => {
-    try {
-      await rejectWithdraw(token, id);
-      toast.info("Withdrawal rejected");
-      fetchPendingWithdrawals();
-    } catch (error) {
-      console.error("Reject error:", error);
-      toast.error("Failed to reject withdrawal");
-    }
+  const handleReject = (id) => {
+    setConfirmConfig({
+      isOpen: true,
+      title: "Reject Withdrawal",
+      message:
+        "Are you sure you want to reject this withdrawal? The amount will be refunded to the user's balance.",
+      type: "danger",
+      onConfirm: async () => {
+        try {
+          await rejectWithdraw(token, id);
+          toast.info("Withdrawal rejected");
+          fetchPendingWithdrawals();
+        } catch (error) {
+          console.error("Reject error:", error);
+          toast.error("Failed to reject withdrawal");
+        }
+      },
+    });
   };
 
   return (
     <div className="w-full text-black p-4 sm:p-8">
+      <ConfirmationModal
+        isOpen={confirmConfig.isOpen}
+        onClose={() => setConfirmConfig({ ...confirmConfig, isOpen: false })}
+        onConfirm={confirmConfig.onConfirm}
+        title={confirmConfig.title}
+        message={confirmConfig.message}
+        type={confirmConfig.type}
+      />
       <h2 className="text-2xl font-bold mb-6 text-white">
         Pending Withdrawals
       </h2>
 
       {loading ? (
-        <div className="text-gray-200">Loading...</div>
+        <Spinner />
       ) : withdrawals.length === 0 ? (
         <div className="text-gray-300">No pending withdrawals.</div>
       ) : (
@@ -76,10 +111,11 @@ function PendingWithdrawal() {
               <thead className="bg-gray-700 text-gray-100 sticky top-0 z-10">
                 <tr>
                   <th className="px-6 py-3">User</th>
-                  <th className="px-6 py-3">Amount</th>
+                  <th className="px-6 py-3">Requested</th>
+                  <th className="px-6 py-3">Net Payout</th>
                   <th className="px-6 py-3">Method</th>
-                  <th className="px-6 py-3">Account Name</th>
-                  <th className="px-6 py-3">Account Number</th>
+                  <th className="px-6 py-3 text-nowrap">Account Name</th>
+                  <th className="px-6 py-3 text-nowrap">Account Number</th>
                   <th className="px-6 py-3">Actions</th>
                 </tr>
               </thead>
@@ -90,6 +126,9 @@ function PendingWithdrawal() {
                       {w.user?.name || "N/A"}
                     </td>
                     <td className="px-6 py-3">${w.amount}</td>
+                    <td className="px-6 py-3 text-green-400 font-bold">
+                      ${w.netAmount || (w.amount * 0.962).toFixed(2)}
+                    </td>
                     <td className="px-6 py-3">{w.method || "N/A"}</td>
                     <td className="px-6 py-3">{w.accountName || "N/A"}</td>
                     <td className="px-6 py-3">{w.accountNumber || "N/A"}</td>

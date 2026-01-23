@@ -26,13 +26,22 @@ export default function Register() {
   });
 
   useEffect(() => {
-    // Example: /ref/SCV07N
+    // 1. Check URL: example /ref/SCV07N
     const parts = location.pathname.split("/");
     if (parts[1] === "ref" && parts[2]) {
       setFormData((prev) => ({
         ...prev,
         invitationCode: parts[2],
       }));
+    } else {
+      // 2. Check localStorage (saved by ReferralLanding.jsx)
+      const storedCode = localStorage.getItem("referralCode");
+      if (storedCode) {
+        setFormData((prev) => ({
+          ...prev,
+          invitationCode: storedCode,
+        }));
+      }
     }
   }, [location]);
 
@@ -72,6 +81,7 @@ export default function Register() {
 
         toast.success("Registration successful!");
         login(res.data.token);
+        localStorage.removeItem("referralCode");
         navigate("/products");
       } catch (err) {
         toast.error("OTP verification failed");
@@ -98,6 +108,7 @@ export default function Register() {
 
         toast.success("Account registration successful!");
         login(res.data.token);
+        localStorage.removeItem("referralCode");
         navigate("/products");
       } catch (err) {
         toast.error("Account registration failed");
@@ -213,7 +224,7 @@ export default function Register() {
                 {/* Invitation Code */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Invitation code (optional)
+                    Invitation code
                   </label>
                   <input
                     type="text"
@@ -224,8 +235,9 @@ export default function Register() {
                         invitationCode: e.target.value,
                       })
                     }
-                    placeholder="Case sensitive"
+                    placeholder="Enter 10-digit code"
                     className="w-full px-3 py-3 bg-gray-50 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:bg-white"
+                    required
                   />
                 </div>
               </>

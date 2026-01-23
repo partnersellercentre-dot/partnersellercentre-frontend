@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { getAllTransactions } from "../../api/paymentApi";
 import { AuthContext } from "../../context/AuthContext";
+import Spinner from "../../components/Spinner";
 
 export default function WithdrawHistory() {
   const [transactions, setTransactions] = useState([]);
@@ -13,7 +14,7 @@ export default function WithdrawHistory() {
         const res = await getAllTransactions(token);
         // ✅ Filter only approved withdraw transactions
         const approvedWithdraws = (res.transactions || []).filter(
-          (tx) => tx.type === "withdraw" && tx.status === "approved"
+          (tx) => tx.type === "withdraw" && tx.status === "approved",
         );
         setTransactions(approvedWithdraws);
       } catch (err) {
@@ -39,8 +40,8 @@ export default function WithdrawHistory() {
             <tr>
               <th className="px-6 py-3">#</th>
               <th className="px-6 py-3">User</th>
-              <th className="px-6 py-3">Type</th>
-              <th className="px-6 py-3">Amount</th>
+              <th className="px-6 py-3">Requested</th>
+              <th className="px-6 py-3">Net Payout</th>
               <th className="px-6 py-3">Status</th>
               <th className="px-6 py-3">Date</th>
             </tr>
@@ -49,7 +50,7 @@ export default function WithdrawHistory() {
             {loading ? (
               <tr>
                 <td colSpan={6} className="px-6 py-6 text-center text-gray-400">
-                  Loading...
+                  <Spinner />
                 </td>
               </tr>
             ) : transactions.length === 0 ? (
@@ -71,8 +72,10 @@ export default function WithdrawHistory() {
                   <td className="px-6 py-3">
                     {tx.user?.name || tx.user || "N/A"}
                   </td>
-                  <td className="px-6 py-3 capitalize">{tx.type}</td>
-                  <td className="px-6 py-3">${tx.amount}</td>
+                  <td className="px-6 py-3 font-semibold">${tx.amount}</td>
+                  <td className="px-6 py-3 text-green-400 font-bold">
+                    ${tx.netAmount || (tx.amount * 0.962).toFixed(2)}
+                  </td>
                   <td className="px-6 py-3 text-green-400 font-semibold">
                     {tx.status}
                   </td>
