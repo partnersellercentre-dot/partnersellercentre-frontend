@@ -74,7 +74,8 @@ export default function Register() {
         login(res.data.token);
         navigate("/products");
       } catch (err) {
-        toast.error("OTP verification failed");
+        const errorMsg = err.response?.data?.error || "OTP verification failed";
+        toast.error(errorMsg);
       }
     }
 
@@ -100,7 +101,9 @@ export default function Register() {
         login(res.data.token);
         navigate("/products");
       } catch (err) {
-        toast.error("Account registration failed");
+        const errorMsg =
+          err.response?.data?.error || "Account registration failed";
+        toast.error(errorMsg);
       }
     }
   };
