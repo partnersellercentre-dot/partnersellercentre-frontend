@@ -31,15 +31,15 @@ export default function RechargeHistory() {
   }, [token]);
 
   return (
-    <div className="bg-gray-800 rounded-lg shadow-md p-4">
-      <h2 className="text-xl font-semibold text-green-400 mb-4">
+    <div className="bg-white rounded-lg shadow-md p-4">
+      <h2 className="text-xl font-semibold text-green-600 mb-4">
         Approved Deposit History
       </h2>
 
       {/* Scrollable Table */}
       <div className="max-h-[400px] overflow-y-auto">
-        <table className="min-w-full text-sm text-left text-gray-300">
-          <thead className="bg-gray-700 text-gray-100 sticky top-0 z-10">
+        <table className="min-w-full text-sm text-left text-gray-900">
+          <thead className="bg-gray-100 text-gray-900 sticky top-0 z-10">
             <tr>
               <th className="px-6 py-3">ID</th>
               <th className="px-6 py-3">User</th>
@@ -52,7 +52,7 @@ export default function RechargeHistory() {
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan={6} className="px-6 py-6 text-center text-gray-400">
+                <td colSpan={6} className="px-6 py-6 text-center text-gray-500">
                   <Spinner />
                 </td>
               </tr>
@@ -60,7 +60,7 @@ export default function RechargeHistory() {
               <tr>
                 <td
                   colSpan={6}
-                  className="px-6 py-6 text-center font-semibold text-black bg-white"
+                  className="px-6 py-6 text-center font-semibold text-gray-900 bg-white"
                 >
                   No approved deposit transactions found.
                 </td>
@@ -69,7 +69,7 @@ export default function RechargeHistory() {
               transactions.map((tx, idx) => (
                 <tr
                   key={tx._id || idx}
-                  className="border-b border-gray-600 hover:bg-gray-700 transition"
+                  className="border-b border-gray-200 hover:bg-gray-50 transition"
                 >
                   <td className="px-6 py-3">{tx._id}</td>
                   <td className="px-6 py-3">
@@ -77,7 +77,7 @@ export default function RechargeHistory() {
                   </td>
                   <td className="px-6 py-3 capitalize">{tx.type}</td>
                   <td className="px-6 py-3">${tx.amount}</td>
-                  <td className="px-6 py-3 text-green-400 font-semibold">
+                  <td className="px-6 py-3 text-green-600 font-semibold">
                     {tx.status}
                   </td>
                   <td className="px-6 py-3">

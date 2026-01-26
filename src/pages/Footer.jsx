@@ -4,8 +4,8 @@ import { getSocialLinks } from "../api/api";
 
 function Footer() {
   const [socialLinks, setSocialLinks] = useState({
-    whatsapp: "https://wa.me/923166226704",
-    telegram: "https://t.me/+923166226704",
+    whatsapp: "",
+    telegram: "",
   });
 
   useEffect(() => {

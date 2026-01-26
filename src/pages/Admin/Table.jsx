@@ -2,11 +2,11 @@ import { FaEdit, FaTrashAlt } from "react-icons/fa";
 
 function Table({ products, onDelete, onEdit }) {
   return (
-    <div className="bg-gray-800 rounded-lg shadow-md">
+    <div className="bg-white rounded-lg shadow-md">
       {/* Fixed height with scroll only inside table */}
       <div className="max-h-[400px] overflow-y-auto">
-        <table className="min-w-full text-sm text-left text-gray-300">
-          <thead className="bg-gray-700 text-gray-100 sticky top-0 z-10">
+        <table className="min-w-full text-sm text-left text-gray-900">
+          <thead className="bg-gray-100 text-gray-900 sticky top-0 z-10">
             <tr>
               <th className="px-6 py-3">ID</th>
               <th className="px-6 py-3">Product Name</th>
@@ -17,7 +17,7 @@ function Table({ products, onDelete, onEdit }) {
           </thead>
           <tbody>
             {products.map((product) => (
-              <tr key={product._id} className="border-b border-gray-600">
+              <tr key={product._id} className="border-b border-gray-200">
                 <td className="px-6 py-3">{product._id}</td>
                 <td className="px-6 py-3">{product.name}</td>
                 <td className="px-6 py-3">${product.price}</td>
@@ -25,7 +25,7 @@ function Table({ products, onDelete, onEdit }) {
                 <td className="px-6 py-3 flex space-x-4">
                   <button
                     onClick={() => onEdit(product)}
-                    className="text-yellow-400 hover:text-yellow-500"
+                    className="text-yellow-600 hover:text-yellow-700"
                   >
                     <FaEdit />
                   </button>

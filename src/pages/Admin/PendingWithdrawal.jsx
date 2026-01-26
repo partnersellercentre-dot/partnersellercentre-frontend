@@ -95,7 +95,7 @@ function PendingWithdrawal() {
         message={confirmConfig.message}
         type={confirmConfig.type}
       />
-      <h2 className="text-2xl font-bold mb-6 text-white">
+      <h2 className="text-2xl font-bold mb-6 text-gray-900">
         Pending Withdrawals
       </h2>
 
@@ -104,11 +104,11 @@ function PendingWithdrawal() {
       ) : withdrawals.length === 0 ? (
         <div className="text-gray-300">No pending withdrawals.</div>
       ) : (
-        <div className="bg-gray-800 rounded-lg shadow-md">
+        <div className="bg-white rounded-lg shadow-md">
           {/* Scrollable table */}
           <div className="max-h-[400px] overflow-y-auto">
-            <table className="min-w-full text-sm text-left text-gray-300">
-              <thead className="bg-gray-700 text-gray-100 sticky top-0 z-10">
+            <table className="min-w-full text-sm text-left text-gray-900">
+              <thead className="bg-gray-100 text-gray-900 sticky top-0 z-10">
                 <tr>
                   <th className="px-6 py-3">ID</th>
                   <th className="px-6 py-3">User</th>
@@ -122,13 +122,13 @@ function PendingWithdrawal() {
               </thead>
               <tbody>
                 {withdrawals.map((w) => (
-                  <tr key={w._id} className="border-b border-gray-600">
+                  <tr key={w._id} className="border-b border-gray-200">
                     <td className="px-6 py-3 capitalize">{w._id}</td>
                     <td className="px-6 py-3 capitalize">
                       {w.user?.name || "N/A"}
                     </td>
                     <td className="px-6 py-3">${w.amount}</td>
-                    <td className="px-6 py-3 text-green-400 font-bold">
+                    <td className="px-6 py-3 text-green-600 font-bold">
                       ${w.netAmount || (w.amount * 0.962).toFixed(2)}
                     </td>
                     <td className="px-6 py-3">{w.method || "N/A"}</td>

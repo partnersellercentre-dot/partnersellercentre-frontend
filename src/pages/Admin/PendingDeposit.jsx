@@ -86,10 +86,10 @@ function PendingDeposit() {
       ) : pendingDeposits.length === 0 ? (
         <div>No pending deposits.</div>
       ) : (
-        <div className="bg-gray-800 rounded-lg shadow-md">
+        <div className="bg-white rounded-lg shadow-md">
           <div className="max-h-[400px] overflow-y-auto overflow-x-auto">
-            <table className="min-w-full table-auto text-sm text-left text-gray-300">
-              <thead className="bg-gray-700 text-gray-100 sticky top-0 z-10">
+            <table className="min-w-full table-auto text-sm text-left text-gray-900">
+              <thead className="bg-gray-100 text-gray-900 sticky top-0 z-10">
                 <tr>
                   <th className="px-4 py-3 min-w-[120px]">ID</th>
                   <th className="px-4 py-3 min-w-[120px]">User</th>
@@ -100,7 +100,7 @@ function PendingDeposit() {
               </thead>
               <tbody>
                 {pendingDeposits.map((dep) => (
-                  <tr key={dep._id} className="border-b border-gray-600">
+                  <tr key={dep._id} className="border-b border-gray-200">
                     <td className="px-4 py-3">{dep._id}</td>
                     <td className="px-4 py-3">{dep.user?.name || dep.user}</td>
                     <td className="px-4 py-3">
@@ -118,7 +118,7 @@ function PendingDeposit() {
                             [dep._id]: e.target.value,
                           }))
                         }
-                        className="w-24 px-2 py-1 rounded bg-gray-700 text-white border border-gray-500"
+                        className="w-24 px-2 py-1 rounded bg-gray-100 text-gray-900 border border-gray-300"
                       />
                     </td>
                     <td className="px-4 py-3">{dep.method}</td>

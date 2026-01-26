@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { getSystemSettings, updateSystemSettings } from "../../api/api";
 import { toast } from "react-toastify";
+import { AuthContext } from "../../context/AuthContext";
 
 const SocialLinks = () => {
   const [socialLinks, setSocialLinks] = useState({
@@ -8,11 +9,12 @@ const SocialLinks = () => {
     telegram: "",
   });
   const [loading, setLoading] = useState(true);
+  const { token } = useContext(AuthContext);
 
   useEffect(() => {
     const fetchSettings = async () => {
       try {
-        const res = await getSystemSettings();
+        const res = await getSystemSettings(token);
         if (res.data.socialLinks) {
           setSocialLinks(res.data.socialLinks);
         }
@@ -23,12 +25,16 @@ const SocialLinks = () => {
         setLoading(false);
       }
     };
-    fetchSettings();
-  }, []);
+    if (token) {
+      fetchSettings();
+    } else {
+      setLoading(false);
+    }
+  }, [token]);
 
   const handleSave = async () => {
     try {
-      await updateSystemSettings({ socialLinks });
+      await updateSystemSettings(token, { socialLinks });
       toast.success("Social links updated successfully");
     } catch (error) {
       console.error("Error updating social links:", error);
@@ -54,7 +60,7 @@ const SocialLinks = () => {
             onChange={(e) =>
               setSocialLinks({ ...socialLinks, whatsapp: e.target.value })
             }
-            className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
+            className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent text-gray-900 placeholder-gray-500"
             placeholder="https://wa.me/..."
           />
         </div>
@@ -68,7 +74,7 @@ const SocialLinks = () => {
             onChange={(e) =>
               setSocialLinks({ ...socialLinks, telegram: e.target.value })
             }
-            className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
+            className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent text-gray-900 placeholder-gray-500"
             placeholder="https://t.me/..."
           />
         </div>

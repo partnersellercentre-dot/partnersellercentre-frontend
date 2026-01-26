@@ -13,11 +13,13 @@ function AdminDashboard() {
   // Local state to hold the total users and products count
   const [totalProducts, setTotalProducts] = useState(0);
   const [totalUsers, setTotalUsers] = useState(0);
+  const [dataLoading, setDataLoading] = useState(true);
 
   // Fetch total products and total users when the component mounts
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setDataLoading(true);
         // Fetch total products
         const productRes = await getProducts(token); // Pass the token to API
         setTotalProducts(productRes?.data?.length || 0); // Fallback to 0 if no data
@@ -36,6 +38,8 @@ function AdminDashboard() {
         // Fallback to zero if there's an error
         setTotalProducts(0);
         setTotalUsers(0);
+      } finally {
+        setDataLoading(false);
       }
     };
 
@@ -46,7 +50,7 @@ function AdminDashboard() {
   }, [token]); // Add token as dependency to refetch when the token changes
 
   // Handle case when user data is not loaded yet
-  if (loading) {
+  if (loading || dataLoading) {
     return (
       <div>
         <Spinner />

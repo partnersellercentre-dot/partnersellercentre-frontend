@@ -57,18 +57,18 @@ const AdminKYC = () => {
   };
 
   return (
-    <div className="text-white">
-      <h1 className="text-2xl font-bold text-green-500 mb-6">
+    <div className="text-gray-900">
+      <h1 className="text-2xl font-bold text-green-600 mb-6">
         KYC Verification Requests
       </h1>
 
       {loading ? (
-        <div className="text-gray-400">Loading KYC records...</div>
+        <div className="text-gray-500">Loading KYC records...</div>
       ) : (
-        <div className="bg-gray-800 rounded-lg shadow-md">
+        <div className="bg-white rounded-lg shadow-md">
           <div className="max-h-[500px] overflow-y-auto">
-            <table className="min-w-full text-sm text-left text-gray-300">
-              <thead className="bg-gray-700 text-gray-100 sticky top-0 z-10">
+            <table className="min-w-full text-sm text-left text-gray-900">
+              <thead className="bg-gray-100 text-gray-900 sticky top-0 z-10">
                 <tr>
                   <th className="px-6 py-3">ID</th>
                   <th className="px-6 py-3">Name</th>
@@ -84,7 +84,7 @@ const AdminKYC = () => {
                   kycRequests.map((req) => (
                     <tr
                       key={req._id}
-                      className="border-b border-gray-600 hover:bg-gray-700 transition"
+                      className="border-b border-gray-200 hover:bg-gray-50 transition"
                     >
                       <td className="px-6 py-3">{req._id}</td>
                       <td className="px-6 py-3">{req.name}</td>
@@ -94,10 +94,10 @@ const AdminKYC = () => {
                       <td
                         className={`px-6 py-3 font-semibold ${
                           req.status === "approved"
-                            ? "text-green-400"
+                            ? "text-green-600"
                             : req.status === "rejected"
-                              ? "text-red-400"
-                              : "text-yellow-400"
+                              ? "text-red-600"
+                              : "text-yellow-600"
                         }`}
                       >
                         {req.status}

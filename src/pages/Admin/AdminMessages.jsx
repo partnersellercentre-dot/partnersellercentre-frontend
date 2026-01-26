@@ -58,9 +58,9 @@ function AdminMessages() {
       {/* Form Section */}
       <form
         onSubmit={handleCreate}
-        className="bg-gray-800  rounded-xl p-6 mb-8 shadow-lg space-y-4"
+        className="bg-white rounded-xl p-6 mb-8 shadow-lg space-y-4 border"
       >
-        <h3 className="text-sm font-semibold text-green-400 mb-2">
+        <h3 className="text-sm font-semibold text-green-600 mb-2">
           Create New Announcement
         </h3>
         <input
@@ -68,13 +68,13 @@ function AdminMessages() {
           placeholder="Enter title..."
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          className="w-full p-3 rounded bg-gray-900  text-white focus:ring-2 focus:ring-green-500 outline-none"
+          className="w-full p-3 rounded bg-gray-100 text-gray-900 focus:ring-2 focus:ring-green-500 outline-none border border-gray-300"
         />
         <textarea
           placeholder="Write your message..."
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          className="w-full p-3 rounded bg-gray-900  text-white focus:ring-2 focus:ring-green-500 outline-none"
+          className="w-full p-3 rounded bg-gray-100 text-gray-900 focus:ring-2 focus:ring-green-500 outline-none border border-gray-300"
           rows={4}
         />
         <button
@@ -90,7 +90,7 @@ function AdminMessages() {
         {announcements.map((a) => (
           <div
             key={a._id}
-            className="relative bg-gray-800  p-6 rounded-xl shadow-lg hover:shadow-green-800/20 transition"
+            className="relative bg-white p-6 rounded-xl shadow-lg hover:shadow-green-200/20 transition border"
           >
             <button
               onClick={() => handleDelete(a._id)}
@@ -100,13 +100,13 @@ function AdminMessages() {
               <FaTrashAlt />
             </button>
 
-            <h3 className="text-xl font-semibold text-green-400 mb-2">
+            <h3 className="text-xl font-semibold text-green-600 mb-2">
               {a.title || "Untitled"}
             </h3>
-            <p className="text-gray-300 mb-3">{a.message}</p>
+            <p className="text-gray-700 mb-3">{a.message}</p>
             <p className="text-sm text-gray-500">
               By{" "}
-              <span className="text-green-400 font-medium">
+              <span className="text-green-600 font-medium">
                 {a.createdBy?.username || "Admin"}
               </span>{" "}
               — {new Date(a.createdAt).toLocaleString()}
@@ -115,7 +115,7 @@ function AdminMessages() {
         ))}
 
         {announcements.length === 0 && (
-          <p className="text-gray-400 text-center">
+          <p className="text-gray-500 text-center">
             No announcements yet. Create one above.
           </p>
         )}

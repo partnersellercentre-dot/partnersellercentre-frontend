@@ -8,10 +8,10 @@ import Spinner from "../../components/Spinner";
 
 function Table({ orders, onDelete }) {
   return (
-    <div className="bg-gray-800 rounded-lg shadow-md overflow-hidden">
+    <div className="bg-white rounded-lg shadow-md overflow-hidden">
       <div className="max-h-[400px] overflow-y-auto">
-        <table className="min-w-full text-sm text-left text-gray-300">
-          <thead className="bg-gray-700 text-gray-100 sticky top-0 z-10">
+        <table className="min-w-full text-sm text-left text-gray-900">
+          <thead className="bg-gray-100 text-gray-900 sticky top-0 z-10">
             <tr>
               <th className="px-6 py-3">Order ID</th>
               <th className="px-6 py-3">Customer</th>
@@ -27,7 +27,7 @@ function Table({ orders, onDelete }) {
               orders.map((order) => (
                 <tr
                   key={order._id}
-                  className="border-b border-gray-700 hover:bg-gray-700 transition-all duration-200"
+                  className="border-b border-gray-200 hover:bg-gray-50 transition-all duration-200"
                 >
                   <td className="px-6 py-3">{order._id}</td>
                   <td className="px-6 py-3">{order.user?.name || "N/A"}</td>
