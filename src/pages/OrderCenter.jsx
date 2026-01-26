@@ -47,6 +47,11 @@ export default function OrderCenter() {
     return () => clearInterval(interval);
   }, []);
 
+  const now = new Date();
+  const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const elapsed = now - startOfDay;
+  const progress = Math.min(100, (elapsed / (24 * 60 * 60 * 1000)) * 100);
+
   const handlePageChange = (page) => {
     if (page >= 1 && page <= totalPages) {
       setCurrentPage(page);
@@ -110,11 +115,29 @@ export default function OrderCenter() {
 
   return (
     <div className="min-h-screen bg-gray-50 p-2 sm:p-3 w-full">
-      <div className="mb-4">
-        <h1 className="text-sm sm:text-base font-semibold text-gray-900 leading-tight">
-          Dropshipping in progress — your product is expected to sell within 24
-          hours.
+      <div className="mb-4 bg-white p-4 rounded-lg shadow">
+        <h1 className="text-lg font-bold text-gray-800">
+          Your store is active!
         </h1>
+        <p className="text-sm text-gray-600">
+          Your products is selling estimated in{" "}
+          <span className="font-bold text-orange-500">24 hour's</span> with{" "}
+          <span className="font-bold text-orange-500">4.2% profit</span>.
+        </p>
+        <div className="mt-4">
+          <div className="relative pt-1">
+            <div className="overflow-hidden h-2 mb-4 text-xs flex rounded bg-gray-200">
+              <div
+                style={{ width: `${progress}%` }}
+                className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-green-500"
+              ></div>
+            </div>
+          </div>
+        </div>
+        <p className="text-xs text-gray-500">
+          Our algorithm is currently matching your products with interested
+          buyers.
+        </p>
       </div>
 
       <div className="space-y-3 mb-6">

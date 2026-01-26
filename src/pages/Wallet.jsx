@@ -1,6 +1,6 @@
 "use client";
 
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useMemo } from "react";
 import { toast } from "react-toastify";
 import { FaMoneyBillWave } from "react-icons/fa";
 import { PiHandDepositFill } from "react-icons/pi";
@@ -14,6 +14,7 @@ import { getMyTransactions } from "../api/paymentApi";
 import { initDeposit } from "../api/deposit";
 import { createNowPayment } from "../api/nowpaymentsApi";
 import { getMyPurchases } from "../api/purchaseApi";
+import Spinner from "../components/Spinner";
 
 export default function Wallet() {
   const { user, token } = useContext(AuthContext);
@@ -29,6 +30,7 @@ export default function Wallet() {
   const [userBalance, setUserBalance] = useState(0);
   const [transactions, setTransactions] = useState([]);
   const [purchases, setPurchases] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const inTransaction = transactions
     .filter(
@@ -41,6 +43,7 @@ export default function Wallet() {
 
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true);
       try {
         const res = await getMyTransactions(token);
 
@@ -56,10 +59,74 @@ export default function Wallet() {
         setPurchases(purchaseRes.data.purchases || []);
       } catch (err) {
         console.error("Failed to fetch data", err);
+      } finally {
+        setLoading(false);
       }
     };
     fetchData();
   }, [token, showPaymentModal, showDepositModal, showWithdrawModal]);
+
+  const combinedHistory = useMemo(() => {
+    const history = [];
+    transactions.forEach((txn) => {
+      history.push({
+        id: txn._id,
+        date: txn.createdAt,
+        type: txn.type,
+        amount: txn.amount,
+        description: txn.description || txn.method || "Transaction",
+        status: txn.status,
+        direction: txn.direction,
+        method: txn.method,
+        orderId: txn.orderId,
+        accountName: txn.accountName,
+        accountNumber: txn.accountNumber,
+        fee: txn.fee,
+        netAmount: txn.netAmount,
+      });
+    });
+    purchases
+      .filter((p) => p.status === "paid")
+      .forEach((purchase) => {
+        history.push({
+          id: purchase._id,
+          date: purchase.paymentClaimedAt || purchase.createdAt,
+          type: "daily_profit",
+          amount: purchase.product?.price * 0.042 || 0,
+          description: `Profit from ${purchase.product?.name || "Product"}`,
+          status: "paid",
+        });
+      });
+    return history.sort(
+      (a, b) => new Date(b.date || 0) - new Date(a.date || 0),
+    );
+  }, [transactions, purchases]);
+
+  const getBorderClass = (type) => {
+    return "border-green-600";
+  };
+
+  const getDotClass = (type) => {
+    return "bg-green-500";
+  };
+
+  const getTypeLabel = (type) => {
+    switch (type) {
+      case "deposit_bonus_self":
+      case "bonus":
+        return "Bonus";
+      case "daily_profit":
+        return "Profit";
+      case "referral_bonus":
+        return "Commission";
+      case "deposit":
+        return "Deposit";
+      case "withdraw":
+        return "Withdrawal";
+      default:
+        return type;
+    }
+  };
 
   const handleDeposit = () => {
     if (!depositAmount || Number(depositAmount) <= 0) {
@@ -210,339 +277,294 @@ export default function Wallet() {
           </div>
 
           <div className="p-4 flex flex-col space-y-6">
-            {activeTab === "account" && (
+            {loading ? (
+              <Spinner />
+            ) : (
               <>
-                {/* Bonuses Section */}
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                    Bonuses
-                  </h3>
-                  {transactions.filter(
-                    (txn) =>
-                      txn.type === "deposit_bonus_self" || txn.type === "bonus",
-                  ).length === 0 ? (
-                    <div className="text-center text-gray-500">
-                      No bonuses yet
-                    </div>
-                  ) : (
-                    transactions
-                      .filter(
-                        (txn) =>
-                          txn.type === "deposit_bonus_self" ||
-                          txn.type === "bonus",
-                      )
-                      .map((txn) => (
-                        <div
-                          key={txn._id}
-                          className="bg-white rounded-lg shadow-md border-l-4 border-green-600 p-4 mb-4"
-                        >
-                          <div className="flex items-center justify-between mb-2">
-                            <div className="flex items-center">
-                              <div className="w-3 h-3 rounded-full mr-3 bg-green-500"></div>
-                              <span className="text-sm text-gray-600">
-                                Bonus
-                              </span>
-                            </div>
-                            <span className="text-sm font-medium text-gray-900">
-                              {txn.createdAt
-                                ? new Date(txn.createdAt).toLocaleDateString()
-                                : "N/A"}
-                            </span>
-                          </div>
-                          <div className="ml-0 md:ml-4">
-                            <div className="text-lg font-bold mb-1 text-gray-900">
-                              ${txn.amount?.toFixed(2) || "0.00"}
-                            </div>
-                            <div className="text-sm text-gray-600">
-                              {txn.description ||
-                                txn.method ||
-                                "Bonus received"}
-                            </div>
-                          </div>
+                {activeTab === "account" && (
+                  <>
+                    {/* Transaction History */}
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                        Transaction History
+                      </h3>
+                      {combinedHistory.length === 0 ? (
+                        <div className="text-center text-gray-500">
+                          No transactions yet
                         </div>
-                      ))
-                  )}
-                </div>
-
-                {/* Daily Profit Section */}
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                    Daily Profit
-                  </h3>
-                  {purchases.filter((p) => p.status === "paid").length === 0 ? (
-                    <div className="text-center text-gray-500">
-                      No profits claimed yet
-                    </div>
-                  ) : (
-                    purchases
-                      .filter((p) => p.status === "paid")
-                      .map((purchase) => (
-                        <div
-                          key={purchase._id}
-                          className="bg-white rounded-lg shadow-md border-l-4 border-blue-600 p-4 mb-4"
-                        >
-                          <div className="flex items-center justify-between mb-2">
-                            <div className="flex items-center">
-                              <div className="w-3 h-3 rounded-full mr-3 bg-blue-500"></div>
-                              <span className="text-sm text-gray-600">
-                                Profit
-                              </span>
-                            </div>
-                            <span className="text-sm font-medium text-gray-900">
-                              {purchase.paymentClaimedAt
-                                ? new Date(
-                                    purchase.paymentClaimedAt,
-                                  ).toLocaleDateString()
-                                : purchase.createdAt
-                                  ? new Date(
-                                      purchase.createdAt,
-                                    ).toLocaleDateString()
+                      ) : (
+                        combinedHistory.map((item) => (
+                          <div
+                            key={item.id}
+                            className={`bg-white rounded-lg shadow-md border-l-4 p-4 mb-4 ${getBorderClass(item.type)}`}
+                          >
+                            <div className="flex items-center justify-between mb-2">
+                              <div className="flex items-center">
+                                <div
+                                  className={`w-3 h-3 rounded-full mr-3 ${getDotClass(item.type)}`}
+                                ></div>
+                                <span className="text-sm text-gray-600">
+                                  {getTypeLabel(item.type)}
+                                </span>
+                              </div>
+                              <span className="text-sm font-medium text-gray-900">
+                                {item.date
+                                  ? new Date(item.date).toLocaleDateString()
                                   : "N/A"}
-                            </span>
-                          </div>
-                          <div className="ml-0 md:ml-4">
-                            <div className="text-lg font-bold mb-1 text-gray-900">
-                              $
-                              {(purchase.product?.price * 0.042)?.toFixed(2) ||
-                                "0.00"}
-                            </div>
-                            <div className="text-sm text-gray-600">
-                              From {purchase.product?.name || "Product"}
-                            </div>
-                          </div>
-                        </div>
-                      ))
-                  )}
-                </div>
-
-                {/* Team Commission Section */}
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                    Team Commission
-                  </h3>
-                  {transactions.filter((txn) => txn.type === "referral_bonus")
-                    .length === 0 ? (
-                    <div className="text-center text-gray-500">
-                      No commissions yet
-                    </div>
-                  ) : (
-                    transactions
-                      .filter((txn) => txn.type === "referral_bonus")
-                      .map((txn) => (
-                        <div
-                          key={txn._id}
-                          className="bg-white rounded-lg shadow-md border-l-4 border-purple-600 p-4 mb-4"
-                        >
-                          <div className="flex items-center justify-between mb-2">
-                            <div className="flex items-center">
-                              <div className="w-3 h-3 rounded-full mr-3 bg-purple-500"></div>
-                              <span className="text-sm text-gray-600">
-                                Commission
                               </span>
                             </div>
-                            <span className="text-sm font-medium text-gray-900">
-                              {txn.createdAt
-                                ? new Date(txn.createdAt).toLocaleDateString()
-                                : "N/A"}
-                            </span>
-                          </div>
-                          <div className="ml-0 md:ml-4">
-                            <div className="text-lg font-bold mb-1 text-gray-900">
-                              ${txn.amount?.toFixed(2) || "0.00"}
+                            <div className="ml-0 md:ml-4">
+                              <div className="text-lg font-bold mb-1 text-gray-900">
+                                {item.type === "withdraw" ? "-" : "+"}$
+                                {item.amount?.toFixed(2) || "0.00"}
+                              </div>
+                              <div className="text-sm text-gray-600">
+                                {item.description}
+                              </div>
+                              {item.status && (
+                                <div className="text-sm text-gray-500">
+                                  Status: {item.status}
+                                </div>
+                              )}
+                              {item.type === "withdraw" && (
+                                <>
+                                  <div className="text-sm text-gray-600">
+                                    Fee: $
+                                    {item.fee ||
+                                      (item.amount * 0.038).toFixed(2)}
+                                  </div>
+                                  <div className="text-sm text-gray-600">
+                                    Net: $
+                                    {(
+                                      item.netAmount ||
+                                      item.amount -
+                                        (item.fee || item.amount * 0.038)
+                                    ).toFixed(2)}
+                                  </div>
+                                  {item.accountName && (
+                                    <div className="text-sm text-gray-600">
+                                      Account: {item.accountName}
+                                    </div>
+                                  )}
+                                  {item.accountNumber && (
+                                    <div className="text-sm text-gray-600">
+                                      Number: {item.accountNumber}
+                                    </div>
+                                  )}
+                                </>
+                              )}
+                              {item.type === "deposit" && (
+                                <>
+                                  {item.method && (
+                                    <div className="text-sm text-gray-600">
+                                      Method: {item.method}
+                                    </div>
+                                  )}
+                                  {item.orderId && (
+                                    <div className="text-sm text-gray-600">
+                                      Order ID: {item.orderId}
+                                    </div>
+                                  )}
+                                </>
+                              )}
                             </div>
-                            <div className="text-sm text-gray-600">
-                              {txn.description || "Referral commission"}
-                            </div>
                           </div>
-                        </div>
-                      ))
-                  )}
-                </div>
-              </>
-            )}
-
-            {activeTab === "deposit" && (
-              <>
-                {transactions.filter(
-                  (txn) => txn.type?.toLowerCase() === "deposit",
-                ).length === 0 ? (
-                  <div className="text-center text-gray-500">
-                    No deposit records yet
-                  </div>
-                ) : (
-                  transactions
-                    .filter((txn) => txn.type?.toLowerCase() === "deposit")
-                    .map((txn) => (
-                      <div
-                        key={txn._id}
-                        className={`bg-white rounded-lg shadow-md border-l-4 p-4 ${
-                          txn.status === "approved"
-                            ? "border-green-500"
-                            : txn.status === "rejected"
-                              ? "border-red-500"
-                              : "border-yellow-500"
-                        }`}
-                      >
-                        <div className="flex items-center justify-between mb-2">
-                          <div className="flex items-center">
-                            <div
-                              className={`w-3 h-3 rounded-full mr-3 ${
-                                txn.status === "approved"
-                                  ? "bg-green-500"
-                                  : txn.status === "rejected"
-                                    ? "bg-red-500"
-                                    : "bg-yellow-500"
-                              }`}
-                            ></div>
-                            <span className="text-sm text-gray-600">
-                              {txn.type}
-                            </span>
-                          </div>
-                          <span className="text-sm font-medium text-gray-900">
-                            {txn.createdAt
-                              ? new Date(txn.createdAt).toLocaleDateString()
-                              : "N/A"}
-                          </span>
-                        </div>
-
-                        <div className="ml-0 md:ml-4">
-                          <div
-                            className={`text-lg font-bold mb-1 ${
-                              txn.status === "approved"
-                                ? "text-green-600"
-                                : txn.status === "rejected"
-                                  ? "text-red-600"
-                                  : "text-yellow-600"
-                            }`}
-                          >
-                            {(txn.status || "pending").charAt(0).toUpperCase() +
-                              (txn.status || "pending").slice(1)}
-                          </div>
-                          <div className="flex justify-between text-sm text-gray-600 mb-1">
-                            <span>Operation amount</span>
-                            <span
-                              className={
-                                (txn.amount || 0) < 0
-                                  ? "text-red-500"
-                                  : "text-green-500"
-                              }
-                            >
-                              {(txn.amount || 0) >= 0 ? "+" : ""}
-                              {txn.amount || 0}
-                            </span>
-                          </div>
-                          <div className="flex justify-between text-sm text-gray-600 mb-1">
-                            <span>Method</span>
-                            <span>{txn.method || "N/A"}</span>
-                          </div>
-                          {txn.orderId && (
-                            <div className="flex justify-between text-sm text-gray-600">
-                              <span>Order ID</span>
-                              <span className="text-xs">{txn.orderId}</span>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    ))
+                        ))
+                      )}
+                    </div>
+                  </>
                 )}
-              </>
-            )}
 
-            {activeTab === "withdrawal" && (
-              <>
-                {transactions.filter(
-                  (txn) => txn.type?.toLowerCase() === "withdraw",
-                ).length === 0 ? (
-                  <div className="text-center text-gray-500">
-                    No withdrawal records yet
-                  </div>
-                ) : (
-                  transactions
-                    .filter((txn) => txn.type?.toLowerCase() === "withdraw")
-                    .map((txn) => (
-                      <div
-                        key={txn._id}
-                        className={`bg-white rounded-lg shadow-md border-l-4 p-4 ${
-                          txn.status === "approved"
-                            ? "border-green-500"
-                            : txn.status === "rejected"
-                              ? "border-red-500"
-                              : "border-yellow-500"
-                        }`}
-                      >
-                        <div className="flex items-center justify-between mb-2">
-                          <div className="flex items-center">
-                            <div
-                              className={`w-3 h-3 rounded-full mr-3 ${
-                                txn.status === "approved"
-                                  ? "bg-green-500"
-                                  : txn.status === "rejected"
-                                    ? "bg-red-500"
-                                    : "bg-yellow-500"
-                              }`}
-                            ></div>
-                            <span className="text-sm text-gray-600">
-                              {txn.method || "N/A"}
-                            </span>
-                          </div>
-                          <span className="text-sm font-medium text-gray-900">
-                            {txn.createdAt
-                              ? new Date(txn.createdAt).toLocaleDateString()
-                              : "N/A"}
-                          </span>
-                        </div>
-
-                        <div className="ml-0 md:ml-4">
+                {activeTab === "deposit" && (
+                  <>
+                    {transactions.filter(
+                      (txn) => txn.type?.toLowerCase() === "deposit",
+                    ).length === 0 ? (
+                      <div className="text-center text-gray-500">
+                        No deposit records yet
+                      </div>
+                    ) : (
+                      transactions
+                        .filter((txn) => txn.type?.toLowerCase() === "deposit")
+                        .map((txn) => (
                           <div
-                            className={`text-lg font-bold mb-1 ${
+                            key={txn._id}
+                            className={`bg-white rounded-lg shadow-md border-l-4 p-4 ${
                               txn.status === "approved"
-                                ? "text-green-600"
+                                ? "border-green-500"
                                 : txn.status === "rejected"
-                                  ? "text-red-600"
-                                  : "text-yellow-600"
+                                  ? "border-red-500"
+                                  : "border-yellow-500"
                             }`}
                           >
-                            {(txn.status || "pending").charAt(0).toUpperCase() +
-                              (txn.status || "pending").slice(1)}
-                          </div>
+                            <div className="flex items-center justify-between mb-2">
+                              <div className="flex items-center">
+                                <div
+                                  className={`w-3 h-3 rounded-full mr-3 ${
+                                    txn.status === "approved"
+                                      ? "bg-green-500"
+                                      : txn.status === "rejected"
+                                        ? "bg-red-500"
+                                        : "bg-yellow-500"
+                                  }`}
+                                ></div>
+                                <span className="text-sm text-gray-600">
+                                  {txn.type}
+                                </span>
+                              </div>
+                              <span className="text-sm font-medium text-gray-900">
+                                {txn.createdAt
+                                  ? new Date(txn.createdAt).toLocaleDateString()
+                                  : "N/A"}
+                              </span>
+                            </div>
 
-                          <div className="flex justify-between text-sm text-gray-600 mb-1">
-                            <span>Requested amount</span>
-                            <span className="text-red-500">
-                              - ${txn.amount || 0}
-                            </span>
+                            <div className="ml-0 md:ml-4">
+                              <div
+                                className={`text-lg font-bold mb-1 ${
+                                  txn.status === "approved"
+                                    ? "text-green-600"
+                                    : txn.status === "rejected"
+                                      ? "text-red-600"
+                                      : "text-yellow-600"
+                                }`}
+                              >
+                                {(txn.status || "pending")
+                                  .charAt(0)
+                                  .toUpperCase() +
+                                  (txn.status || "pending").slice(1)}
+                              </div>
+                              <div className="flex justify-between text-sm text-gray-600 mb-1">
+                                <span>Operation amount</span>
+                                <span
+                                  className={
+                                    (txn.amount || 0) < 0
+                                      ? "text-red-500"
+                                      : "text-green-500"
+                                  }
+                                >
+                                  {(txn.amount || 0) >= 0 ? "+" : ""}
+                                  {txn.amount || 0}
+                                </span>
+                              </div>
+                              <div className="flex justify-between text-sm text-gray-600 mb-1">
+                                <span>Method</span>
+                                <span>{txn.method || "N/A"}</span>
+                              </div>
+                              {txn.orderId && (
+                                <div className="flex justify-between text-sm text-gray-600">
+                                  <span>Order ID</span>
+                                  <span className="text-xs">{txn.orderId}</span>
+                                </div>
+                              )}
+                            </div>
                           </div>
+                        ))
+                    )}
+                  </>
+                )}
 
-                          <div className="flex justify-between text-sm text-gray-600 mb-1">
-                            <span>Fee (3.8%)</span>
-                            <span className="text-red-400">
-                              - ${txn.fee || (txn.amount * 0.038).toFixed(2)}
-                            </span>
-                          </div>
-
-                          <div className="flex justify-between text-sm font-semibold text-gray-900 mb-1 border-t border-gray-100 pt-1">
-                            <span>Expected Payout</span>
-                            <span className="text-green-600">
-                              $
-                              {txn.netAmount ||
-                                (
-                                  txn.amount - (txn.fee || txn.amount * 0.038)
-                                ).toFixed(2)}
-                            </span>
-                          </div>
-
-                          <div className="flex justify-between text-sm text-gray-600 mb-1">
-                            <span>Account Name</span>
-                            <span>{txn.accountName || "N/A"}</span>
-                          </div>
-
-                          <div className="flex justify-between text-sm text-gray-600">
-                            <span>Account Number</span>
-                            <span>{txn.accountNumber || "N/A"}</span>
-                          </div>
-                        </div>
+                {activeTab === "withdrawal" && (
+                  <>
+                    {transactions.filter(
+                      (txn) => txn.type?.toLowerCase() === "withdraw",
+                    ).length === 0 ? (
+                      <div className="text-center text-gray-500">
+                        No withdrawal records yet
                       </div>
-                    ))
+                    ) : (
+                      transactions
+                        .filter((txn) => txn.type?.toLowerCase() === "withdraw")
+                        .map((txn) => (
+                          <div
+                            key={txn._id}
+                            className={`bg-white rounded-lg shadow-md border-l-4 p-4 ${
+                              txn.status === "approved"
+                                ? "border-green-500"
+                                : txn.status === "rejected"
+                                  ? "border-red-500"
+                                  : "border-yellow-500"
+                            }`}
+                          >
+                            <div className="flex items-center justify-between mb-2">
+                              <div className="flex items-center">
+                                <div
+                                  className={`w-3 h-3 rounded-full mr-3 ${
+                                    txn.status === "approved"
+                                      ? "bg-green-500"
+                                      : txn.status === "rejected"
+                                        ? "bg-red-500"
+                                        : "bg-yellow-500"
+                                  }`}
+                                ></div>
+                                <span className="text-sm text-gray-600">
+                                  {txn.method || "N/A"}
+                                </span>
+                              </div>
+                              <span className="text-sm font-medium text-gray-900">
+                                {txn.createdAt
+                                  ? new Date(txn.createdAt).toLocaleDateString()
+                                  : "N/A"}
+                              </span>
+                            </div>
+
+                            <div className="ml-0 md:ml-4">
+                              <div
+                                className={`text-lg font-bold mb-1 ${
+                                  txn.status === "approved"
+                                    ? "text-green-600"
+                                    : txn.status === "rejected"
+                                      ? "text-red-600"
+                                      : "text-yellow-600"
+                                }`}
+                              >
+                                {(txn.status || "pending")
+                                  .charAt(0)
+                                  .toUpperCase() +
+                                  (txn.status || "pending").slice(1)}
+                              </div>
+
+                              <div className="flex justify-between text-sm text-gray-600 mb-1">
+                                <span>Requested amount</span>
+                                <span className="text-red-500">
+                                  - ${txn.amount || 0}
+                                </span>
+                              </div>
+
+                              <div className="flex justify-between text-sm text-gray-600 mb-1">
+                                <span>Fee (3.8%)</span>
+                                <span className="text-red-400">
+                                  - $
+                                  {txn.fee || (txn.amount * 0.038).toFixed(2)}
+                                </span>
+                              </div>
+
+                              <div className="flex justify-between text-sm font-semibold text-gray-900 mb-1 border-t border-gray-100 pt-1">
+                                <span>Expected Payout</span>
+                                <span className="text-green-600">
+                                  $
+                                  {txn.netAmount ||
+                                    (
+                                      txn.amount -
+                                      (txn.fee || txn.amount * 0.038)
+                                    ).toFixed(2)}
+                                </span>
+                              </div>
+
+                              <div className="flex justify-between text-sm text-gray-600 mb-1">
+                                <span>Account Name</span>
+                                <span>{txn.accountName || "N/A"}</span>
+                              </div>
+
+                              <div className="flex justify-between text-sm text-gray-600">
+                                <span>Account Number</span>
+                                <span>{txn.accountNumber || "N/A"}</span>
+                              </div>
+                            </div>
+                          </div>
+                        ))
+                    )}
+                  </>
                 )}
               </>
             )}

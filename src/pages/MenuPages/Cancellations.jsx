@@ -1,10 +1,6 @@
 import React, { useEffect, useState, useContext } from "react";
-import {
-  FaTimesCircle,
-  FaCalendarAlt,
-  FaDollarSign,
-  FaBox,
-} from "react-icons/fa";
+import { FaTimes, FaDollarSign, FaBox, FaTimesCircle } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 import { getMyPurchases } from "../../api/purchaseApi";
 import { AuthContext } from "../../context/AuthContext";
 import Spinner from "../../components/Spinner";
@@ -13,6 +9,7 @@ export default function Cancellations() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const { token } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -30,23 +27,54 @@ export default function Cancellations() {
         setLoading(false);
       }
     };
-    fetchOrders();
+    if (token) {
+      fetchOrders();
+    } else {
+      setLoading(false);
+    }
   }, [token]);
 
   return (
-    <div className="p-6 min-h-screen bg-gray-50">
+    <div className="p-4 min-h-screen bg-white">
       {/* Header */}
-      <h1 className="text-2xl font-bold text-green-600 mb-6 flex items-center gap-2">
-        <FaTimesCircle className="text-green-500" /> My Cancellations
+      <h1 className="text-3xl font-bold text-green-600 mb-2 flex items-center gap-3">
+        <FaTimes className="text-green-500 text-2xl" /> My Cancellations
       </h1>
 
-      {/* Cancelled Orders */}
-      <div className="bg-white shadow-md rounded-lg p-6 border border-gray-100">
-        {loading ? (
+      <p className="text-gray-400 text-lg mb-8">No items in wishlist yet.</p>
+
+      {loading ? (
+        <div className="flex justify-center mt-20">
           <Spinner />
-        ) : orders.length === 0 ? (
-          <p className="text-gray-600 text-sm">No cancelled orders found.</p>
-        ) : (
+        </div>
+      ) : orders.length === 0 ? (
+        <div className="flex flex-col items-center text-center mt-10">
+          <div className="mb-8">
+            <img
+              src="/My Cancellations.png"
+              alt="No cancellations"
+              className="w-72 h-72 object-contain"
+            />
+          </div>
+
+          <h2 className="text-3xl font-bold text-gray-800 mb-2">
+            No Cancellations Yet
+          </h2>
+          <p className="text-gray-600 mb-10">
+            You haven't cancelled any orders.
+          </p>
+
+          <div className="w-full max-w-sm">
+            <button
+              onClick={() => navigate("/orders")}
+              className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-4 rounded-lg shadow-md transition duration-300 uppercase tracking-wide"
+            >
+              View Order History
+            </button>
+          </div>
+        </div>
+      ) : (
+        <div className="bg-white shadow-md rounded-lg p-4 border border-gray-100">
           <ul className="divide-y divide-gray-200">
             {orders.map((order) => (
               <li
@@ -55,7 +83,6 @@ export default function Cancellations() {
               >
                 {/* Product Info */}
                 <div className="flex items-center gap-4">
-                  {/* If product image exists, show it, else fallback icon */}
                   {order.product?.image ? (
                     <img
                       src={order.product.image}
@@ -77,7 +104,6 @@ export default function Cancellations() {
                         order.updatedAt || order.createdAt,
                       ).toLocaleDateString()}
                     </p>
-                    {/* Optionally, show a reason if you store it */}
                   </div>
                 </div>
 
@@ -94,8 +120,8 @@ export default function Cancellations() {
               </li>
             ))}
           </ul>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }
