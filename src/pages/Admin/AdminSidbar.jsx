@@ -14,7 +14,7 @@ function AdminSidebar({ closeSidebar, setActiveLink, activeLink }) {
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("role");
-    navigate("/login");
+    navigate("/admin-login");
   };
 
   return (

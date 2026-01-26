@@ -43,6 +43,7 @@ import ReferralLanding from "./pages/ReferralLanding";
 // Lazy load components
 const Home = lazy(() => import("./pages/Home"));
 const Login = lazy(() => import("./pages/Auth/Login"));
+const AdminLogin = lazy(() => import("./pages/Auth/AdminLogin"));
 const Register = lazy(() => import("./pages/Auth/Register"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const Wallet = lazy(() => import("./pages/Wallet"));
@@ -59,6 +60,7 @@ const AdminProducts = lazy(() => import("./pages/Admin/AdminProducts"));
 const CreateProduct = lazy(() => import("./pages/Admin/CreateProduct"));
 const Users = lazy(() => import("./pages/Admin/Users"));
 const Orders = lazy(() => import("./pages/Admin/Orders"));
+const AdminManagement = lazy(() => import("./pages/Admin/AdminManagement"));
 const SocialLinksComponent = lazy(() => import("./pages/Admin/SocialLinks"));
 
 function App() {
@@ -70,6 +72,7 @@ function App() {
             {/* Public Routes */}
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/admin-login" element={<AdminLogin />} />
             <Route path="/register" element={<Register />} />
 
             {/* Admin Routes */}
@@ -98,6 +101,7 @@ function App() {
               <Route path="recharge-history" element={<RechargeHistory />} />
               <Route path="withdraw-history" element={<WithdrawHistory />} />
               <Route path="bonus" element={<Bonus />} />
+              <Route path="manage-admins" element={<AdminManagement />} />
               <Route path="admin-messages" element={<AdminMessages />} />
               <Route path="support-chat" element={<AdminChat />} />
               <Route path="social-links" element={<SocialLinksComponent />} />

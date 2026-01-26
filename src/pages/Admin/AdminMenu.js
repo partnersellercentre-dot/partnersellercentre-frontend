@@ -13,6 +13,7 @@ export const adminMenuItems = [
   { name: "Withdraw history", path: "/admin/withdraw-history" },
 
   { name: "Bonus page", path: "/admin/bonus" },
+  { name: "Manage Admins", path: "/admin/manage-admins" },
   { name: "Social Links", path: "/admin/social-links" },
   { name: "Logout", path: "/logout" },
 ];

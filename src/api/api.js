@@ -287,3 +287,25 @@ export const deleteNotification = (token, id) =>
 
 // Get social links (public)
 export const getSocialLinks = () => API.get("/admin/social-links");
+
+/* ---------------------- Admin Management APIs ---------------------- */
+
+export const getAllAdmins = (token) =>
+  API.get("/admin/all-admins", {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+export const createAdmin = (token, data) =>
+  API.post("/admin/register", data, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+export const updateAdmin = (token, id, data) =>
+  API.put(`/admin/admins/${id}`, data, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+export const deleteAdmin = (token, id) =>
+  API.delete(`/admin/admins/${id}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });

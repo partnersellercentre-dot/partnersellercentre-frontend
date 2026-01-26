@@ -8,7 +8,6 @@ import {
   sendOtp,
   loginWithOtp,
   loginWithUsername,
-  loginAdmin,
   forgotPassword,
   resetPassword,
 } from "../../api/api";
@@ -21,7 +20,6 @@ export default function Login() {
   const [activeTab, setActiveTab] = useState("Email");
   const [agreed, setAgreed] = useState(false);
   const [otpSent, setOtpSent] = useState(false);
-  const [role, setRole] = useState("user");
   const [showForgot, setShowForgot] = useState(false);
   const [resetStep, setResetStep] = useState(1); // 1: send otp, 2: reset password
   const [showPassword, setShowPassword] = useState(false);
@@ -68,48 +66,27 @@ export default function Login() {
 
         login(res.data.token, res.data.user.role);
         toast.success("Login successful 🎉");
-
-        if (res.data.user.role === "user") {
-          navigate("/products");
-        } else {
-          navigate("/admin");
-        }
+        navigate("/products");
       } catch (err) {
         toast.error("Login failed");
       }
     }
 
-    // ✅ Username + Password login
+    // ✅ Account login
     if (activeTab === "Account") {
       if (!formData.username) return toast.error("Enter your username!");
       if (!formData.password) return toast.error("Enter your password!");
 
       try {
-        let res;
-        let userRole = role;
+        const res = await loginWithUsername({
+          username: formData.username,
+          password: formData.password,
+        });
 
-        if (role === "admin") {
-          res = await loginAdmin({
-            username: formData.username,
-            password: formData.password,
-          });
-          userRole = res.data.admin.role;
-        } else {
-          res = await loginWithUsername({
-            username: formData.username,
-            password: formData.password,
-          });
-          userRole = res.data.user.role;
-        }
-
+        const userRole = res.data.user.role;
         login(res.data.token, userRole);
         toast.success("Login successful 🎉");
-
-        if (userRole === "admin") {
-          navigate("/admin");
-        } else {
-          navigate("/products");
-        }
+        navigate("/products");
       } catch (err) {
         toast.error(err.response?.data?.error || "Account login failed");
       }
@@ -251,21 +228,6 @@ export default function Login() {
                 >
                   Forgot Password?
                 </button>
-              </div>
-
-              {/* Role */}
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Select Role
-                </label>
-                <select
-                  value={role}
-                  onChange={(e) => setRole(e.target.value)}
-                  className="w-full px-3 py-3 bg-gray-50 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:bg-white"
-                >
-                  <option value="user">User</option>
-                  <option value="admin">Admin</option>
-                </select>
               </div>
 
               {/* Agreement */}

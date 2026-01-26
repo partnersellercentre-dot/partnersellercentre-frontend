@@ -13,7 +13,10 @@ export default function ProtectedRoute({ children, allowedRoles }) {
 
   // Not logged in → redirect to login
   if (!token) {
-    return <Navigate to="/login" state={{ from: location }} replace />;
+    const redirectPath = location.pathname.startsWith("/admin")
+      ? "/admin-login"
+      : "/login";
+    return <Navigate to={redirectPath} state={{ from: location }} replace />;
   }
 
   // Logged in but not allowed for this route → redirect based on role
