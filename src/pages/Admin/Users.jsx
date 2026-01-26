@@ -65,6 +65,7 @@ function Users() {
             <table className="min-w-full text-sm text-left text-gray-300">
               <thead className="bg-gray-700 text-gray-100 sticky top-0 z-10">
                 <tr>
+                  <th className="px-6 py-3">ID</th>
                   <th className="px-6 py-3">Name</th>
                   <th className="px-6 py-3">Email</th>
                   <th className="px-6 py-3">Role</th>
@@ -74,6 +75,7 @@ function Users() {
               <tbody>
                 {users.map((user) => (
                   <tr key={user._id} className="border-b border-gray-600">
+                    <td className="px-6 py-3">{user._id}</td>
                     <td className="px-6 py-3">{user.name}</td>
                     <td className="px-6 py-3">{user.email}</td>
                     <td className="px-6 py-3">{user.role}</td>

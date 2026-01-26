@@ -74,6 +74,12 @@ function AdminChat() {
     try {
       const res = await getAdminUserMessages(token, user._id);
       setMessages(res.data.messages);
+      // Immediately clear unread count for the selected user in local state
+      setUsers((prevUsers) =>
+        prevUsers.map((u) =>
+          u._id === user._id ? { ...u, unreadCount: 0 } : u,
+        ),
+      );
     } catch (err) {
       toast.error("Failed to fetch messages");
     }
@@ -121,16 +127,26 @@ function AdminChat() {
                     {u.name || u.email}
                   </h3>
                   <p className="text-sm text-gray-400 truncate w-40">
-                    {u.lastMessage?.message || "No messages yet"}
+                    {u.lastMessage?.message ||
+                      (u.lastMessage?.imageUrl
+                        ? "sent an image"
+                        : "No messages yet")}
                   </p>
                 </div>
-                <span className="text-xs text-gray-500">
-                  {u.lastMessage &&
-                    new Date(u.lastMessage.timestamp).toLocaleTimeString([], {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
-                </span>
+                <div className="flex flex-col items-end gap-1">
+                  <span className="text-xs text-gray-500">
+                    {u.lastMessage &&
+                      new Date(u.lastMessage.timestamp).toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                  </span>
+                  {u.unreadCount > 0 && (
+                    <span className="bg-green-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full min-w-[20px] text-center">
+                      {u.unreadCount}
+                    </span>
+                  )}
+                </div>
               </div>
             </div>
           ))}

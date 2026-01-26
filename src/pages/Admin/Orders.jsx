@@ -13,7 +13,7 @@ function Table({ orders, onDelete }) {
         <table className="min-w-full text-sm text-left text-gray-300">
           <thead className="bg-gray-700 text-gray-100 sticky top-0 z-10">
             <tr>
-              <th className="px-6 py-3">Order #</th>
+              <th className="px-6 py-3">Order ID</th>
               <th className="px-6 py-3">Customer</th>
               <th className="px-6 py-3">Product</th>
               <th className="px-6 py-3">Amount</th>
@@ -29,9 +29,7 @@ function Table({ orders, onDelete }) {
                   key={order._id}
                   className="border-b border-gray-700 hover:bg-gray-700 transition-all duration-200"
                 >
-                  <td className="px-6 py-3">
-                    {order._id.slice(-6).toUpperCase()}
-                  </td>
+                  <td className="px-6 py-3">{order._id}</td>
                   <td className="px-6 py-3">{order.user?.name || "N/A"}</td>
                   <td className="px-6 py-3">{order.product?.name || "N/A"}</td>
                   <td className="px-6 py-3 font-medium text-green-400">

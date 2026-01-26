@@ -33,6 +33,7 @@ import Bonus from "./pages/Admin/Bonus";
 import AdminMessages from "./pages/Admin/AdminMessages";
 import AdminChat from "./pages/Admin/AdminChat";
 import AdminKYC from "./pages/Admin/AdminKYC";
+import SocialLinks from "./pages/Admin/SocialLinks";
 import Success from "./pages/Success";
 import Fail from "./pages/Fail";
 import Benefits from "./pages/Benefits";
@@ -58,6 +59,7 @@ const AdminProducts = lazy(() => import("./pages/Admin/AdminProducts"));
 const CreateProduct = lazy(() => import("./pages/Admin/CreateProduct"));
 const Users = lazy(() => import("./pages/Admin/Users"));
 const Orders = lazy(() => import("./pages/Admin/Orders"));
+const SocialLinksComponent = lazy(() => import("./pages/Admin/SocialLinks"));
 
 function App() {
   return (
@@ -98,6 +100,7 @@ function App() {
               <Route path="bonus" element={<Bonus />} />
               <Route path="admin-messages" element={<AdminMessages />} />
               <Route path="support-chat" element={<AdminChat />} />
+              <Route path="social-links" element={<SocialLinksComponent />} />
             </Route>
 
             {/* Dashboard Routes */}

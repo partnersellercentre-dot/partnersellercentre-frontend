@@ -57,7 +57,7 @@ export default function OrderCenter() {
     const purchaseTime = new Date(purchase.createdAt);
     const now = new Date();
     const secondsSincePurchase = (now - purchaseTime) / 1000;
-    return secondsSincePurchase >= 172800 && purchase.status === "to_be_paid";
+    return secondsSincePurchase >= 86400 && purchase.status === "to_be_paid";
   };
 
   const handleDetailsClick = (purchase) => {
@@ -127,7 +127,7 @@ export default function OrderCenter() {
             const purchaseTime = new Date(purchase.createdAt);
             const now = new Date();
             const secondsSincePurchase = (now - purchaseTime) / 1000;
-            const remainingSeconds = Math.ceil(172800 - secondsSincePurchase);
+            const remainingSeconds = Math.ceil(86400 - secondsSincePurchase);
 
             return (
               <div

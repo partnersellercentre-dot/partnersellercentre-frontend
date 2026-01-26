@@ -41,7 +41,7 @@ export default function RechargeHistory() {
         <table className="min-w-full text-sm text-left text-gray-300">
           <thead className="bg-gray-700 text-gray-100 sticky top-0 z-10">
             <tr>
-              <th className="px-6 py-3">#</th>
+              <th className="px-6 py-3">ID</th>
               <th className="px-6 py-3">User</th>
               <th className="px-6 py-3">Type</th>
               <th className="px-6 py-3">Amount</th>
@@ -71,7 +71,7 @@ export default function RechargeHistory() {
                   key={tx._id || idx}
                   className="border-b border-gray-600 hover:bg-gray-700 transition"
                 >
-                  <td className="px-6 py-3">{idx + 1}</td>
+                  <td className="px-6 py-3">{tx._id}</td>
                   <td className="px-6 py-3">
                     {tx.user?.name || tx.user || "N/A"}
                   </td>

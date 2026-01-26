@@ -1,7 +1,28 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { FaWhatsapp, FaTelegram } from "react-icons/fa";
+import { getSocialLinks } from "../api/api";
 
 function Footer() {
+  const [socialLinks, setSocialLinks] = useState({
+    whatsapp: "https://wa.me/923166226704",
+    telegram: "https://t.me/+923166226704",
+  });
+
+  useEffect(() => {
+    const fetchSocialLinks = async () => {
+      try {
+        const res = await getSocialLinks();
+        if (res.data.socialLinks) {
+          setSocialLinks(res.data.socialLinks);
+        }
+      } catch (error) {
+        console.error("Error fetching social links:", error);
+        // Keep defaults if error
+      }
+    };
+    fetchSocialLinks();
+  }, []);
+
   return (
     <footer className="w-full bg-white border-t border-gray-200">
       <div className="w-full p-6 flex flex-col items-center">
@@ -16,7 +37,7 @@ function Footer() {
 
         <div className="flex gap-6 mb-8">
           <a
-            href="https://wa.me/923166226704"
+            href={socialLinks.whatsapp}
             target="_blank"
             rel="noopener noreferrer"
             className="text-green-500 hover:text-green-600 transition-colors"
@@ -25,7 +46,7 @@ function Footer() {
             <FaWhatsapp size={40} />
           </a>
           <a
-            href="https://t.me/+923166226704"
+            href={socialLinks.telegram}
             target="_blank"
             rel="noopener noreferrer"
             className="text-blue-500 hover:text-blue-600 transition-colors"

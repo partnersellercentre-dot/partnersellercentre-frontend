@@ -8,6 +8,7 @@ function Table({ products, onDelete, onEdit }) {
         <table className="min-w-full text-sm text-left text-gray-300">
           <thead className="bg-gray-700 text-gray-100 sticky top-0 z-10">
             <tr>
+              <th className="px-6 py-3">ID</th>
               <th className="px-6 py-3">Product Name</th>
               <th className="px-6 py-3">Price</th>
               <th className="px-6 py-3">Category</th>
@@ -17,6 +18,7 @@ function Table({ products, onDelete, onEdit }) {
           <tbody>
             {products.map((product) => (
               <tr key={product._id} className="border-b border-gray-600">
+                <td className="px-6 py-3">{product._id}</td>
                 <td className="px-6 py-3">{product.name}</td>
                 <td className="px-6 py-3">${product.price}</td>
                 <td className="px-6 py-3">{product.category}</td>

@@ -16,7 +16,7 @@ const AdminKYC = () => {
         setKycRequests(data);
       } catch (error) {
         toast.error(
-          error.response?.data?.message || "Failed to load KYC requests"
+          error.response?.data?.message || "Failed to load KYC requests",
         );
       } finally {
         setLoading(false);
@@ -33,8 +33,8 @@ const AdminKYC = () => {
       toast.success("KYC approved successfully");
       setKycRequests((prev) =>
         prev.map((req) =>
-          req._id === id ? { ...req, status: "approved" } : req
-        )
+          req._id === id ? { ...req, status: "approved" } : req,
+        ),
       );
     } catch (error) {
       toast.error(error.response?.data?.message || "Failed to approve KYC");
@@ -48,8 +48,8 @@ const AdminKYC = () => {
       toast.info("KYC rejected");
       setKycRequests((prev) =>
         prev.map((req) =>
-          req._id === id ? { ...req, status: "rejected" } : req
-        )
+          req._id === id ? { ...req, status: "rejected" } : req,
+        ),
       );
     } catch (error) {
       toast.error(error.response?.data?.message || "Failed to reject KYC");
@@ -70,6 +70,7 @@ const AdminKYC = () => {
             <table className="min-w-full text-sm text-left text-gray-300">
               <thead className="bg-gray-700 text-gray-100 sticky top-0 z-10">
                 <tr>
+                  <th className="px-6 py-3">ID</th>
                   <th className="px-6 py-3">Name</th>
                   <th className="px-6 py-3">Email</th>
                   <th className="px-6 py-3">Phone</th>
@@ -85,6 +86,7 @@ const AdminKYC = () => {
                       key={req._id}
                       className="border-b border-gray-600 hover:bg-gray-700 transition"
                     >
+                      <td className="px-6 py-3">{req._id}</td>
                       <td className="px-6 py-3">{req.name}</td>
                       <td className="px-6 py-3">{req.email}</td>
                       <td className="px-6 py-3">{req.phone}</td>
@@ -94,8 +96,8 @@ const AdminKYC = () => {
                           req.status === "approved"
                             ? "text-green-400"
                             : req.status === "rejected"
-                            ? "text-red-400"
-                            : "text-yellow-400"
+                              ? "text-red-400"
+                              : "text-yellow-400"
                         }`}
                       >
                         {req.status}

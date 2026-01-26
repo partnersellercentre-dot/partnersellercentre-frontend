@@ -110,6 +110,7 @@ function PendingWithdrawal() {
             <table className="min-w-full text-sm text-left text-gray-300">
               <thead className="bg-gray-700 text-gray-100 sticky top-0 z-10">
                 <tr>
+                  <th className="px-6 py-3">ID</th>
                   <th className="px-6 py-3">User</th>
                   <th className="px-6 py-3">Requested</th>
                   <th className="px-6 py-3">Net Payout</th>
@@ -122,6 +123,7 @@ function PendingWithdrawal() {
               <tbody>
                 {withdrawals.map((w) => (
                   <tr key={w._id} className="border-b border-gray-600">
+                    <td className="px-6 py-3 capitalize">{w._id}</td>
                     <td className="px-6 py-3 capitalize">
                       {w.user?.name || "N/A"}
                     </td>

@@ -217,68 +217,152 @@ export default function Wallet() {
           <div className="p-4 flex flex-col space-y-6">
             {activeTab === "account" && (
               <>
-                {purchases.length === 0 ? (
-                  <div className="text-center text-gray-500">No orders yet</div>
-                ) : (
-                  purchases.map((purchase) => (
-                    <div
-                      key={purchase._id}
-                      className={`bg-white rounded-lg shadow-md border-l-4 p-4 mb-4 ${
-                        purchase.status === "paid"
-                          ? "border-green-600"
-                          : "border-yellow-500"
-                      }`}
-                    >
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="flex items-center">
-                          <div
-                            className={`w-3 h-3 rounded-full mr-3 ${
-                              purchase.status === "paid"
-                                ? "bg-green-500"
-                                : "bg-yellow-500"
-                            }`}
-                          ></div>
-                          <span className="text-sm text-gray-600">Order</span>
-                        </div>
-                        <span className="text-sm font-medium text-gray-900">
-                          {purchase.createdAt
-                            ? new Date(purchase.createdAt).toLocaleDateString()
-                            : "N/A"}
-                        </span>
-                      </div>
-
-                      <div className="ml-0 md:ml-4">
-                        <div className="text-lg font-bold mb-1 text-gray-900">
-                          {purchase.product?.name || "N/A"}
-                        </div>
-                        <div className="flex justify-between text-sm text-gray-600 mb-1">
-                          <span>Amount</span>
-                          <span>
-                            ${purchase.product?.price?.toFixed(2) || "0.00"}
-                          </span>
-                        </div>
-                        <div className="flex justify-between text-sm text-gray-600 mb-1">
-                          <span>Price</span>
-                          <span>
-                            ${purchase.product?.price?.toFixed(2) || "0.00"}
-                          </span>
-                        </div>
-                        <div className="flex justify-between text-sm text-gray-600">
-                          <span>Claimed</span>
-                          <span
-                            className={
-                              purchase.status === "paid"
-                                ? "text-green-600"
-                                : "text-yellow-600"
-                            }
-                          >
-                            {purchase.status === "paid" ? "Yes" : "No"}
-                          </span>
-                        </div>
-                      </div>
+                {/* Bonuses Section */}
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                    Bonuses
+                  </h3>
+                  {transactions.filter(
+                    (txn) =>
+                      txn.type === "deposit_bonus_self" || txn.type === "bonus",
+                  ).length === 0 ? (
+                    <div className="text-center text-gray-500">
+                      No bonuses yet
                     </div>
-                  ))
-                )}
+                  ) : (
+                    transactions
+                      .filter(
+                        (txn) =>
+                          txn.type === "deposit_bonus_self" ||
+                          txn.type === "bonus",
+                      )
+                      .map((txn) => (
+                        <div
+                          key={txn._id}
+                          className="bg-white rounded-lg shadow-md border-l-4 border-green-600 p-4 mb-4"
+                        >
+                          <div className="flex items-center justify-between mb-2">
+                            <div className="flex items-center">
+                              <div className="w-3 h-3 rounded-full mr-3 bg-green-500"></div>
+                              <span className="text-sm text-gray-600">
+                                Bonus
+                              </span>
+                            </div>
+                            <span className="text-sm font-medium text-gray-900">
+                              {txn.createdAt
+                                ? new Date(txn.createdAt).toLocaleDateString()
+                                : "N/A"}
+                            </span>
+                          </div>
+                          <div className="ml-0 md:ml-4">
+                            <div className="text-lg font-bold mb-1 text-gray-900">
+                              ${txn.amount?.toFixed(2) || "0.00"}
+                            </div>
+                            <div className="text-sm text-gray-600">
+                              {txn.description ||
+                                txn.method ||
+                                "Bonus received"}
+                            </div>
+                          </div>
+                        </div>
+                      ))
+                  )}
+                </div>
+
+                {/* Daily Profit Section */}
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                    Daily Profit
+                  </h3>
+                  {purchases.filter((p) => p.status === "paid").length === 0 ? (
+                    <div className="text-center text-gray-500">
+                      No profits claimed yet
+                    </div>
+                  ) : (
+                    purchases
+                      .filter((p) => p.status === "paid")
+                      .map((purchase) => (
+                        <div
+                          key={purchase._id}
+                          className="bg-white rounded-lg shadow-md border-l-4 border-blue-600 p-4 mb-4"
+                        >
+                          <div className="flex items-center justify-between mb-2">
+                            <div className="flex items-center">
+                              <div className="w-3 h-3 rounded-full mr-3 bg-blue-500"></div>
+                              <span className="text-sm text-gray-600">
+                                Profit
+                              </span>
+                            </div>
+                            <span className="text-sm font-medium text-gray-900">
+                              {purchase.paymentClaimedAt
+                                ? new Date(
+                                    purchase.paymentClaimedAt,
+                                  ).toLocaleDateString()
+                                : purchase.createdAt
+                                  ? new Date(
+                                      purchase.createdAt,
+                                    ).toLocaleDateString()
+                                  : "N/A"}
+                            </span>
+                          </div>
+                          <div className="ml-0 md:ml-4">
+                            <div className="text-lg font-bold mb-1 text-gray-900">
+                              $
+                              {(purchase.product?.price * 0.042)?.toFixed(2) ||
+                                "0.00"}
+                            </div>
+                            <div className="text-sm text-gray-600">
+                              From {purchase.product?.name || "Product"}
+                            </div>
+                          </div>
+                        </div>
+                      ))
+                  )}
+                </div>
+
+                {/* Team Commission Section */}
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                    Team Commission
+                  </h3>
+                  {transactions.filter((txn) => txn.type === "referral_bonus")
+                    .length === 0 ? (
+                    <div className="text-center text-gray-500">
+                      No commissions yet
+                    </div>
+                  ) : (
+                    transactions
+                      .filter((txn) => txn.type === "referral_bonus")
+                      .map((txn) => (
+                        <div
+                          key={txn._id}
+                          className="bg-white rounded-lg shadow-md border-l-4 border-purple-600 p-4 mb-4"
+                        >
+                          <div className="flex items-center justify-between mb-2">
+                            <div className="flex items-center">
+                              <div className="w-3 h-3 rounded-full mr-3 bg-purple-500"></div>
+                              <span className="text-sm text-gray-600">
+                                Commission
+                              </span>
+                            </div>
+                            <span className="text-sm font-medium text-gray-900">
+                              {txn.createdAt
+                                ? new Date(txn.createdAt).toLocaleDateString()
+                                : "N/A"}
+                            </span>
+                          </div>
+                          <div className="ml-0 md:ml-4">
+                            <div className="text-lg font-bold mb-1 text-gray-900">
+                              ${txn.amount?.toFixed(2) || "0.00"}
+                            </div>
+                            <div className="text-sm text-gray-600">
+                              {txn.description || "Referral commission"}
+                            </div>
+                          </div>
+                        </div>
+                      ))
+                  )}
+                </div>
               </>
             )}
 

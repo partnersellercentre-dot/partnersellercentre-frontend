@@ -284,3 +284,6 @@ export const deleteNotification = (token, id) =>
   API.delete(`/notifications/${id}`, {
     headers: { Authorization: `Bearer ${token}` },
   });
+
+// Get social links (public)
+export const getSocialLinks = () => API.get("/admin/social-links");
