@@ -23,6 +23,10 @@ function Footer() {
     fetchSocialLinks();
   }, []);
 
+  const isValidUrl = (url) => {
+    return url && /^https?:\/\/.+/.test(url);
+  };
+
   return (
     <footer className="w-full bg-white border-t border-gray-200">
       <div className="w-full p-6 flex flex-col items-center">
@@ -36,24 +40,36 @@ function Footer() {
         <p className="text-gray-600 mb-4">You can contact us using these:</p>
 
         <div className="flex gap-6 mb-8">
-          <a
-            href={socialLinks.whatsapp}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-green-500 hover:text-green-600 transition-colors"
-            aria-label="Contact us on WhatsApp"
-          >
-            <FaWhatsapp size={40} />
-          </a>
-          <a
-            href={socialLinks.telegram}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-blue-500 hover:text-blue-600 transition-colors"
-            aria-label="Contact us on Telegram"
-          >
-            <FaTelegram size={40} />
-          </a>
+          {isValidUrl(socialLinks.whatsapp) ? (
+            <a
+              href={socialLinks.whatsapp}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-green-500 hover:text-green-600 transition-colors"
+              aria-label="Contact us on WhatsApp"
+            >
+              <FaWhatsapp size={40} />
+            </a>
+          ) : (
+            <span className="text-gray-400 cursor-not-allowed">
+              <FaWhatsapp size={40} />
+            </span>
+          )}
+          {isValidUrl(socialLinks.telegram) ? (
+            <a
+              href={socialLinks.telegram}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-500 hover:text-blue-600 transition-colors"
+              aria-label="Contact us on Telegram"
+            >
+              <FaTelegram size={40} />
+            </a>
+          ) : (
+            <span className="text-gray-400 cursor-not-allowed">
+              <FaTelegram size={40} />
+            </span>
+          )}
         </div>
 
         {/* Copyright */}

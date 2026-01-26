@@ -33,6 +33,20 @@ const SocialLinks = () => {
   }, [token]);
 
   const handleSave = async () => {
+    // Validate URLs
+    const urlRegex = /^https?:\/\/.+/;
+    if (socialLinks.whatsapp && !urlRegex.test(socialLinks.whatsapp)) {
+      toast.error(
+        "WhatsApp link must be a valid URL starting with http:// or https://",
+      );
+      return;
+    }
+    if (socialLinks.telegram && !urlRegex.test(socialLinks.telegram)) {
+      toast.error(
+        "Telegram link must be a valid URL starting with http:// or https://",
+      );
+      return;
+    }
     try {
       await updateSystemSettings(token, { socialLinks });
       toast.success("Social links updated successfully");

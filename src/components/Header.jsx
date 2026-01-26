@@ -19,14 +19,28 @@ import {
   FaQuestion,
   FaSignOutAlt,
   FaWallet,
+  FaCopy,
 } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
+import { toast } from "react-toastify";
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const { user, logout } = useContext(AuthContext);
+
+  const copyUsername = async () => {
+    if (user?.name) {
+      try {
+        await navigator.clipboard.writeText(user.name);
+        toast.success("Username copied to clipboard!");
+      } catch (err) {
+        console.error("Failed to copy username:", err);
+        toast.error("Failed to copy username");
+      }
+    }
+  };
 
   const navLinks = [
     { name: "Psc Wallet", href: "/wallet", icon: <FaWallet /> },
@@ -145,11 +159,22 @@ export default function Header() {
                   )}
                 </div>
                 <div>
-                  <Link to="/profile" onClick={() => setMenuOpen(false)}>
-                    <h4 className="font-semibold text-gray-800">
-                      {user?.name || "Guest"}
-                    </h4>
-                  </Link>
+                  <div className="flex items-center gap-2">
+                    <Link to="/profile" onClick={() => setMenuOpen(false)}>
+                      <h4 className="font-semibold text-gray-800">
+                        {user?.name || "Guest"}
+                      </h4>
+                    </Link>
+                    {user?.name && (
+                      <button
+                        onClick={copyUsername}
+                        className="text-gray-500 hover:text-gray-700 transition-colors"
+                        title="Copy username"
+                      >
+                        <FaCopy className="text-sm" />
+                      </button>
+                    )}
+                  </div>
                   <p className="text-sm text-gray-500">
                     {user?.isKycApproved ? "Verified User" : "Unverified"}
                   </p>
