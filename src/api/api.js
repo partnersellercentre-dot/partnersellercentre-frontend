@@ -69,12 +69,15 @@ export const getTotalRevenue = (token) =>
 export const getUserMessages = (token) =>
   API.get("/chat", { headers: { Authorization: `Bearer ${token}` } });
 
-export const sendMessageToAdmin = (token, message) =>
-  API.post(
-    "/chat",
-    { message },
-    { headers: { Authorization: `Bearer ${token}` } },
-  );
+export const sendMessageToAdmin = (token, data) => {
+  const formData = new FormData();
+  if (data.message) formData.append("message", data.message);
+  if (data.image) formData.append("image", data.image);
+
+  return API.post("/chat", formData, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+};
 
 export const getChatUsers = (token) =>
   API.get("/chat/admin/users", {
@@ -86,12 +89,15 @@ export const getAdminUserMessages = (token, userId) =>
     headers: { Authorization: `Bearer ${token}` },
   });
 
-export const replyToUser = (token, userId, message) =>
-  API.post(
-    `/chat/admin/${userId}/reply`,
-    { message },
-    { headers: { Authorization: `Bearer ${token}` } },
-  );
+export const replyToUser = (token, userId, data) => {
+  const formData = new FormData();
+  if (data.message) formData.append("message", data.message);
+  if (data.image) formData.append("image", data.image);
+
+  return API.post(`/chat/admin/${userId}/reply`, formData, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+};
 
 export const deleteUser = (token, userId) =>
   API.delete(`/admin/users/${userId}`, {

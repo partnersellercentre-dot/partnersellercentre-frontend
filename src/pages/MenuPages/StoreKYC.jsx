@@ -157,8 +157,8 @@ export default function StoreKYC() {
               ["ID Number", kycDetails.idNumber],
               [
                 "Status",
-                <span className="text-green-600 font-semibold flex items-center gap-1">
-                  Verified <FaCheckCircle className="text-blue-500" />
+                <span className="text-green-600 font-semibold">
+                  Verified ✅
                 </span>,
               ],
             ].map(([label, value], i) => (

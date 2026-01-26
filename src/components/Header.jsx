@@ -74,7 +74,7 @@ export default function Header() {
         {/* Right Section */}
         <div className="flex items-center gap-3">
           {/* Profile Avatar */}
-          <Link to="/profile">
+          <Link to="/profile" className="relative">
             {user?.profileImage ? (
               <img
                 src={user.profileImage}
@@ -84,6 +84,11 @@ export default function Header() {
             ) : (
               <div className="w-8 h-8 bg-green-100 text-green-600 flex items-center justify-center rounded-full text-sm font-bold cursor-pointer">
                 {user?.name?.charAt(0).toUpperCase() || "G"}
+              </div>
+            )}
+            {user?.isKycApproved && (
+              <div className="absolute -bottom-1 -right-1 bg-white rounded-full p-0.5 shadow-sm">
+                <FaCheckCircle className="text-blue-500 text-[10px]" />
               </div>
             )}
           </Link>
@@ -145,15 +150,8 @@ export default function Header() {
                       {user?.name || "Guest"}
                     </h4>
                   </Link>
-                  <p className="text-sm text-gray-500 flex items-center gap-1">
-                    {user?.isKycApproved ? (
-                      <>
-                        <FaCheckCircle className="text-blue-500" /> Verified
-                        User
-                      </>
-                    ) : (
-                      "Unverified"
-                    )}
+                  <p className="text-sm text-gray-500">
+                    {user?.isKycApproved ? "Verified User" : "Unverified"}
                   </p>
                 </div>
               </div>

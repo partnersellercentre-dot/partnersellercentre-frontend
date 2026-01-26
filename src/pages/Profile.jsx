@@ -222,14 +222,8 @@ export default function Profile() {
             <h2 className="text-xl font-semibold text-gray-800 capitalize">
               {user.name}
             </h2>
-            <p className="text-gray-500 text-sm flex items-center gap-1">
-              {user.isKycApproved ? (
-                <>
-                  <FaCheckCircle className="text-blue-500" /> Verified User
-                </>
-              ) : (
-                "Unverified"
-              )}
+            <p className="text-gray-500 text-sm">
+              {user.isKycApproved ? "Verified User" : "Unverified"}
             </p>
           </div>
         </div>

@@ -7,7 +7,10 @@ function ChatSupport() {
   const { token, user } = useContext(AuthContext);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState(null);
   const messagesEndRef = useRef(null);
+  const fileInputRef = useRef(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -17,6 +20,20 @@ function ChatSupport() {
     fetchMessages();
     scrollToBottom();
   }, []);
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setSelectedImage(file);
+      setPreviewUrl(URL.createObjectURL(file));
+    }
+  };
+
+  const clearImage = () => {
+    setSelectedImage(null);
+    setPreviewUrl(null);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
 
   useEffect(() => {
     if (user?._id) {
@@ -50,12 +67,16 @@ function ChatSupport() {
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
-    if (!newMessage.trim()) return;
+    if (!newMessage.trim() && !selectedImage) return;
 
     try {
-      const res = await sendMessageToAdmin(token, newMessage);
+      const res = await sendMessageToAdmin(token, {
+        message: newMessage,
+        image: selectedImage,
+      });
       setMessages((prev) => [...prev, res.data.message]);
       setNewMessage("");
+      clearImage();
     } catch (err) {
       console.error("Failed to send message", err);
     }
@@ -114,7 +135,17 @@ function ChatSupport() {
                     : "bg-white text-gray-800 rounded-tl-none border border-green-100"
                 }`}
               >
-                <p className="text-sm whitespace-pre-wrap">{msg.message}</p>
+                {msg.imageUrl && (
+                  <img
+                    src={msg.imageUrl}
+                    alt="Chat attachment"
+                    className="max-w-full rounded-lg mb-2 cursor-pointer hover:opacity-90"
+                    onClick={() => window.open(msg.imageUrl, "_blank")}
+                  />
+                )}
+                {msg.message && (
+                  <p className="text-sm whitespace-pre-wrap">{msg.message}</p>
+                )}
                 <span
                   className={`text-[10px] block mt-1 ${
                     !msg.isAdmin ? "text-green-100" : "text-gray-400"
@@ -137,7 +168,62 @@ function ChatSupport() {
         onSubmit={handleSendMessage}
         className="p-4 border-t border-gray-100 bg-white"
       >
+        {previewUrl && (
+          <div className="relative inline-block mb-2">
+            <img
+              src={previewUrl}
+              alt="Preview"
+              className="h-20 w-20 object-cover rounded-lg border border-gray-200"
+            />
+            <button
+              type="button"
+              onClick={clearImage}
+              className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 shadow-lg hover:bg-red-600"
+            >
+              <svg
+                className="w-3 h-3"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+          </div>
+        )}
+
         <div className="flex gap-2 items-end">
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleImageChange}
+            ref={fileInputRef}
+            className="hidden"
+          />
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            className="p-3 bg-gray-100 text-gray-600 rounded-2xl hover:bg-gray-200 transition"
+          >
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+              />
+            </svg>
+          </button>
           <textarea
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}

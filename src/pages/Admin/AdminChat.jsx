@@ -10,10 +10,27 @@ function AdminChat() {
   const [selectedUser, setSelectedUser] = useState(null);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState(null);
   const messagesEndRef = useRef(null);
+  const fileInputRef = useRef(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setSelectedImage(file);
+      setPreviewUrl(URL.createObjectURL(file));
+    }
+  };
+
+  const clearImage = () => {
+    setSelectedImage(null);
+    setPreviewUrl(null);
+    if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
   useEffect(() => {
@@ -64,12 +81,16 @@ function AdminChat() {
 
   const handleSendReply = async (e) => {
     e.preventDefault();
-    if (!newMessage.trim() || !selectedUser) return;
+    if ((!newMessage.trim() && !selectedImage) || !selectedUser) return;
 
     try {
-      const res = await replyToUser(token, selectedUser._id, newMessage);
+      const res = await replyToUser(token, selectedUser._id, {
+        message: newMessage,
+        image: selectedImage,
+      });
       setMessages((prev) => [...prev, res.data.message]);
       setNewMessage("");
+      clearImage();
       fetchUsers(); // Update last message in sidebar
     } catch (err) {
       toast.error("Failed to send reply");
@@ -147,7 +168,15 @@ function AdminChat() {
                         : "bg-gray-700 text-gray-100 rounded-tl-none border border-gray-600"
                     }`}
                   >
-                    <p className="text-sm">{msg.message}</p>
+                    {msg.imageUrl && (
+                      <img
+                        src={msg.imageUrl}
+                        alt="Chat attachment"
+                        className="max-w-full rounded-lg mb-2 cursor-pointer hover:opacity-90"
+                        onClick={() => window.open(msg.imageUrl, "_blank")}
+                      />
+                    )}
+                    {msg.message && <p className="text-sm">{msg.message}</p>}
                     <span
                       className={`text-[10px] block mt-1 ${msg.isAdmin ? "text-green-100" : "text-gray-400"}`}
                     >
@@ -166,7 +195,61 @@ function AdminChat() {
               onSubmit={handleSendReply}
               className="p-4 border-t border-gray-700 bg-gray-800"
             >
+              {previewUrl && (
+                <div className="relative inline-block mb-2">
+                  <img
+                    src={previewUrl}
+                    alt="Preview"
+                    className="h-20 w-20 object-cover rounded-lg border border-gray-600"
+                  />
+                  <button
+                    type="button"
+                    onClick={clearImage}
+                    className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 shadow-lg hover:bg-red-600"
+                  >
+                    <svg
+                      className="w-3 h-3"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
+                  </button>
+                </div>
+              )}
               <div className="flex gap-2">
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  ref={fileInputRef}
+                  className="hidden"
+                />
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="p-2 bg-gray-700 text-gray-400 rounded-full hover:bg-gray-600 transition"
+                >
+                  <svg
+                    className="w-6 h-6"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                    />
+                  </svg>
+                </button>
                 <input
                   type="text"
                   value={newMessage}
@@ -176,7 +259,7 @@ function AdminChat() {
                 />
                 <button
                   type="submit"
-                  disabled={!newMessage.trim()}
+                  disabled={!newMessage.trim() && !selectedImage}
                   className="bg-green-600 hover:bg-green-700 disabled:bg-gray-600 text-white font-bold py-2 px-6 rounded-full transition-all"
                 >
                   Send

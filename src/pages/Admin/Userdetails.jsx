@@ -3,7 +3,6 @@ import { useParams, useNavigate } from "react-router-dom";
 import { getUsers, deleteUser, updateUserStatus } from "../../api/api";
 import { AuthContext } from "../../context/AuthContext";
 import Spinner from "../../components/Spinner";
-import { FaCheckCircle } from "react-icons/fa";
 
 function Userdetails() {
   const { id } = useParams();
@@ -115,15 +114,9 @@ function Userdetails() {
           <span
             className={`${
               user.isKycApproved ? "text-green-400" : "text-red-400"
-            } font-medium flex items-center gap-1`}
+            } font-medium`}
           >
-            {user.isKycApproved ? (
-              <>
-                <FaCheckCircle className="text-blue-500" /> KYC Verified
-              </>
-            ) : (
-              "KYC Unverified"
-            )}
+            {user.isKycApproved ? "KYC Verified" : "KYC Unverified"}
           </span>
         </div>
         <div>

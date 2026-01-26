@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { FaTrashAlt, FaCheckCircle } from "react-icons/fa";
+import { FaTrashAlt } from "react-icons/fa";
 import { getUsers, deleteUser } from "../../api/api";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext"; // Import AuthContext
@@ -74,15 +74,7 @@ function Users() {
               <tbody>
                 {users.map((user) => (
                   <tr key={user._id} className="border-b border-gray-600">
-                    <td className="px-6 py-3 flex items-center gap-1">
-                      {user.name}
-                      {user.isKycApproved && (
-                        <FaCheckCircle
-                          className="text-blue-500"
-                          title="Verified"
-                        />
-                      )}
-                    </td>
+                    <td className="px-6 py-3">{user.name}</td>
                     <td className="px-6 py-3">{user.email}</td>
                     <td className="px-6 py-3">{user.role}</td>
                     <td className="px-6 py-3 flex space-x-4">
