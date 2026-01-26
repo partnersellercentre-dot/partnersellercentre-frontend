@@ -28,50 +28,65 @@ export default function Referral() {
   const rewardTiers = [
     {
       title: "Starter",
-      activeStores: "3",
-      funds: "$200",
-      commission: "$30",
-      weeklySalary: "$5",
+      friends: "3 Active Friend Stores",
+      friendFunds: "$200 Total Friend Store Funds",
+      yourFunds: "$100 Your Store Funds",
+      commission: "$30 Commission",
+      salary: "$5 Monthly Salary",
       icon: <FaRocket className="text-blue-500" />,
     },
     {
       title: "Growth",
-      activeStores: "10",
-      funds: "$100",
-      commission: "$00",
-      weeklySalary: "$0",
+      friends: "10 Active Friend Stores",
+      friendFunds: "$1,000 Total Friend Store Funds",
+      yourFunds: "$300 Your Store Funds",
+      commission: "$100 Commission",
+      salary: "$20 Monthly Salary",
       icon: <FaChartLine className="text-green-500" />,
     },
     {
       title: "Expansion",
-      activeStores: "30",
-      funds: "$3100",
-      commission: "$00",
-      weeklySalary: "$0",
+      friends: "20 Active Friend Stores",
+      friendFunds: "$3,000 Total Friend Store Funds",
+      yourFunds: "$500 Your Store Funds",
+      commission: "$300 Commission",
+      salary: "$50 Monthly Salary",
       icon: <FaGlobe className="text-purple-500" />,
     },
     {
-      title: "Premium",
-      activeStores: "40",
-      funds: "$200",
-      commission: "$90",
-      weeklySalary: "$5",
-      icon: <FaStar className="text-red-500" />,
-    },
-    {
       title: "Elite",
-      activeStores: "70",
-      funds: "$1100",
-      commission: "$50",
-      weeklySalary: "$25",
+      friends: "30 Active Friend Stores",
+      friendFunds: "$5,000 Total Friend Store Funds",
+      yourFunds: "$700 Your Store Funds",
+      commission: "$400 Commission",
+      salary: "$70 Monthly Salary",
       icon: <FaCrown className="text-red-500" />,
     },
     {
+      title: "Master",
+      friends: "40 Active Friend Stores",
+      friendFunds: "$7,500 Total Friend Store Funds",
+      yourFunds: "$800 Your Store Funds",
+      commission: "$500 Commission",
+      salary: "$100 Monthly Salary",
+      icon: <FaBullseye className="text-orange-500" />,
+    },
+    {
+      title: "Premium",
+      friends: "70 Active Friend Stores",
+      friendFunds: "$10,000 Total Friend Store Funds",
+      yourFunds: "$1,000 Your Store Funds",
+      commission: "$750 Commission",
+      salary: "$125 Monthly Salary",
+      icon: <FaStar className="text-red-500" />,
+    },
+    {
       title: "Diamond",
-      activeStores: "100",
-      funds: "2,55K",
-      commission: "$70",
-      weeklySalary: "",
+      friends: "100 Active Friend Stores",
+      friendFunds: "$12,500 Total Friend Store Funds",
+      yourFunds: "$1,250 Your Store Funds",
+      commission: "$1,000 Commission",
+      salary: "$200 Monthly Salary",
       icon: <FaGem className="text-blue-400" />,
     },
   ];
@@ -234,10 +249,11 @@ export default function Referral() {
                 <span className="font-bold text-gray-800">{tier.title}</span>
               </div>
               <div className="space-y-1 text-xs sm:text-sm text-gray-600">
-                <p>{tier.activeStores} Active Friend Stores</p>
-                <p>{tier.funds} Total Friend Store Funds</p>
-                <p>{tier.commission} Commission</p>
-                {tier.weeklySalary && <p>{tier.weeklySalary} Weekly Salary</p>}
+                <p>{tier.friends}</p>
+                <p>{tier.friendFunds}</p>
+                <p>{tier.yourFunds}</p>
+                <p>{tier.commission}</p>
+                {tier.salary && <p>{tier.salary}</p>}
               </div>
             </div>
           ))}

@@ -16,7 +16,7 @@ function Home() {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-green-50 flex flex-col w-full">
+    <div className="min-h-[80vh] bg-green-50 flex flex-col w-full">
       {/* Header */}
       <header className="sticky top-0 z-50 flex items-center justify-between p-4 md:p-6 w-full border-b border-gray-200 bg-white">
         <div className="flex items-center space-x-2">
@@ -43,7 +43,7 @@ function Home() {
       </header>
 
       {/* Hero Section */}
-      <main className="flex flex-col justify-center px-4 md:px-6 w-full h-screen">
+      <main className="flex flex-col justify-center px-4 md:px-6 w-full h-[80vh]">
         <div className="text-center md:text-left w-full">
           <h1 className="text-4xl sm:text-6xl font-bold text-black leading-tight mb-6">
             Global TOP1 brand dropshipping one-stop solution.

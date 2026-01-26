@@ -10,7 +10,7 @@ export default function Benefits() {
       friendFunds: "$200 Total Friend Store Funds",
       yourFunds: "$100 Your Store Funds",
       commission: "$30 Commission",
-      salary: "$5 Weekly Salary",
+      salary: "$5 Monthly Salary",
     },
     {
       level: "Growth",
@@ -18,7 +18,7 @@ export default function Benefits() {
       friendFunds: "$1,000 Total Friend Store Funds",
       yourFunds: "$300 Your Store Funds",
       commission: "$100 Commission",
-      salary: "$20 Weekly Salary",
+      salary: "$20 Monthly Salary",
     },
     {
       level: "Expansion",
@@ -26,7 +26,7 @@ export default function Benefits() {
       friendFunds: "$3,000 Total Friend Store Funds",
       yourFunds: "$500 Your Store Funds",
       commission: "$300 Commission",
-      salary: "$50 Weekly Salary",
+      salary: "$50 Monthly Salary",
     },
     {
       level: "Elite",
@@ -34,7 +34,7 @@ export default function Benefits() {
       friendFunds: "$5,000 Total Friend Store Funds",
       yourFunds: "$700 Your Store Funds",
       commission: "$400 Commission",
-      salary: "$70 Weekly Salary",
+      salary: "$70 Monthly Salary",
     },
     {
       level: "Master",
@@ -42,7 +42,7 @@ export default function Benefits() {
       friendFunds: "$7,500 Total Friend Store Funds",
       yourFunds: "$800 Your Store Funds",
       commission: "$500 Commission",
-      salary: "$100 Weekly Salary",
+      salary: "$100 Monthly Salary",
     },
     {
       level: "Premium",
@@ -50,7 +50,7 @@ export default function Benefits() {
       friendFunds: "$10,000 Total Friend Store Funds",
       yourFunds: "$1,000 Your Store Funds",
       commission: "$750 Commission",
-      salary: "$125 Weekly Salary",
+      salary: "$125 Monthly Salary",
     },
     {
       level: "Diamond",
@@ -58,7 +58,7 @@ export default function Benefits() {
       friendFunds: "$12,500 Total Friend Store Funds",
       yourFunds: "$1,250 Your Store Funds",
       commission: "$1,000 Commission",
-      salary: "$200 Weekly Salary",
+      salary: "$200 Monthly Salary",
     },
   ];
 
@@ -67,14 +67,14 @@ export default function Benefits() {
     "Total Friend Store Funds",
     "Your Store Funds",
     "Commission Earned",
-    "Weekly Salary",
+    "Monthly Salary",
   ];
 
   const incentives = [
     "Grow your network of friend stores",
     "Increase funds in your friend stores",
     "Develop your own store's performance",
-    "Earn commission and weekly salary through strategic growth",
+    "Earn commission and monthly salary through strategic growth",
   ];
 
   return (
