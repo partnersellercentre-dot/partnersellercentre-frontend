@@ -7,6 +7,7 @@ import {
 } from "../../api/productsApi";
 import Table from "./Table";
 import Spinner from "../../components/Spinner";
+import { CATEGORIES } from "../../constants/categories";
 
 function AdminProducts() {
   const [products, setProducts] = useState([]);
@@ -154,14 +155,20 @@ function AdminProducts() {
                 <label htmlFor="category" className="block text-gray-700">
                   Category
                 </label>
-                <input
-                  type="text"
+                <select
                   id="category"
                   name="category"
                   defaultValue={productToEdit?.category}
                   className="w-full p-2 bg-gray-100 text-gray-700 rounded-lg border border-gray-300"
                   required
-                />
+                >
+                  <option value="">-- Select Category --</option>
+                  {CATEGORIES.map((cat) => (
+                    <option key={cat.name} value={cat.name}>
+                      {cat.name}
+                    </option>
+                  ))}
+                </select>
               </div>
               <div className="mb-4">
                 <label htmlFor="image" className="block text-gray-700">

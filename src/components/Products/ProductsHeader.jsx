@@ -1,22 +1,10 @@
 import { useProducts } from "../../context/ProductsContext";
 import { FiFilter, FiStar, FiSquare, FiTag, FiSearch } from "react-icons/fi";
-
-const categories = [
-  { name: "Gadgets", icon: "📦" },
-  { name: "Shoes", icon: "👟" },
-  { name: "Shirts", icon: "👕" },
-  { name: "Books", icon: "📕" },
-  { name: "Toys", icon: "🧸" },
-  { name: "Watches", icon: "⌚" },
-  { name: "Electronics", icon: "🔌" },
-  { name: "Home Decores", icon: "🏠" },
-  { name: "Women's fashion", icon: "👗" },
-  { name: "Hoodies & shirts", icon: "🧥" },
-];
+import { CATEGORIES as categories } from "../../constants/categories";
 
 // put longer ones last
 const sortedCategories = [...categories].sort(
-  (a, b) => a.name.length - b.name.length
+  (a, b) => a.name.length - b.name.length,
 );
 
 const filters = [

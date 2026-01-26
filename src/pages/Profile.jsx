@@ -204,7 +204,12 @@ export default function Profile() {
                 {user.name.charAt(0).toUpperCase()}
               </div>
             )}
-            <label className="absolute bottom-0 right-0 bg-green-600 p-1 rounded-full cursor-pointer text-white">
+            {user.isKycApproved && (
+              <div className="absolute -bottom-1 -right-1 bg-white rounded-full p-0.5">
+                <FaCheckCircle className="text-blue-500 text-lg" />
+              </div>
+            )}
+            <label className="absolute bottom-0 left-0 bg-green-600 p-1 rounded-full cursor-pointer text-white translate-x-[-25%]">
               <FaCamera size={14} />
               <input
                 type="file"
@@ -217,8 +222,14 @@ export default function Profile() {
             <h2 className="text-xl font-semibold text-gray-800 capitalize">
               {user.name}
             </h2>
-            <p className="text-gray-500 text-sm">
-              {user.isKycApproved ? "Verified User" : "Unverified"}
+            <p className="text-gray-500 text-sm flex items-center gap-1">
+              {user.isKycApproved ? (
+                <>
+                  <FaCheckCircle className="text-blue-500" /> Verified User
+                </>
+              ) : (
+                "Unverified"
+              )}
             </p>
           </div>
         </div>

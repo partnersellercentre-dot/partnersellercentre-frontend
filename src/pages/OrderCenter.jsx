@@ -112,7 +112,7 @@ export default function OrderCenter() {
     <div className="min-h-screen bg-gray-50 p-2 sm:p-3 w-full">
       <div className="mb-4">
         <h1 className="text-sm sm:text-base font-semibold text-gray-900 leading-tight">
-          Dropshipping in progress — your product is expected to sell within 48
+          Dropshipping in progress — your product is expected to sell within 24
           hours.
         </h1>
       </div>

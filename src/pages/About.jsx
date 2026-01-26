@@ -45,8 +45,8 @@ export default function About() {
             products to buyers on behalf of our partners.
           </li>
           <li>
-            <strong>Timely delivery:</strong> Products are delivered within 48
-            to 72 hours, enhancing customer satisfaction and loyalty.
+            <strong>Timely delivery:</strong> Products are delivered within 24
+            to 48 hours, enhancing customer satisfaction and loyalty.
           </li>
         </ul>
       </section>

@@ -2,6 +2,7 @@ import { toast } from "react-toastify";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createProduct } from "../../api/productsApi";
+import { CATEGORIES } from "../../constants/categories";
 
 function CreateProduct() {
   const [formData, setFormData] = useState({
@@ -165,13 +166,11 @@ function CreateProduct() {
               required
             >
               <option value="">-- Select Category --</option>
-              <option value="Gadgets">Gadgets</option>
-              <option value="Electronics">Electronics</option>
-              <option value="Shoes">Shoes</option>
-              <option value="Shirts">Shirts</option>
-              <option value="Books">Books</option>
-              <option value="Home Decores">Home Decores</option>
-              <option value="Health & Wellness">Health & Wellness</option>
+              {CATEGORIES.map((cat) => (
+                <option key={cat.name} value={cat.name}>
+                  {cat.name}
+                </option>
+              ))}
             </select>
           </div>
 

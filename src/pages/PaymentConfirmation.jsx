@@ -17,33 +17,10 @@ export default function PaymentConfirmationModal({
 }) {
   const [activeTab, setActiveTab] = useState("online");
   const [selectedPayment, setSelectedPayment] = useState(null);
+  const [showInstructions, setShowInstructions] = useState(false);
+  const [selectedOfflineMethod, setSelectedOfflineMethod] = useState(null);
   const navigate = useNavigate();
   const { token } = useContext(AuthContext);
-
-  useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "unset";
-    }
-    return () => {
-      document.body.style.overflow = "unset";
-    };
-  }, [isOpen]);
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.key === "Escape") {
-        onClose();
-      }
-    };
-    if (isOpen) {
-      document.addEventListener("keydown", handleKeyDown);
-    }
-    return () => {
-      document.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [isOpen, onClose]);
-  if (!isOpen) return null;
 
   const handlePayment = () => {
     if (!selectedPayment) {
@@ -74,227 +51,313 @@ export default function PaymentConfirmationModal({
     { id: 6, name: "UPI", img: "/upi.jpg" },
   ];
 
-  const handleOfflineDeposit = async (opt) => {
+  const handleOfflineDeposit = (opt) => {
+    setSelectedOfflineMethod(opt);
+    setShowInstructions(true);
+  };
+
+  const handleProceedOffline = async () => {
+    if (!selectedOfflineMethod) return;
     try {
       // Prepare deposit data
       const depositData = {
         amount: Number(amount),
-        method: opt.name,
+        method: selectedOfflineMethod.name,
         screenshot: null, // Optional, can add later
       };
       // Call API to create pending deposit
       await depositRequest(token, depositData);
       // Navigate to chat-support page
       navigate("/chat-support", {
-        state: { method: opt.name, amount },
+        state: { method: selectedOfflineMethod.name, amount },
       });
     } catch (error) {
       toast.error("Failed to create deposit request. Please try again.");
     }
   };
 
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [isOpen]);
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") {
+        onClose();
+      }
+    };
+    if (isOpen) {
+      document.addEventListener("keydown", handleKeyDown);
+    }
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isOpen, onClose]);
+  if (!isOpen) return null;
+
   return (
-    <div
-      className="fixed inset-0 flex items-center justify-center bg-black/50 z-50 p-4"
-      onClick={onClose}
-    >
+    <>
       <div
-        className="bg-white rounded-lg shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto"
-        onClick={(e) => e.stopPropagation()}
+        className="fixed inset-0 flex items-center justify-center bg-black/50 z-50 p-4"
+        onClick={onClose}
       >
-        {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b">
-          <h2 className="text-lg font-semibold text-gray-900">
-            Payment Confirmation
-          </h2>
-          <button
-            onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors"
-          >
-            <FaTimes size={20} />
-          </button>
-        </div>
-
-        {/* Content */}
-        <div className="p-4">
-          {/* Order Details */}
-          <div className="mb-4">
-            <p className="text-sm text-gray-600 mb-1">
-              Recharge order number:{" "}
-              <span className="text-gray-900">{orderNumber}</span>
-            </p>
-            <p className="text-sm text-gray-600">
-              Deposit amount:{" "}
-              <span className="text-red-500 font-semibold">${amount}</span>
-            </p>
-          </div>
-
-          {/* Tabs */}
-          <div className="flex mb-4 bg-gray-100 rounded-lg p-1">
+        <div
+          className="bg-white rounded-lg shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {/* Header */}
+          <div className="flex items-center justify-between p-4 border-b">
+            <h2 className="text-lg font-semibold text-gray-900">
+              Payment Confirmation
+            </h2>
             <button
-              onClick={() => setActiveTab("online")}
-              className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
-                activeTab === "online"
-                  ? "bg-white text-gray-900 shadow-sm"
-                  : "text-gray-600 hover:text-gray-900"
-              }`}
+              onClick={onClose}
+              className="text-gray-400 hover:text-gray-600 transition-colors"
             >
-              Online deposit
-            </button>
-            <button
-              onClick={() => setActiveTab("offline")}
-              className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
-                activeTab === "offline"
-                  ? "bg-white text-gray-900 shadow-sm"
-                  : "text-gray-600 hover:text-gray-900"
-              }`}
-            >
-              Offline deposit
+              <FaTimes size={20} />
             </button>
           </div>
 
-          {/* Online Deposit Options */}
-          {activeTab === "online" && (
-            <div className="mb-6">
-              <h3 className="text-sm font-medium text-gray-900 mb-3">
-                Payment options
-              </h3>
+          {/* Content */}
+          <div className="p-4">
+            {/* Order Details */}
+            <div className="mb-4">
+              <p className="text-sm text-gray-600 mb-1">
+                Recharge order number:{" "}
+                <span className="text-gray-900">{orderNumber}</span>
+              </p>
+              <p className="text-sm text-gray-600">
+                Deposit amount:{" "}
+                <span className="text-red-500 font-semibold">${amount}</span>
+              </p>
+            </div>
 
-              {/* Tether TRC20 Option */}
-              <div
-                onClick={() => setSelectedPayment("trc20")}
-                className={`relative bg-green-500 rounded-md p-4 mb-3 cursor-pointer transition-all ${
-                  selectedPayment === "trc20" ? "ring-2 ring-green-600" : ""
-                }`}
-              >
-                <div className="flex items-center justify-between text-white">
-                  <div>
-                    <div className="font-semibold text-lg">Tether</div>
-                    <div className="text-sm opacity-90">USDT (TRC20)</div>
-                  </div>
-                  <img
-                    src="/tether-usdt-logo.png" // Existing logo
-                    alt="USDT TRC20"
-                    className="w-16 h-auto"
-                  />
-                </div>
-                {selectedPayment === "trc20" && (
-                  <div className="absolute top-2 right-2">
-                    <FaCheckCircle className="text-white" size={20} />
-                  </div>
-                )}
-              </div>
-
-              {/* Tether BEP20 Option */}
-              <div
-                onClick={() => setSelectedPayment("bep20")}
-                className={`relative border text-green-500 border-green-500 p-4 rounded-md mb-3 cursor-pointer transition-all ${
-                  selectedPayment === "bep20" ? "ring-2 ring-green-600" : ""
-                }`}
-              >
-                <div className="flex items-center justify-between text-black">
-                  <div>
-                    <div className="font-semibold text-lg">Tether</div>
-                    <div className="text-sm opacity-90">USDT (BEP20)</div>
-                  </div>
-                  <div className="w-8 h-8 border-2 border-white rounded flex items-center justify-center text-black text-xs">
-                    <img
-                      src="/bdep.webp" // Existing logo
-                      alt="USDT BEP20"
-                      className="w-32 "
-                    />{" "}
-                  </div>
-                </div>
-                {selectedPayment === "bep20" && (
-                  <div className="absolute top-2 right-2">
-                    <FaCheckCircle className="text-white" size={20} />
-                  </div>
-                )}
-              </div>
-
-              {/* TRX Option */}
-              <div
-                onClick={() => setSelectedPayment("trx")}
-                className={`relative border text-green-500 border-green-500 p-4 rounded-md mb-3 cursor-pointer transition-all ${
-                  selectedPayment === "trx" ? "ring-2 ring-green-600" : ""
-                }`}
-              >
-                <div className="flex items-center justify-between text-black">
-                  <div>
-                    <div className="font-semibold text-lg">TRX</div>
-                    <div className="text-sm opacity-90">Tron</div>
-                  </div>
-                  <div className="w-8 h-8 border-2 border-white rounded flex items-center justify-center text-black text-xs">
-                    <img
-                      src="/trx.png" // Existing logo
-                      alt="USDT BEP20"
-                      className="w-32 "
-                    />{" "}
-                  </div>
-                </div>
-                {selectedPayment === "trx" && (
-                  <div className="absolute top-2 right-2">
-                    <FaCheckCircle className="text-white" size={20} />
-                  </div>
-                )}
-              </div>
-
-              {/* Card Options */}
-              <div
-                onClick={() => setSelectedPayment("card")}
-                className={`relative bg-gray-100 p-4 mb-3 cursor-pointer transition-all ${
-                  selectedPayment === "card" ? "ring-2 ring-green-600" : ""
-                }`}
-              >
-                <div className="flex items-center justify-center space-x-4">
-                  <SiVisa size={32} />
-                  <SiMastercard size={32} />
-                </div>
-                {selectedPayment === "card" && (
-                  <div className="absolute top-2 right-2">
-                    <FaCheckCircle className="text-green-600" size={20} />
-                  </div>
-                )}
-              </div>
-
-              {/* Confirm Button */}
+            {/* Tabs */}
+            <div className="flex mb-4 bg-gray-100 rounded-lg p-1">
               <button
-                onClick={() => handlePayment(selectedPayment)}
-                className="w-full mt-4 py-3 font-medium bg-green-500 text-white hover:bg-green-600 transition-colors cursor-pointer"
+                onClick={() => setActiveTab("online")}
+                className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
+                  activeTab === "online"
+                    ? "bg-white text-gray-900 shadow-sm"
+                    : "text-gray-600 hover:text-gray-900"
+                }`}
               >
-                Continue
+                Online deposit
+              </button>
+              <button
+                onClick={() => setActiveTab("offline")}
+                className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
+                  activeTab === "offline"
+                    ? "bg-white text-gray-900 shadow-sm"
+                    : "text-gray-600 hover:text-gray-900"
+                }`}
+              >
+                Offline deposit
               </button>
             </div>
-          )}
 
-          {/* Offline Deposit Options */}
-          {activeTab === "offline" && (
-            <div className="mb-6">
-              <h3 className="text-sm font-medium text-gray-900 mb-3">
-                Select a method
-              </h3>
-              <div className="grid grid-cols-3 gap-3">
-                {offlineOptions.map((opt) => (
-                  <div
-                    key={opt.id}
-                    className="border border-green-500  p-3 flex flex-col items-center justify-center rounded-lg cursor-pointer"
-                    onClick={() => handleOfflineDeposit(opt)} // <-- Call handler
-                  >
+            {/* Online Deposit Options */}
+            {activeTab === "online" && (
+              <div className="mb-6">
+                <h3 className="text-sm font-medium text-gray-900 mb-3">
+                  Payment options
+                </h3>
+
+                {/* Tether TRC20 Option */}
+                <div
+                  onClick={() => setSelectedPayment("trc20")}
+                  className={`relative bg-green-500 rounded-md p-4 mb-3 cursor-pointer transition-all ${
+                    selectedPayment === "trc20" ? "ring-2 ring-green-600" : ""
+                  }`}
+                >
+                  <div className="flex items-center justify-between text-white">
+                    <div>
+                      <div className="font-semibold text-lg">Tether</div>
+                      <div className="text-sm opacity-90">USDT (TRC20)</div>
+                    </div>
                     <img
-                      src={opt.img}
-                      alt={opt.name}
-                      className="w-12 h-12 object-contain mb-2"
+                      src="/tether-usdt-logo.png" // Existing logo
+                      alt="USDT TRC20"
+                      className="w-16 h-auto"
                     />
-                    <p className="text-xs font-normal text-green-500 text-center">
-                      {opt.name}
-                    </p>
                   </div>
-                ))}
+                  {selectedPayment === "trc20" && (
+                    <div className="absolute top-2 right-2">
+                      <FaCheckCircle className="text-white" size={20} />
+                    </div>
+                  )}
+                </div>
+
+                {/* Tether BEP20 Option */}
+                <div
+                  onClick={() => setSelectedPayment("bep20")}
+                  className={`relative border text-green-500 border-green-500 p-4 rounded-md mb-3 cursor-pointer transition-all ${
+                    selectedPayment === "bep20" ? "ring-2 ring-green-600" : ""
+                  }`}
+                >
+                  <div className="flex items-center justify-between text-black">
+                    <div>
+                      <div className="font-semibold text-lg">Tether</div>
+                      <div className="text-sm opacity-90">USDT (BEP20)</div>
+                    </div>
+                    <div className="w-8 h-8 border-2 border-white rounded flex items-center justify-center text-black text-xs">
+                      <img
+                        src="/bdep.webp" // Existing logo
+                        alt="USDT BEP20"
+                        className="w-32 "
+                      />{" "}
+                    </div>
+                  </div>
+                  {selectedPayment === "bep20" && (
+                    <div className="absolute top-2 right-2">
+                      <FaCheckCircle className="text-white" size={20} />
+                    </div>
+                  )}
+                </div>
+
+                {/* TRX Option */}
+                <div
+                  className={`relative border text-gray-400 border-gray-200 p-4 rounded-md mb-3 cursor-not-allowed opacity-60 transition-all`}
+                >
+                  <div className="flex items-center justify-between text-gray-500">
+                    <div>
+                      <div className="font-semibold text-lg">TRX</div>
+                      <div className="text-sm opacity-90">Tron (Disabled)</div>
+                    </div>
+                    <div className="w-8 h-8 rounded flex items-center justify-center grayscale">
+                      <img src="/trx.png" alt="TRX" className="w-32" />{" "}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Card Options */}
+                <div
+                  className={`relative bg-gray-100 p-4 mb-3 cursor-not-allowed opacity-60 transition-all`}
+                >
+                  <div className="flex items-center justify-center space-x-4 grayscale opacity-50">
+                    <SiVisa size={32} />
+                    <SiMastercard size={32} />
+                  </div>
+                  <div className="text-center text-xs text-gray-500 mt-1">
+                    (Temporarily Disabled)
+                  </div>
+                </div>
+
+                {/* Confirm Button */}
+                <button
+                  onClick={() => handlePayment(selectedPayment)}
+                  className="w-full mt-4 py-3 font-medium bg-green-500 text-white hover:bg-green-600 transition-colors cursor-pointer"
+                >
+                  Continue
+                </button>
               </div>
-            </div>
-          )}
+            )}
+
+            {/* Offline Deposit Options */}
+            {activeTab === "offline" && (
+              <div className="mb-6">
+                <h3 className="text-sm font-medium text-gray-900 mb-3">
+                  Select a method
+                </h3>
+                <div className="grid grid-cols-3 gap-3">
+                  {offlineOptions.map((opt) => (
+                    <div
+                      key={opt.id}
+                      className="border border-green-500  p-3 flex flex-col items-center justify-center rounded-lg cursor-pointer"
+                      onClick={() => handleOfflineDeposit(opt)} // <-- Call handler
+                    >
+                      <img
+                        src={opt.img}
+                        alt={opt.name}
+                        className="w-12 h-12 object-contain mb-2"
+                      />
+                      <p className="text-xs font-normal text-green-500 text-center">
+                        {opt.name}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
-    </div>
+
+      {/* Offline Instructions Modal */}
+      {showInstructions && (
+        <div
+          className="fixed inset-0 flex items-center justify-center bg-black/60 z-[60] p-4"
+          onClick={() => setShowInstructions(false)}
+        >
+          <div
+            className="bg-white rounded-xl shadow-2xl w-full max-w-sm overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="bg-green-500 p-4 text-white text-center">
+              <h3 className="text-lg font-bold">
+                Offline Deposit Instructions
+              </h3>
+            </div>
+            <div className="p-6 space-y-4">
+              <div className="flex items-start space-x-3">
+                <div className="bg-green-100 text-green-600 rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 font-bold text-sm">
+                  1
+                </div>
+                <p className="text-gray-700 text-sm">
+                  Click <strong>[Chat with Support]</strong> to get our current
+                  bank/wallet info.
+                </p>
+              </div>
+              <div className="flex items-start space-x-3">
+                <div className="bg-green-100 text-green-600 rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 font-bold text-sm">
+                  2
+                </div>
+                <p className="text-gray-700 text-sm">
+                  Pay with your local currency to the provided account.
+                </p>
+              </div>
+              <div className="flex items-start space-x-3">
+                <div className="bg-green-100 text-green-600 rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 font-bold text-sm">
+                  3
+                </div>
+                <p className="text-gray-700 text-sm">
+                  Upload a screenshot of your payment in the chat.
+                </p>
+              </div>
+              <div className="flex items-start space-x-3">
+                <div className="bg-green-100 text-green-600 rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 font-bold text-sm">
+                  4
+                </div>
+                <p className="text-gray-700 text-sm font-medium">
+                  After successfully, amount will be credit automatically to
+                  wallet.
+                </p>
+              </div>
+
+              <div className="pt-4 flex space-x-3">
+                <button
+                  onClick={() => setShowInstructions(false)}
+                  className="flex-1 py-2 text-gray-500 font-medium hover:text-gray-700 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleProceedOffline}
+                  className="flex-1 py-2 bg-green-500 text-white font-bold rounded-lg hover:bg-green-600 transition-all shadow-md shadow-green-200"
+                >
+                  Proceed to Chat
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 }

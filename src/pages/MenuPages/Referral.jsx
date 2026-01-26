@@ -171,7 +171,7 @@ export default function Referral() {
             Active Stores
           </p>
           <p className="text-xl sm:text-2xl font-bold mt-1">
-            {referrals.filter((r) => r.accountStatus === "Active").length || 0}
+            {referrals.filter((r) => r.isActive).length || 0}
           </p>
         </div>
         <div className="bg-red-500 text-white p-3 rounded-xl text-center shadow-md flex flex-col justify-center relative">
@@ -179,7 +179,7 @@ export default function Referral() {
             Inactive Stores
           </p>
           <p className="text-xl sm:text-2xl font-bold mt-1">
-            {referrals.filter((r) => r.accountStatus !== "Active").length || 0}
+            {referrals.filter((r) => !r.isActive).length || 0}
           </p>
           <span className="absolute top-1 right-2 text-white font-bold text-xs">
             ×
