@@ -206,7 +206,7 @@ export default function Profile() {
             )}
             {user.isKycApproved && (
               <div className="absolute -bottom-1 -right-1 bg-white rounded-full p-0.5">
-                <FaCheckCircle className="text-blue-500 text-lg" />
+                <FaCheckCircle className="text-green-500 text-lg" />
               </div>
             )}
             <label className="absolute bottom-0 left-0 bg-green-600 p-1 rounded-full cursor-pointer text-white translate-x-[-25%]">

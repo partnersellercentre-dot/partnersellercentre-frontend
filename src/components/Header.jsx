@@ -102,7 +102,7 @@ export default function Header() {
             )}
             {user?.isKycApproved && (
               <div className="absolute -bottom-1 -right-1 bg-white rounded-full p-0.5 shadow-sm">
-                <FaCheckCircle className="text-blue-500 text-[10px]" />
+                <FaCheckCircle className="text-green-500 text-[10px]" />
               </div>
             )}
           </Link>
@@ -154,7 +154,7 @@ export default function Header() {
                   )}
                   {user?.isKycApproved && (
                     <div className="absolute -bottom-1 -right-1 bg-white rounded-full p-0.5">
-                      <FaCheckCircle className="text-blue-500 text-xs" />
+                      <FaCheckCircle className="text-green-500 text-xs" />
                     </div>
                   )}
                 </div>
