@@ -85,6 +85,7 @@ export default function Wallet() {
         netAmount: txn.netAmount,
       });
     });
+    /* 
     purchases
       .filter((p) => p.status === "paid")
       .forEach((purchase) => {
@@ -97,6 +98,7 @@ export default function Wallet() {
           status: "paid",
         });
       });
+    */
     return history.sort(
       (a, b) => new Date(b.date || 0) - new Date(a.date || 0),
     );
@@ -116,6 +118,7 @@ export default function Wallet() {
       case "bonus":
         return "Bonus";
       case "daily_profit":
+      case "profit":
         return "Profit";
       case "referral_bonus":
         return "Commission";
@@ -123,8 +126,10 @@ export default function Wallet() {
         return "Deposit";
       case "withdraw":
         return "Withdrawal";
+      case "transfer":
+        return "Funds Release";
       default:
-        return type;
+        return type.charAt(0).toUpperCase() + type.slice(1);
     }
   };
 

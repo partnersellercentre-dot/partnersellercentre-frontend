@@ -1,7 +1,6 @@
 export const CATEGORIES = [
   { name: "Gadgets", icon: "📦" },
   { name: "Shoes", icon: "👟" },
-  { name: "Shirts", icon: "👕" },
   { name: "Books", icon: "📕" },
   { name: "Toys", icon: "🧸" },
   { name: "Watches", icon: "⌚" },

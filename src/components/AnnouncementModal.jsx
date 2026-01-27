@@ -16,7 +16,7 @@ const AnnouncementModal = ({ isOpen, onClose, announcement }) => {
   if (!isOpen || !announcement) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black bg-opacity-80 backdrop-blur-sm">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 backdrop-blur-sm">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden transform transition-all animate-in fade-in zoom-in duration-300">
         {/* Header */}
         <div className="bg-green-600 px-6 py-4 flex items-center justify-between">
@@ -44,15 +44,6 @@ const AnnouncementModal = ({ isOpen, onClose, announcement }) => {
               </p>
             ))}
           </div>
-
-          <p className="mt-6 text-sm text-gray-400 italic">
-            Posted on{" "}
-            {new Date(announcement.createdAt).toLocaleDateString(undefined, {
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-            })}
-          </p>
         </div>
 
         {/* Footer */}
