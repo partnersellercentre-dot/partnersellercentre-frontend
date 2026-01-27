@@ -13,6 +13,7 @@ import { AuthContext } from "../context/AuthContext";
 import { getMyTransactions } from "../api/paymentApi";
 import { initDeposit } from "../api/deposit";
 import { createNowPayment } from "../api/nowpaymentsApi";
+import { createSafepayTracker } from "../api/safepayApi";
 import { getMyPurchases } from "../api/purchaseApi";
 import Spinner from "../components/Spinner";
 
@@ -28,6 +29,8 @@ export default function Wallet() {
   const [depositAmount, setDepositAmount] = useState("");
   const [currentOrderNumber, setCurrentOrderNumber] = useState("");
   const [userBalance, setUserBalance] = useState(0);
+  const [withdrawableBalance, setWithdrawableBalance] = useState(0);
+  const [isRestricted, setIsRestricted] = useState(false);
   const [transactions, setTransactions] = useState([]);
   const [purchases, setPurchases] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -50,6 +53,9 @@ export default function Wallet() {
         if (res.data.user && typeof res.data.user.balance === "number") {
           setUserBalance(res.data.user.balance);
         }
+
+        setWithdrawableBalance(res.data.withdrawableBalance ?? 0);
+        setIsRestricted(res.data.isRestricted ?? false);
 
         if (Array.isArray(res.data.transactions)) {
           setTransactions(res.data.transactions);
@@ -159,6 +165,22 @@ export default function Wallet() {
         pay_currency = "usdtbsc";
       } else if (selectedPayment === "trx") {
         pay_currency = "trx";
+      } else if (
+        selectedPayment === "easypaisa" ||
+        selectedPayment === "jazzcash"
+      ) {
+        // SafePay Integration
+        const res = await createSafepayTracker(token, {
+          amount: depositAmount,
+        });
+
+        if (res.data.success && res.data.redirectUrl) {
+          window.location.href = res.data.redirectUrl;
+          return;
+        } else {
+          toast.error("Failed to create SafePay session");
+          return;
+        }
       } else if (selectedPayment === "card") {
         toast.info("Card payments are not implemented yet.");
         return;
@@ -630,6 +652,8 @@ export default function Wallet() {
           isOpen={showWithdrawModal}
           onClose={() => setShowWithdrawModal(false)}
           onSuccess={() => setShowWithdrawModal(false)} // refresh after success
+          withdrawableBalance={withdrawableBalance}
+          isRestricted={isRestricted}
         />
       )}
 

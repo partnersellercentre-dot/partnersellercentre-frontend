@@ -12,7 +12,13 @@ import { SiTether, SiVisa, SiMastercard } from "react-icons/si";
 import { AuthContext } from "../context/AuthContext";
 import { withdrawRequest } from "../api/paymentApi";
 
-export default function WithdrawModal({ isOpen, onClose, onSuccess }) {
+export default function WithdrawModal({
+  isOpen,
+  onClose,
+  onSuccess,
+  withdrawableBalance,
+  isRestricted,
+}) {
   const { token, user } = useContext(AuthContext);
   const [selectedPayment, setSelectedPayment] = useState(null);
   const [form, setForm] = useState({
@@ -48,6 +54,12 @@ export default function WithdrawModal({ isOpen, onClose, onSuccess }) {
 
     if (Number(amount) < 30) {
       toast.warning("Minimum withdrawal amount is 30 USDT");
+      return;
+    }
+
+    const maxAvailable = isRestricted ? withdrawableBalance : user?.balance;
+    if (Number(amount) > maxAvailable) {
+      toast.error("Insufficient withdrawable balance");
       return;
     }
 
@@ -123,7 +135,11 @@ export default function WithdrawModal({ isOpen, onClose, onSuccess }) {
           {/* Amount */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Withdraw Amount (Available: ${user?.balance || 0})
+              Withdraw Amount (Available: $
+              {isRestricted
+                ? withdrawableBalance?.toFixed(2)
+                : user?.balance?.toFixed(2) || 0}
+              )
             </label>
             <div className="flex items-center border rounded-md px-3 py-2">
               <span className="mr-2 text-gray-500">$</span>
@@ -137,6 +153,12 @@ export default function WithdrawModal({ isOpen, onClose, onSuccess }) {
                 min="30"
               />
             </div>
+            {isRestricted && (
+              <p className="text-[10px] text-gray-500 mt-1">
+                * Withdrawal is restricted to earned commissions and bonuses
+                only.
+              </p>
+            )}
             {form.amount && Number(form.amount) > 0 && (
               <div className="mt-2 text-sm text-gray-600">
                 <div>
@@ -211,6 +233,62 @@ export default function WithdrawModal({ isOpen, onClose, onSuccess }) {
                 {selectedPayment === "bep20" && (
                   <div className="absolute top-2 right-2">
                     <FaCheckCircle className="text-green-600" size={20} />
+                  </div>
+                )}
+              </div>
+
+              {/* Easypaisa Option */}
+              <div
+                onClick={() => {
+                  setSelectedPayment("easypaisa");
+                  setForm({ ...form, method: "Easypaisa" });
+                }}
+                className={`relative border text-blue-600 border-blue-500 p-4 rounded-md cursor-pointer transition-all ${
+                  selectedPayment === "easypaisa" ? "ring-2 ring-blue-600" : ""
+                }`}
+              >
+                <div className="flex items-center justify-between">
+                  <div>
+                    <div className="font-semibold text-lg">Easypaisa</div>
+                    <div className="text-sm opacity-90">PKR Wallet</div>
+                  </div>
+                  <img
+                    src="/Easypaisa-logo.png"
+                    alt="Easypaisa"
+                    className="w-16 h-auto"
+                  />
+                </div>
+                {selectedPayment === "easypaisa" && (
+                  <div className="absolute top-2 right-2">
+                    <FaCheckCircle className="text-blue-600" size={20} />
+                  </div>
+                )}
+              </div>
+
+              {/* JazzCash Option */}
+              <div
+                onClick={() => {
+                  setSelectedPayment("jazzcash");
+                  setForm({ ...form, method: "JazzCash" });
+                }}
+                className={`relative border text-red-600 border-red-500 p-4 rounded-md cursor-pointer transition-all ${
+                  selectedPayment === "jazzcash" ? "ring-2 ring-red-600" : ""
+                }`}
+              >
+                <div className="flex items-center justify-between">
+                  <div>
+                    <div className="font-semibold text-lg">JazzCash</div>
+                    <div className="text-sm opacity-90">PKR Wallet</div>
+                  </div>
+                  <img
+                    src="/new-Jazzcash-logo.png"
+                    alt="JazzCash"
+                    className="w-16 h-auto"
+                  />
+                </div>
+                {selectedPayment === "jazzcash" && (
+                  <div className="absolute top-2 right-2">
+                    <FaCheckCircle className="text-red-600" size={20} />
                   </div>
                 )}
               </div>

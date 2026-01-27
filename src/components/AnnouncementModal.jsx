@@ -1,7 +1,32 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { FiX, FiBell } from "react-icons/fi";
+import { FaWhatsapp, FaTelegram } from "react-icons/fa";
+import { getSocialLinks } from "../api/api";
 
 const AnnouncementModal = ({ isOpen, onClose, announcement }) => {
+  const [socialLinks, setSocialLinks] = useState({
+    whatsapp: "",
+    telegram: "",
+  });
+
+  useEffect(() => {
+    const fetchSocialLinks = async () => {
+      try {
+        const res = await getSocialLinks();
+        if (res.data.socialLinks) {
+          setSocialLinks(res.data.socialLinks);
+        }
+      } catch (error) {
+        console.error("Error fetching social links:", error);
+      }
+    };
+    fetchSocialLinks();
+  }, []);
+
+  const isValidUrl = (url) => {
+    return url && /^https?:\/\/.+/.test(url);
+  };
+
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
@@ -43,6 +68,45 @@ const AnnouncementModal = ({ isOpen, onClose, announcement }) => {
                 {line}
               </p>
             ))}
+          </div>
+
+          {/* Social Links */}
+          <div className="mt-6 pt-6 border-t border-gray-100 flex flex-col items-center">
+            <p className="text-sm text-gray-500 mb-3">
+              Questions? Contact us directly:
+            </p>
+            <div className="flex gap-6">
+              {isValidUrl(socialLinks.whatsapp) ? (
+                <a
+                  href={socialLinks.whatsapp}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-green-500 hover:text-green-600 transition-transform hover:scale-110"
+                  aria-label="Contact us on WhatsApp"
+                >
+                  <FaWhatsapp size={32} />
+                </a>
+              ) : (
+                <span className="text-gray-300">
+                  <FaWhatsapp size={32} />
+                </span>
+              )}
+              {isValidUrl(socialLinks.telegram) ? (
+                <a
+                  href={socialLinks.telegram}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-500 hover:text-blue-600 transition-transform hover:scale-110"
+                  aria-label="Contact us on Telegram"
+                >
+                  <FaTelegram size={32} />
+                </a>
+              ) : (
+                <span className="text-gray-300">
+                  <FaTelegram size={32} />
+                </span>
+              )}
+            </div>
           </div>
         </div>
 

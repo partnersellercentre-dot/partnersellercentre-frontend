@@ -236,6 +236,58 @@ export default function PaymentConfirmationModal({
                   </div>
                 </div>
 
+                {/* EasyPaisa SafePay */}
+                <div
+                  onClick={() => setSelectedPayment("easypaisa")}
+                  className={`relative border text-blue-600 border-blue-500 p-4 rounded-md mb-3 cursor-pointer transition-all ${
+                    selectedPayment === "easypaisa"
+                      ? "ring-2 ring-blue-600"
+                      : ""
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <div className="font-semibold text-lg">EasyPaisa</div>
+                      <div className="text-sm opacity-90">SafePay Gateway</div>
+                    </div>
+                    <img
+                      src="/Easypaisa-logo.png"
+                      alt="Easypaisa"
+                      className="w-16 h-auto"
+                    />
+                  </div>
+                  {selectedPayment === "easypaisa" && (
+                    <div className="absolute top-2 right-2">
+                      <FaCheckCircle className="text-blue-600" size={20} />
+                    </div>
+                  )}
+                </div>
+
+                {/* JazzCash SafePay */}
+                <div
+                  onClick={() => setSelectedPayment("jazzcash")}
+                  className={`relative border text-red-600 border-red-500 p-4 rounded-md mb-3 cursor-pointer transition-all ${
+                    selectedPayment === "jazzcash" ? "ring-2 ring-red-600" : ""
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <div className="font-semibold text-lg">JazzCash</div>
+                      <div className="text-sm opacity-90">SafePay Gateway</div>
+                    </div>
+                    <img
+                      src="/new-Jazzcash-logo.png"
+                      alt="JazzCash"
+                      className="w-16 h-auto"
+                    />
+                  </div>
+                  {selectedPayment === "jazzcash" && (
+                    <div className="absolute top-2 right-2">
+                      <FaCheckCircle className="text-red-600" size={20} />
+                    </div>
+                  )}
+                </div>
+
                 {/* Card Options */}
                 <div
                   className={`relative bg-gray-100 p-4 mb-3 cursor-not-allowed opacity-60 transition-all`}

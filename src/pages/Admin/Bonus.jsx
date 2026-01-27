@@ -322,6 +322,8 @@ const LevelConfig = ({ title, description, levels, onChange }) => {
 
 function Bonus() {
   const [signupBonus, setSignupBonus] = useState(0);
+  const [restrictWithdrawalToProfits, setRestrictWithdrawalToProfits] =
+    useState(false);
 
   // New State for Deposits (Ranges)
   const [depositSelfRanges, setDepositSelfRanges] = useState([]);
@@ -338,6 +340,9 @@ function Bonus() {
       try {
         const { data } = await getSystemSettings(token);
         setSignupBonus(data.signupBonus || 0);
+        setRestrictWithdrawalToProfits(
+          data.restrictWithdrawalToProfits || false,
+        );
 
         setDepositSelfRanges(data.depositSelfRanges || []);
         setReferralFirstDepositRanges(data.referralFirstDepositRanges || []);
@@ -361,6 +366,7 @@ function Bonus() {
         referralOrderSettings,
         depositSelfRanges,
         referralFirstDepositRanges,
+        restrictWithdrawalToProfits,
       });
       toast.success("Bonus settings updated successfully!");
     } catch (error) {
@@ -410,6 +416,44 @@ function Bonus() {
               onChange={(e) => setSignupBonus(Number(e.target.value))}
             />
           </label>
+        </div>
+
+        {/* Withdrawal Restriction Section */}
+        <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200 mb-8">
+          <h3 className="text-xl font-bold text-gray-800 mb-4">
+            Withdrawal Restriction
+          </h3>
+          <p className="text-gray-500 mb-4 text-sm">
+            Toggle whether users can withdraw their whole balance or only their
+            earned profits and bonuses (Claim profit, Self recharge bonus, Team
+            commission, Referral recharge bonus).
+          </p>
+          <div className="flex items-center gap-3">
+            <span className="text-gray-700 font-medium">
+              Restrict Withdrawal to Profits/Bonuses
+            </span>
+            <button
+              onClick={() =>
+                setRestrictWithdrawalToProfits(!restrictWithdrawalToProfits)
+              }
+              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${
+                restrictWithdrawalToProfits ? "bg-blue-600" : "bg-gray-200"
+              }`}
+            >
+              <span
+                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                  restrictWithdrawalToProfits
+                    ? "translate-x-6"
+                    : "translate-x-1"
+                }`}
+              />
+            </button>
+            <span className="text-sm font-semibold text-gray-600">
+              {restrictWithdrawalToProfits
+                ? "ON (Restricted)"
+                : "OFF (Full Balance)"}
+            </span>
+          </div>
         </div>
 
         {/* Deposit Bonus Section - New Simplified Layout */}
