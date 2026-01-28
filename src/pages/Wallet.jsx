@@ -126,6 +126,10 @@ export default function Wallet() {
       case "daily_profit":
       case "profit":
         return "Profit";
+      case "referral_recharge_bonus":
+        return "Referral Recharge Bonus";
+      case "team_commission":
+        return "Team Commission";
       case "referral_bonus":
         return "Commission";
       case "deposit":
@@ -250,18 +254,24 @@ export default function Wallet() {
           <h2 className="text-lg font-semibold text-white mb-4 flex items-center">
             <MdAccountBalance className="mr-2 text-white" /> My Assets
           </h2>
-          <div className="grid grid-cols-2 gap-6 mb-6 text-white">
+          <div className="grid grid-cols-3 gap-2 mb-6 text-white text-center">
             <div>
-              <div className="text-2xl font-bold">
-                ${userBalance.toFixed(2)}
-              </div>
-              <div className="text-sm">Available Amount</div>
+              <div className="text-lg font-bold">${userBalance.toFixed(2)}</div>
+              <div className="text-[10px] uppercase opacity-80">Total</div>
             </div>
             <div>
-              <div className="text-2xl font-bold">
+              <div className="text-lg font-bold">
+                ${withdrawableBalance.toFixed(2)}
+              </div>
+              <div className="text-[10px] uppercase opacity-80">
+                Withdrawable
+              </div>
+            </div>
+            <div>
+              <div className="text-lg font-bold">
                 ${inTransaction.toFixed(2)}
               </div>
-              <div className="text-sm">In transaction</div>
+              <div className="text-[10px] uppercase opacity-80">Escrow</div>
             </div>
           </div>
           {/* Action Buttons */}
