@@ -41,7 +41,7 @@ export default function OrderModal({ product, onClose }) {
   const orderId = order?._id ? order._id : product._id?.slice(-6);
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4">
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 px-4">
       <div className="bg-white rounded-2xl w-full max-w-lg p-6 shadow-xl relative max-h-[90vh] overflow-y-auto">
         {/* Close Button */}
         <button

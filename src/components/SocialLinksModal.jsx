@@ -1,13 +1,30 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { FiX } from "react-icons/fi";
 import SocialLinks from "./SocialLinks";
 
 const SocialLinksModal = ({ isOpen, onClose }) => {
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [isOpen]);
+
   if (!isOpen) return null;
 
   return (
-    <div className="fixed top-24 left-1/2 -translate-x-1/2 z-[100] w-full max-w-lg px-4 pointer-events-none">
-      <div className="bg-white rounded-2xl shadow-2xl overflow-hidden transform transition-all animate-in slide-in-from-top duration-500 pointer-events-auto border border-gray-100">
+    <div
+      className="fixed inset-0 z-[100] flex items-start justify-center pt-24 px-4 bg-black/40 backdrop-blur-sm transition-all duration-300"
+      onClick={onClose}
+    >
+      <div
+        className="bg-white rounded-2xl shadow-2xl overflow-hidden w-full max-w-lg transform transition-all animate-in slide-in-from-top duration-500 border border-gray-100"
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className="relative p-6 pt-10">
           <button
             onClick={onClose}
@@ -22,15 +39,6 @@ const SocialLinksModal = ({ isOpen, onClose }) => {
             className="flex flex-row justify-center gap-3"
             showTitle={true}
           />
-        </div>
-
-        <div className="bg-gray-50 px-6 py-3">
-          <button
-            onClick={onClose}
-            className="w-full py-2 bg-green-600 text-white text-sm font-bold rounded-lg hover:bg-green-700 transform active:scale-95 transition-all shadow-md"
-          >
-            Got it
-          </button>
         </div>
       </div>
     </div>

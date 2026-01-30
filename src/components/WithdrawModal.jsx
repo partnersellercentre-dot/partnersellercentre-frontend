@@ -83,7 +83,7 @@ export default function WithdrawModal({
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
+    <div className="fixed inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm z-50">
       <div className="bg-white rounded-lg shadow-xl w-full max-w-md mx-4">
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b">
@@ -100,21 +100,24 @@ export default function WithdrawModal({
 
         {/* Form Content */}
         <div className="p-4 space-y-4">
-          {/* Guidelines */}
-          <div className="bg-yellow-50 border border-yellow-200 rounded-md p-3">
-            <h3 className="text-sm font-medium text-yellow-800 mb-2">
-              Withdrawal Guidelines
-            </h3>
-            <ul className="text-sm text-yellow-700 space-y-1">
-              <li className="flex items-center gap-2">
-                <FaCheckCircle className="text-yellow-500 shrink-0" size={12} />
-                <span>Minimum withdrawal amount: 30 USDT</span>
-              </li>
-              <li className="flex items-center gap-2">
-                <FaCheckCircle className="text-yellow-500 shrink-0" size={12} />
-                <span>Network handling fees: 3.8%</span>
-              </li>
-            </ul>
+          {/* Dashboard Cards */}
+          <div className="grid grid-cols-2 gap-4">
+            <div className="bg-gray-50 p-4 rounded-xl border border-gray-100 flex flex-col items-center justify-center shadow-sm">
+              <span className="text-gray-500 text-sm mb-1 font-medium">
+                Available Amount
+              </span>
+              <span className="text-2xl font-bold text-gray-900">
+                ${user?.balance?.toFixed(2) || "0.00"}
+              </span>
+            </div>
+            <div className="bg-gray-50 p-4 rounded-xl border border-gray-100 flex flex-col items-center justify-center shadow-sm">
+              <span className="text-gray-500 text-sm mb-1 font-medium">
+                Withdrawal Amount
+              </span>
+              <span className="text-2xl font-bold text-gray-900">
+                ${withdrawableBalance?.toFixed(2) || "0.00"}
+              </span>
+            </div>
           </div>
 
           {/* Withdrawal Address */}
@@ -135,11 +138,7 @@ export default function WithdrawModal({
           {/* Amount */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Withdraw Amount (Available: $
-              {isRestricted
-                ? withdrawableBalance?.toFixed(2)
-                : user?.balance?.toFixed(2) || 0}
-              )
+              Withdraw Amount
             </label>
             <div className="flex items-center border rounded-md px-3 py-2">
               <span className="mr-2 text-gray-500">$</span>
@@ -153,12 +152,6 @@ export default function WithdrawModal({
                 min="30"
               />
             </div>
-            {isRestricted && (
-              <p className="text-[10px] text-gray-500 mt-1">
-                * Withdrawal is restricted to earned commissions and bonuses
-                only.
-              </p>
-            )}
             {form.amount && Number(form.amount) > 0 && (
               <div className="mt-2 text-sm text-gray-600">
                 <div>
