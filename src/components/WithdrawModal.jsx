@@ -148,7 +148,7 @@ export default function WithdrawModal({
                 name="amount"
                 value={form.amount}
                 onChange={handleChange}
-                placeholder="30"
+                placeholder="Minimum withrawal amount is 30$"
                 className="w-full outline-none text-gray-900"
                 min="30"
               />
@@ -178,31 +178,35 @@ export default function WithdrawModal({
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Select Withdrawal Method
             </label>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-2 sm:gap-3">
               {/* Tether TRC20 Option */}
               <div
                 onClick={() => {
                   setSelectedPayment("trc20");
                   setForm({ ...form, method: "USDT (TRC20)" });
                 }}
-                className={`relative bg-green-500 rounded-md p-4 cursor-pointer transition-all ${
+                className={`relative bg-green-500 rounded-md p-2 sm:p-4 cursor-pointer transition-all ${
                   selectedPayment === "trc20" ? "ring-2 ring-green-600" : ""
                 }`}
               >
                 <div className="flex items-center justify-between text-white">
                   <div>
-                    <div className="font-semibold text-lg">Tether</div>
-                    <div className="text-sm opacity-90">USDT (TRC20)</div>
+                    <div className="font-semibold text-sm sm:text-lg">
+                      Tether
+                    </div>
+                    <div className="text-[10px] sm:text-sm opacity-90">
+                      USDT (TRC20)
+                    </div>
                   </div>
                   <img
                     src="/tether-usdt-logo.png"
                     alt="USDT TRC20"
-                    className="w-16 h-auto"
+                    className="w-10 sm:w-16 h-auto"
                   />
                 </div>
                 {selectedPayment === "trc20" && (
-                  <div className="absolute top-2 right-2">
-                    <FaCheckCircle className="text-white" size={20} />
+                  <div className="absolute top-1 right-1 sm:top-2 sm:right-2">
+                    <FaCheckCircle className="text-white" size={16} />
                   </div>
                 )}
               </div>
@@ -213,26 +217,28 @@ export default function WithdrawModal({
                   setSelectedPayment("bep20");
                   setForm({ ...form, method: "USDT (BEP20)" });
                 }}
-                className={`relative border text-green-500 border-green-500 p-4 rounded-md cursor-pointer transition-all ${
+                className={`relative border text-green-500 border-green-500 p-2 sm:p-4 rounded-md cursor-pointer transition-all ${
                   selectedPayment === "bep20" ? "ring-2 ring-green-600" : ""
                 }`}
               >
                 <div className="flex items-center justify-between text-black">
                   <div>
-                    <div className="font-semibold text-lg">Tether</div>
-                    <div className="text-sm opacity-90">USDT (BEP20)</div>
+                    <div className="font-semibold text-sm sm:text-lg">
+                      Tether
+                    </div>
+                    <div className="text-[10px] sm:text-sm opacity-90">
+                      USDT (BEP20)
+                    </div>
                   </div>
-                  <div className="w-8 h-8 border-2 border-white rounded flex items-center justify-center text-black text-xs">
-                    <img
-                      src="/bdep.webp"
-                      alt="USDT BEP20"
-                      className="w-32 "
-                    />{" "}
-                  </div>
+                  <img
+                    src="/bdep.webp"
+                    alt="USDT BEP20"
+                    className="w-10 sm:w-16 h-auto"
+                  />{" "}
                 </div>
                 {selectedPayment === "bep20" && (
-                  <div className="absolute top-2 right-2">
-                    <FaCheckCircle className="text-green-600" size={20} />
+                  <div className="absolute top-1 right-1 sm:top-2 sm:right-2">
+                    <FaCheckCircle className="text-green-600" size={16} />
                   </div>
                 )}
               </div>
@@ -243,24 +249,28 @@ export default function WithdrawModal({
                   setSelectedPayment("easypaisa");
                   setForm({ ...form, method: "Easypaisa" });
                 }}
-                className={`relative border text-blue-600 border-blue-500 p-4 rounded-md cursor-pointer transition-all ${
+                className={`relative border text-blue-600 border-blue-500 p-2 sm:p-4 rounded-md cursor-pointer transition-all ${
                   selectedPayment === "easypaisa" ? "ring-2 ring-blue-600" : ""
                 }`}
               >
                 <div className="flex items-center justify-between">
                   <div>
-                    <div className="font-semibold text-lg">Easypaisa</div>
-                    <div className="text-sm opacity-90">PKR Wallet</div>
+                    <div className="font-semibold text-sm sm:text-lg">
+                      Easypaisa
+                    </div>
+                    <div className="text-[10px] sm:text-sm opacity-90">
+                      PKR Wallet
+                    </div>
                   </div>
                   <img
                     src="/Easypaisa-logo.png"
                     alt="Easypaisa"
-                    className="w-16 h-auto"
+                    className="w-10 sm:w-16 h-auto"
                   />
                 </div>
                 {selectedPayment === "easypaisa" && (
-                  <div className="absolute top-2 right-2">
-                    <FaCheckCircle className="text-blue-600" size={20} />
+                  <div className="absolute top-1 right-1 sm:top-2 sm:right-2">
+                    <FaCheckCircle className="text-blue-600" size={16} />
                   </div>
                 )}
               </div>
@@ -271,24 +281,28 @@ export default function WithdrawModal({
                   setSelectedPayment("jazzcash");
                   setForm({ ...form, method: "JazzCash" });
                 }}
-                className={`relative border text-red-600 border-red-500 p-4 rounded-md cursor-pointer transition-all ${
+                className={`relative border text-red-600 border-red-500 p-2 sm:p-4 rounded-md cursor-pointer transition-all ${
                   selectedPayment === "jazzcash" ? "ring-2 ring-red-600" : ""
                 }`}
               >
                 <div className="flex items-center justify-between">
                   <div>
-                    <div className="font-semibold text-lg">JazzCash</div>
-                    <div className="text-sm opacity-90">PKR Wallet</div>
+                    <div className="font-semibold text-sm sm:text-lg">
+                      JazzCash
+                    </div>
+                    <div className="text-[10px] sm:text-sm opacity-90">
+                      PKR Wallet
+                    </div>
                   </div>
                   <img
                     src="/new-Jazzcash-logo.png"
                     alt="JazzCash"
-                    className="w-16 h-auto"
+                    className="w-10 sm:w-16 h-auto"
                   />
                 </div>
                 {selectedPayment === "jazzcash" && (
-                  <div className="absolute top-2 right-2">
-                    <FaCheckCircle className="text-red-600" size={20} />
+                  <div className="absolute top-1 right-1 sm:top-2 sm:right-2">
+                    <FaCheckCircle className="text-red-600" size={16} />
                   </div>
                 )}
               </div>
