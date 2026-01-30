@@ -99,12 +99,6 @@ function Userdetails() {
           <span className="font-semibold text-green-300">Phone:</span>{" "}
           <span className="break-all">{user.phone || "N/A"}</span>
         </div>
-        <div className="break-all">
-          <span className="font-semibold text-green-300">
-            Password (plain):
-          </span>{" "}
-          <span className="break-all">{user.plainPassword || "N/A"}</span>
-        </div>
         <div>
           <span className="font-semibold text-green-300">Balance:</span> $
           {user.balance ?? 0}

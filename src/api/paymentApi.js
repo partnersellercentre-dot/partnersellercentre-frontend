@@ -19,9 +19,10 @@ export const withdrawRequest = (token, data) =>
   });
 
 // Get all my wallet transactions
-export const getMyTransactions = (token) =>
+export const getMyTransactions = (token, params = {}) =>
   API.get("/wallet/my-transactions", {
     headers: { Authorization: `Bearer ${token}` },
+    params,
   });
 
 /* ---------------------- ADMIN WALLET APIs ---------------------- */

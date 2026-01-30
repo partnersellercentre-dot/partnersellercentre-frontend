@@ -7,6 +7,7 @@ import "react-toastify/dist/ReactToastify.css";
 // Import your Spinner component for loading indication
 import Spinner from "./components/Spinner";
 import ProtectedRoute from "./components/ProtectedRoute";
+import PublicRoute from "./components/PublicRoute";
 import Notifications from "./pages/Admin/Notifications";
 import Products from "./pages/Products";
 import DashboardLayout from "./components/DashboardLayout";
@@ -71,9 +72,30 @@ function App() {
           <Routes>
             {/* Public Routes */}
             <Route path="/" element={<Home />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/admin-login" element={<AdminLogin />} />
-            <Route path="/register" element={<Register />} />
+            <Route
+              path="/login"
+              element={
+                <PublicRoute>
+                  <Login />
+                </PublicRoute>
+              }
+            />
+            <Route
+              path="/admin-login"
+              element={
+                <PublicRoute>
+                  <AdminLogin />
+                </PublicRoute>
+              }
+            />
+            <Route
+              path="/register"
+              element={
+                <PublicRoute>
+                  <Register />
+                </PublicRoute>
+              }
+            />
 
             {/* Admin Routes */}
             <Route

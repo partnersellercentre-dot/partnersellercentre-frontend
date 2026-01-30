@@ -16,6 +16,7 @@ import { createNowPayment } from "../api/nowpaymentsApi";
 import { createSafepayTracker } from "../api/safepayApi";
 import { getMyPurchases } from "../api/purchaseApi";
 import Spinner from "../components/Spinner";
+import SocialLinksModal from "../components/SocialLinksModal";
 
 export default function Wallet() {
   const { user, token } = useContext(AuthContext);
@@ -32,45 +33,73 @@ export default function Wallet() {
   const [withdrawableBalance, setWithdrawableBalance] = useState(0);
   const [isRestricted, setIsRestricted] = useState(false);
   const [transactions, setTransactions] = useState([]);
-  const [purchases, setPurchases] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [tabLoading, setTabLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalEscrow, setTotalEscrow] = useState(0);
+  const [showSocialModal, setShowSocialModal] = useState(false);
 
-  const inTransaction = transactions
-    .filter(
-      (txn) =>
-        txn.type === "escrow" &&
-        txn.status === "pending" &&
-        txn.direction === "out",
-    )
-    .reduce((sum, txn) => sum + txn.amount, 0);
+  const fetchBaseData = async () => {
+    setLoading(true);
+    try {
+      const res = await getMyTransactions(token, { tab: activeTab, page: 1 });
+
+      if (res.data.user && typeof res.data.user.balance === "number") {
+        setUserBalance(res.data.user.balance);
+      }
+
+      setWithdrawableBalance(res.data.withdrawableBalance ?? 0);
+      setIsRestricted(res.data.isRestricted ?? false);
+      setTotalEscrow(res.data.totalEscrow || 0);
+
+      if (Array.isArray(res.data.transactions)) {
+        setTransactions(res.data.transactions);
+        setTotalPages(res.data.totalPages || 1);
+        setCurrentPage(res.data.currentPage || 1);
+      }
+    } catch (err) {
+      console.error("Failed to fetch data", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
+    fetchBaseData();
+    setShowSocialModal(true);
+  }, [token]);
+
+  useEffect(() => {
+    // Only fetch tab specific data when tab or page changes (and not initial loading)
+    if (loading) return;
+
+    const fetchTabData = async () => {
+      setTabLoading(true);
       try {
-        const res = await getMyTransactions(token);
-
-        if (res.data.user && typeof res.data.user.balance === "number") {
-          setUserBalance(res.data.user.balance);
-        }
-
-        setWithdrawableBalance(res.data.withdrawableBalance ?? 0);
-        setIsRestricted(res.data.isRestricted ?? false);
+        const res = await getMyTransactions(token, {
+          tab: activeTab,
+          page: currentPage,
+        });
 
         if (Array.isArray(res.data.transactions)) {
           setTransactions(res.data.transactions);
+          setTotalPages(res.data.totalPages || 1);
+          setTotalEscrow(res.data.totalEscrow || 0);
         }
-
-        const purchaseRes = await getMyPurchases(token);
-        setPurchases(purchaseRes.data.purchases || []);
       } catch (err) {
-        console.error("Failed to fetch data", err);
+        console.error("Failed to fetch tab data", err);
       } finally {
-        setLoading(false);
+        setTabLoading(false);
       }
     };
-    fetchData();
-  }, [token, showPaymentModal, showDepositModal, showWithdrawModal]);
+    fetchTabData();
+  }, [activeTab, currentPage]);
+
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+    setCurrentPage(1);
+  };
 
   const combinedHistory = useMemo(() => {
     const history = [];
@@ -91,24 +120,10 @@ export default function Wallet() {
         netAmount: txn.netAmount,
       });
     });
-    /* 
-    purchases
-      .filter((p) => p.status === "paid")
-      .forEach((purchase) => {
-        history.push({
-          id: purchase._id,
-          date: purchase.paymentClaimedAt || purchase.createdAt,
-          type: "daily_profit",
-          amount: purchase.product?.price * 0.042 || 0,
-          description: `Profit from ${purchase.product?.name || "Product"}`,
-          status: "paid",
-        });
-      });
-    */
     return history.sort(
       (a, b) => new Date(b.date || 0) - new Date(a.date || 0),
     );
-  }, [transactions, purchases]);
+  }, [transactions]);
 
   const getBorderClass = (type) => {
     return "border-green-600";
@@ -254,24 +269,18 @@ export default function Wallet() {
           <h2 className="text-lg font-semibold text-white mb-4 flex items-center">
             <MdAccountBalance className="mr-2 text-white" /> My Assets
           </h2>
-          <div className="grid grid-cols-3 gap-2 mb-6 text-white text-center">
+          <div className="grid grid-cols-2 gap-4 mb-6 text-white text-center">
             <div>
               <div className="text-lg font-bold">${userBalance.toFixed(2)}</div>
-              <div className="text-[10px] uppercase opacity-80">Total</div>
-            </div>
-            <div>
-              <div className="text-lg font-bold">
-                ${withdrawableBalance.toFixed(2)}
-              </div>
               <div className="text-[10px] uppercase opacity-80">
-                Withdrawable
+                Available amount
               </div>
             </div>
             <div>
-              <div className="text-lg font-bold">
-                ${inTransaction.toFixed(2)}
+              <div className="text-lg font-bold">${totalEscrow.toFixed(2)}</div>
+              <div className="text-[10px] uppercase opacity-80">
+                In transaction
               </div>
-              <div className="text-[10px] uppercase opacity-80">Escrow</div>
             </div>
           </div>
           {/* Action Buttons */}
@@ -297,7 +306,7 @@ export default function Wallet() {
             {["account", "deposit", "withdrawal"].map((tab) => (
               <button
                 key={tab}
-                onClick={() => setActiveTab(tab)}
+                onClick={() => handleTabChange(tab)}
                 className={`px-6 py-3 font-medium text-sm ${
                   activeTab === tab
                     ? "text-green-600 border-b-2 border-green-600"
@@ -318,288 +327,331 @@ export default function Wallet() {
               <Spinner />
             ) : (
               <>
-                {activeTab === "account" && (
+                {tabLoading ? (
+                  <Spinner />
+                ) : (
                   <>
-                    {/* Transaction History */}
-                    <div>
-                      <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                        Transaction History
-                      </h3>
-                      {combinedHistory.length === 0 ? (
-                        <div className="text-center text-gray-500">
-                          No transactions yet
+                    {activeTab === "account" && (
+                      <>
+                        {/* Transaction History */}
+                        <div>
+                          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                            Transaction History
+                          </h3>
+                          {combinedHistory.length === 0 ? (
+                            <div className="text-center text-gray-500">
+                              No transactions yet
+                            </div>
+                          ) : (
+                            combinedHistory.map((item) => (
+                              <div
+                                key={item.id}
+                                className={`bg-white rounded-lg shadow-md border-l-4 p-4 mb-4 ${getBorderClass(item.type)}`}
+                              >
+                                <div className="flex items-center justify-between mb-2">
+                                  <div className="flex items-center">
+                                    <div
+                                      className={`w-3 h-3 rounded-full mr-3 ${getDotClass(item.type)}`}
+                                    ></div>
+                                    <span className="text-sm text-gray-600">
+                                      {getTypeLabel(item.type)}
+                                    </span>
+                                  </div>
+                                  <span className="text-sm font-medium text-gray-900">
+                                    {item.date
+                                      ? new Date(item.date).toLocaleDateString()
+                                      : "N/A"}
+                                  </span>
+                                </div>
+                                <div className="ml-0 md:ml-4">
+                                  <div className="text-lg font-bold mb-1 text-gray-900">
+                                    {item.type === "withdraw" ? "-" : "+"}$
+                                    {item.amount?.toFixed(2) || "0.00"}
+                                  </div>
+                                  <div className="text-sm text-gray-600">
+                                    {item.description}
+                                  </div>
+                                  {item.type === "withdraw" && (
+                                    <>
+                                      <div className="text-sm text-gray-600">
+                                        Fee: $
+                                        {item.fee ||
+                                          (item.amount * 0.038).toFixed(2)}
+                                      </div>
+                                      <div className="text-sm text-gray-600">
+                                        Net: $
+                                        {(
+                                          item.netAmount ||
+                                          item.amount -
+                                            (item.fee || item.amount * 0.038)
+                                        ).toFixed(2)}
+                                      </div>
+                                      {item.accountName && (
+                                        <div className="text-sm text-gray-600">
+                                          Account: {item.accountName}
+                                        </div>
+                                      )}
+                                      {item.accountNumber && (
+                                        <div className="text-sm text-gray-600">
+                                          Number: {item.accountNumber}
+                                        </div>
+                                      )}
+                                    </>
+                                  )}
+                                  {item.type === "deposit" && (
+                                    <>
+                                      {item.method && (
+                                        <div className="text-sm text-gray-600">
+                                          Method: {item.method}
+                                        </div>
+                                      )}
+                                      {item.orderId && (
+                                        <div className="text-sm text-gray-600">
+                                          Order ID: {item.orderId}
+                                        </div>
+                                      )}
+                                    </>
+                                  )}
+                                </div>
+                              </div>
+                            ))
+                          )}
                         </div>
-                      ) : (
-                        combinedHistory.map((item) => (
-                          <div
-                            key={item.id}
-                            className={`bg-white rounded-lg shadow-md border-l-4 p-4 mb-4 ${getBorderClass(item.type)}`}
-                          >
-                            <div className="flex items-center justify-between mb-2">
-                              <div className="flex items-center">
-                                <div
-                                  className={`w-3 h-3 rounded-full mr-3 ${getDotClass(item.type)}`}
-                                ></div>
-                                <span className="text-sm text-gray-600">
-                                  {getTypeLabel(item.type)}
-                                </span>
-                              </div>
-                              <span className="text-sm font-medium text-gray-900">
-                                {item.date
-                                  ? new Date(item.date).toLocaleDateString()
-                                  : "N/A"}
-                              </span>
-                            </div>
-                            <div className="ml-0 md:ml-4">
-                              <div className="text-lg font-bold mb-1 text-gray-900">
-                                {item.type === "withdraw" ? "-" : "+"}$
-                                {item.amount?.toFixed(2) || "0.00"}
-                              </div>
-                              <div className="text-sm text-gray-600">
-                                {item.description}
-                              </div>
-                              {item.status && (
-                                <div className="text-sm text-gray-500">
-                                  Status: {item.status}
-                                </div>
-                              )}
-                              {item.type === "withdraw" && (
-                                <>
-                                  <div className="text-sm text-gray-600">
-                                    Fee: $
-                                    {item.fee ||
-                                      (item.amount * 0.038).toFixed(2)}
-                                  </div>
-                                  <div className="text-sm text-gray-600">
-                                    Net: $
-                                    {(
-                                      item.netAmount ||
-                                      item.amount -
-                                        (item.fee || item.amount * 0.038)
-                                    ).toFixed(2)}
-                                  </div>
-                                  {item.accountName && (
-                                    <div className="text-sm text-gray-600">
-                                      Account: {item.accountName}
-                                    </div>
-                                  )}
-                                  {item.accountNumber && (
-                                    <div className="text-sm text-gray-600">
-                                      Number: {item.accountNumber}
-                                    </div>
-                                  )}
-                                </>
-                              )}
-                              {item.type === "deposit" && (
-                                <>
-                                  {item.method && (
-                                    <div className="text-sm text-gray-600">
-                                      Method: {item.method}
-                                    </div>
-                                  )}
-                                  {item.orderId && (
-                                    <div className="text-sm text-gray-600">
-                                      Order ID: {item.orderId}
-                                    </div>
-                                  )}
-                                </>
-                              )}
-                            </div>
-                          </div>
-                        ))
-                      )}
-                    </div>
-                  </>
-                )}
-
-                {activeTab === "deposit" && (
-                  <>
-                    {transactions.filter(
-                      (txn) => txn.type?.toLowerCase() === "deposit",
-                    ).length === 0 ? (
-                      <div className="text-center text-gray-500">
-                        No deposit records yet
-                      </div>
-                    ) : (
-                      transactions
-                        .filter((txn) => txn.type?.toLowerCase() === "deposit")
-                        .map((txn) => (
-                          <div
-                            key={txn._id}
-                            className={`bg-white rounded-lg shadow-md border-l-4 p-4 ${
-                              txn.status === "approved"
-                                ? "border-green-500"
-                                : txn.status === "rejected"
-                                  ? "border-red-500"
-                                  : "border-yellow-500"
-                            }`}
-                          >
-                            <div className="flex items-center justify-between mb-2">
-                              <div className="flex items-center">
-                                <div
-                                  className={`w-3 h-3 rounded-full mr-3 ${
-                                    txn.status === "approved"
-                                      ? "bg-green-500"
-                                      : txn.status === "rejected"
-                                        ? "bg-red-500"
-                                        : "bg-yellow-500"
-                                  }`}
-                                ></div>
-                                <span className="text-sm text-gray-600">
-                                  {txn.type}
-                                </span>
-                              </div>
-                              <span className="text-sm font-medium text-gray-900">
-                                {txn.createdAt
-                                  ? new Date(txn.createdAt).toLocaleDateString()
-                                  : "N/A"}
-                              </span>
-                            </div>
-
-                            <div className="ml-0 md:ml-4">
-                              <div
-                                className={`text-lg font-bold mb-1 ${
-                                  txn.status === "approved"
-                                    ? "text-green-600"
-                                    : txn.status === "rejected"
-                                      ? "text-red-600"
-                                      : "text-yellow-600"
-                                }`}
-                              >
-                                {(txn.status || "pending")
-                                  .charAt(0)
-                                  .toUpperCase() +
-                                  (txn.status || "pending").slice(1)}
-                              </div>
-                              <div className="flex justify-between text-sm text-gray-600 mb-1">
-                                <span>Operation amount</span>
-                                <span
-                                  className={
-                                    (txn.amount || 0) < 0
-                                      ? "text-red-500"
-                                      : "text-green-500"
-                                  }
-                                >
-                                  {(txn.amount || 0) >= 0 ? "+" : ""}
-                                  {txn.amount || 0}
-                                </span>
-                              </div>
-                              <div className="flex justify-between text-sm text-gray-600 mb-1">
-                                <span>Method</span>
-                                <span>{txn.method || "N/A"}</span>
-                              </div>
-                              {txn.orderId && (
-                                <div className="flex justify-between text-sm text-gray-600">
-                                  <span>Order ID</span>
-                                  <span className="text-xs">{txn.orderId}</span>
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                        ))
+                      </>
                     )}
-                  </>
-                )}
 
-                {activeTab === "withdrawal" && (
-                  <>
-                    {transactions.filter(
-                      (txn) => txn.type?.toLowerCase() === "withdraw",
-                    ).length === 0 ? (
-                      <div className="text-center text-gray-500">
-                        No withdrawal records yet
-                      </div>
-                    ) : (
-                      transactions
-                        .filter((txn) => txn.type?.toLowerCase() === "withdraw")
-                        .map((txn) => (
-                          <div
-                            key={txn._id}
-                            className={`bg-white rounded-lg shadow-md border-l-4 p-4 ${
-                              txn.status === "approved"
-                                ? "border-green-500"
-                                : txn.status === "rejected"
-                                  ? "border-red-500"
-                                  : "border-yellow-500"
-                            }`}
-                          >
-                            <div className="flex items-center justify-between mb-2">
-                              <div className="flex items-center">
-                                <div
-                                  className={`w-3 h-3 rounded-full mr-3 ${
-                                    txn.status === "approved"
-                                      ? "bg-green-500"
-                                      : txn.status === "rejected"
-                                        ? "bg-red-500"
-                                        : "bg-yellow-500"
-                                  }`}
-                                ></div>
-                                <span className="text-sm text-gray-600">
-                                  {txn.method || "N/A"}
-                                </span>
-                              </div>
-                              <span className="text-sm font-medium text-gray-900">
-                                {txn.createdAt
-                                  ? new Date(txn.createdAt).toLocaleDateString()
-                                  : "N/A"}
-                              </span>
-                            </div>
-
-                            <div className="ml-0 md:ml-4">
+                    {activeTab === "deposit" && (
+                      <>
+                        {transactions.filter(
+                          (txn) => txn.type?.toLowerCase() === "deposit",
+                        ).length === 0 ? (
+                          <div className="text-center text-gray-500">
+                            No deposit records yet
+                          </div>
+                        ) : (
+                          transactions
+                            .filter(
+                              (txn) => txn.type?.toLowerCase() === "deposit",
+                            )
+                            .map((txn) => (
                               <div
-                                className={`text-lg font-bold mb-1 ${
+                                key={txn._id}
+                                className={`bg-white rounded-lg shadow-md border-l-4 p-4 ${
                                   txn.status === "approved"
-                                    ? "text-green-600"
+                                    ? "border-green-500"
                                     : txn.status === "rejected"
-                                      ? "text-red-600"
-                                      : "text-yellow-600"
+                                      ? "border-red-500"
+                                      : "border-yellow-500"
                                 }`}
                               >
-                                {(txn.status || "pending")
-                                  .charAt(0)
-                                  .toUpperCase() +
-                                  (txn.status || "pending").slice(1)}
-                              </div>
+                                <div className="flex items-center justify-between mb-2">
+                                  <div className="flex items-center">
+                                    <div
+                                      className={`w-3 h-3 rounded-full mr-3 ${
+                                        txn.status === "approved"
+                                          ? "bg-green-500"
+                                          : txn.status === "rejected"
+                                            ? "bg-red-500"
+                                            : "bg-yellow-500"
+                                      }`}
+                                    ></div>
+                                    <span className="text-sm text-gray-600">
+                                      {txn.type}
+                                    </span>
+                                  </div>
+                                  <span className="text-sm font-medium text-gray-900">
+                                    {txn.createdAt
+                                      ? new Date(
+                                          txn.createdAt,
+                                        ).toLocaleDateString()
+                                      : "N/A"}
+                                  </span>
+                                </div>
 
-                              <div className="flex justify-between text-sm text-gray-600 mb-1">
-                                <span>Requested amount</span>
-                                <span className="text-red-500">
-                                  - ${txn.amount || 0}
-                                </span>
+                                <div className="ml-0 md:ml-4">
+                                  <div
+                                    className={`text-lg font-bold mb-1 ${
+                                      txn.status === "approved"
+                                        ? "text-green-600"
+                                        : txn.status === "rejected"
+                                          ? "text-red-600"
+                                          : "text-yellow-600"
+                                    }`}
+                                  >
+                                    {(txn.status || "pending")
+                                      .charAt(0)
+                                      .toUpperCase() +
+                                      (txn.status || "pending").slice(1)}
+                                  </div>
+                                  <div className="flex justify-between text-sm text-gray-600 mb-1">
+                                    <span>Operation amount</span>
+                                    <span
+                                      className={
+                                        (txn.amount || 0) < 0
+                                          ? "text-red-500"
+                                          : "text-green-500"
+                                      }
+                                    >
+                                      {(txn.amount || 0) >= 0 ? "+" : ""}
+                                      {txn.amount || 0}
+                                    </span>
+                                  </div>
+                                  <div className="flex justify-between text-sm text-gray-600 mb-1">
+                                    <span>Method</span>
+                                    <span>{txn.method || "N/A"}</span>
+                                  </div>
+                                  {txn.orderId && (
+                                    <div className="flex justify-between text-sm text-gray-600">
+                                      <span>Order ID</span>
+                                      <span className="text-xs">
+                                        {txn.orderId}
+                                      </span>
+                                    </div>
+                                  )}
+                                </div>
                               </div>
+                            ))
+                        )}
+                      </>
+                    )}
 
-                              <div className="flex justify-between text-sm text-gray-600 mb-1">
-                                <span>Fee (3.8%)</span>
-                                <span className="text-red-400">
-                                  - $
-                                  {txn.fee || (txn.amount * 0.038).toFixed(2)}
-                                </span>
-                              </div>
-
-                              <div className="flex justify-between text-sm font-semibold text-gray-900 mb-1 border-t border-gray-100 pt-1">
-                                <span>Expected Payout</span>
-                                <span className="text-green-600">
-                                  $
-                                  {txn.netAmount ||
-                                    (
-                                      txn.amount -
-                                      (txn.fee || txn.amount * 0.038)
-                                    ).toFixed(2)}
-                                </span>
-                              </div>
-
-                              <div className="flex justify-between text-sm text-gray-600 mb-1">
-                                <span>Account Name</span>
-                                <span>{txn.accountName || "N/A"}</span>
-                              </div>
-
-                              <div className="flex justify-between text-sm text-gray-600">
-                                <span>Account Number</span>
-                                <span>{txn.accountNumber || "N/A"}</span>
-                              </div>
-                            </div>
+                    {activeTab === "withdrawal" && (
+                      <>
+                        {transactions.filter(
+                          (txn) => txn.type?.toLowerCase() === "withdraw",
+                        ).length === 0 ? (
+                          <div className="text-center text-gray-500">
+                            No withdrawal records yet
                           </div>
-                        ))
+                        ) : (
+                          transactions
+                            .filter(
+                              (txn) => txn.type?.toLowerCase() === "withdraw",
+                            )
+                            .map((txn) => (
+                              <div
+                                key={txn._id}
+                                className={`bg-white rounded-lg shadow-md border-l-4 p-4 ${
+                                  txn.status === "approved"
+                                    ? "border-green-500"
+                                    : txn.status === "rejected"
+                                      ? "border-red-500"
+                                      : "border-yellow-500"
+                                }`}
+                              >
+                                <div className="flex items-center justify-between mb-2">
+                                  <div className="flex items-center">
+                                    <div
+                                      className={`w-3 h-3 rounded-full mr-3 ${
+                                        txn.status === "approved"
+                                          ? "bg-green-500"
+                                          : txn.status === "rejected"
+                                            ? "bg-red-500"
+                                            : "bg-yellow-500"
+                                      }`}
+                                    ></div>
+                                    <span className="text-sm text-gray-600">
+                                      {txn.method || "N/A"}
+                                    </span>
+                                  </div>
+                                  <span className="text-sm font-medium text-gray-900">
+                                    {txn.createdAt
+                                      ? new Date(
+                                          txn.createdAt,
+                                        ).toLocaleDateString()
+                                      : "N/A"}
+                                  </span>
+                                </div>
+
+                                <div className="ml-0 md:ml-4">
+                                  <div
+                                    className={`text-lg font-bold mb-1 ${
+                                      txn.status === "approved"
+                                        ? "text-green-600"
+                                        : txn.status === "rejected"
+                                          ? "text-red-600"
+                                          : "text-yellow-600"
+                                    }`}
+                                  >
+                                    {(txn.status || "pending")
+                                      .charAt(0)
+                                      .toUpperCase() +
+                                      (txn.status || "pending").slice(1)}
+                                  </div>
+
+                                  <div className="flex justify-between text-sm text-gray-600 mb-1">
+                                    <span>Requested amount</span>
+                                    <span className="text-red-500">
+                                      - ${txn.amount || 0}
+                                    </span>
+                                  </div>
+
+                                  <div className="flex justify-between text-sm text-gray-600 mb-1">
+                                    <span>Fee (3.8%)</span>
+                                    <span className="text-red-400">
+                                      - $
+                                      {txn.fee ||
+                                        (txn.amount * 0.038).toFixed(2)}
+                                    </span>
+                                  </div>
+
+                                  <div className="flex justify-between text-sm font-semibold text-gray-900 mb-1 border-t border-gray-100 pt-1">
+                                    <span>Expected Payout</span>
+                                    <span className="text-green-600">
+                                      $
+                                      {txn.netAmount ||
+                                        (
+                                          txn.amount -
+                                          (txn.fee || txn.amount * 0.038)
+                                        ).toFixed(2)}
+                                    </span>
+                                  </div>
+
+                                  <div className="flex justify-between text-sm text-gray-600 mb-1">
+                                    <span>Account Name</span>
+                                    <span>{txn.accountName || "N/A"}</span>
+                                  </div>
+
+                                  <div className="flex justify-between text-sm text-gray-600">
+                                    <span>Account Number</span>
+                                    <span>{txn.accountNumber || "N/A"}</span>
+                                  </div>
+                                </div>
+                              </div>
+                            ))
+                        )}
+                      </>
+                    )}
+
+                    {/* Pagination Controls */}
+                    {totalPages > 1 && (
+                      <div className="flex justify-center items-center space-x-4 mt-6">
+                        <button
+                          disabled={currentPage === 1}
+                          onClick={() => setCurrentPage((p) => p - 1)}
+                          className={`px-4 py-2 rounded-md ${
+                            currentPage === 1
+                              ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                              : "bg-green-500 text-white hover:bg-green-600"
+                          }`}
+                        >
+                          Previous
+                        </button>
+                        <span className="text-sm font-medium text-gray-700">
+                          Account {currentPage} of {totalPages}
+                        </span>
+                        <button
+                          disabled={currentPage === totalPages}
+                          onClick={() => setCurrentPage((p) => p + 1)}
+                          className={`px-4 py-2 rounded-md ${
+                            currentPage === totalPages
+                              ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                              : "bg-green-500 text-white hover:bg-green-600"
+                          }`}
+                        >
+                          Next
+                        </button>
+                      </div>
                     )}
                   </>
                 )}
@@ -661,7 +713,10 @@ export default function Wallet() {
         <WithdrawModal
           isOpen={showWithdrawModal}
           onClose={() => setShowWithdrawModal(false)}
-          onSuccess={() => setShowWithdrawModal(false)} // refresh after success
+          onSuccess={() => {
+            setShowWithdrawModal(false);
+            fetchBaseData(); // Refresh records after successful withdrawal request
+          }}
           withdrawableBalance={withdrawableBalance}
           isRestricted={isRestricted}
         />
@@ -686,6 +741,12 @@ export default function Wallet() {
           onClose={handleQRCodeClose}
         />
       )}
+
+      {/* Social Links Popup */}
+      <SocialLinksModal
+        isOpen={showSocialModal}
+        onClose={() => setShowSocialModal(false)}
+      />
 
       <BottomNavigation />
     </div>

@@ -62,11 +62,19 @@ const SocialLinks = () => {
 
   return (
     <div className="p-6 bg-white rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold mb-6 text-gray-800">Social Links</h2>
+      <div className="mb-6">
+        <h2 className="text-2xl font-bold text-gray-800">
+          Official Channel Links
+        </h2>
+        <p className="text-gray-500 text-sm">
+          These links will be displayed on the website for users to join your
+          channels.
+        </p>
+      </div>
       <div className="space-y-4">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            WhatsApp Link
+            WhatsApp Channel Link
           </label>
           <input
             type="url"
@@ -75,12 +83,12 @@ const SocialLinks = () => {
               setSocialLinks({ ...socialLinks, whatsapp: e.target.value })
             }
             className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent text-gray-900 placeholder-gray-500"
-            placeholder="https://wa.me/..."
+            placeholder="https://whatsapp.com/channel/..."
           />
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Telegram Link
+            Telegram Channel Link
           </label>
           <input
             type="url"
@@ -89,7 +97,7 @@ const SocialLinks = () => {
               setSocialLinks({ ...socialLinks, telegram: e.target.value })
             }
             className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent text-gray-900 placeholder-gray-500"
-            placeholder="https://t.me/..."
+            placeholder="https://t.me/channel_name"
           />
         </div>
         <button
