@@ -248,7 +248,7 @@ export default function PaymentConfirmationModal({
                   <div className="flex items-center justify-between">
                     <div>
                       <div className="font-semibold text-lg">EasyPaisa</div>
-                      <div className="text-sm opacity-90">SafePay Gateway</div>
+                      <div className="text-sm opacity-90">Instant Payment</div>
                     </div>
                     <img
                       src="/Easypaisa-logo.png"
@@ -273,7 +273,7 @@ export default function PaymentConfirmationModal({
                   <div className="flex items-center justify-between">
                     <div>
                       <div className="font-semibold text-lg">JazzCash</div>
-                      <div className="text-sm opacity-90">SafePay Gateway</div>
+                      <div className="text-sm opacity-90">Instant Payment</div>
                     </div>
                     <img
                       src="/new-Jazzcash-logo.png"

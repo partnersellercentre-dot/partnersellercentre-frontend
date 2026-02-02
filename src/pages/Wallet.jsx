@@ -188,16 +188,17 @@ export default function Wallet() {
         selectedPayment === "easypaisa" ||
         selectedPayment === "jazzcash"
       ) {
-        // SafePay Integration
+        // WPAY Integration (Reusing Safepay Tracker call)
         const res = await createSafepayTracker(token, {
           amount: depositAmount,
+          method: selectedPayment,
         });
 
         if (res.data.success && res.data.redirectUrl) {
           window.location.href = res.data.redirectUrl;
           return;
         } else {
-          toast.error("Failed to create SafePay session");
+          toast.error("Failed to create Payment session");
           return;
         }
       } else if (selectedPayment === "card") {
