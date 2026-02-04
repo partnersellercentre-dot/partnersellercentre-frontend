@@ -18,6 +18,12 @@ export const withdrawRequest = (token, data) =>
     headers: { Authorization: `Bearer ${token}` },
   });
 
+// Transfer funds between wallets
+export const transferFunds = (token, data) =>
+  API.post("/wallet/transfer", data, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
 // Get all my wallet transactions
 export const getMyTransactions = (token, params = {}) =>
   API.get("/wallet/my-transactions", {

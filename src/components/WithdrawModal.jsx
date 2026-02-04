@@ -7,10 +7,11 @@ import {
   FaMoneyBillWave,
   FaCheckCircle,
   FaChevronDown,
+  FaExchangeAlt,
 } from "react-icons/fa";
 import { SiTether, SiVisa, SiMastercard } from "react-icons/si";
 import { AuthContext } from "../context/AuthContext";
-import { withdrawRequest } from "../api/paymentApi";
+import { withdrawRequest, transferFunds } from "../api/paymentApi";
 
 export default function WithdrawModal({
   isOpen,
@@ -21,12 +22,22 @@ export default function WithdrawModal({
 }) {
   const { token, user } = useContext(AuthContext);
   const [selectedPayment, setSelectedPayment] = useState(null);
+  const [showSwap, setShowSwap] = useState(false);
+  const [swapAmount, setSwapAmount] = useState("");
+  const [swapDirection, setSwapDirection] = useState("AtoB"); // AtoB: Available -> Withdrawal, BtoA: Withdrawal -> Available
   const [form, setForm] = useState({
     withdrawalAddress: "",
     amount: "",
     method: "",
   });
   const [loading, setLoading] = useState(false);
+  const [swapLoading, setSwapLoading] = useState(false);
+
+  const rechargeBalance = Math.max(
+    0,
+    (user?.balance || 0) - (withdrawableBalance || 0),
+  );
+
   const fee = form.amount
     ? Math.round(Number(form.amount) * 0.038 * 100) / 100
     : 0;
@@ -82,9 +93,50 @@ export default function WithdrawModal({
     }
   };
 
+  const handleSwap = async () => {
+    if (!swapAmount || Number(swapAmount) <= 0) {
+      toast.warning("Please enter a valid amount");
+      return;
+    }
+
+    if (swapDirection === "AtoB") {
+      // Direction A -> B: Show the special popup message as requested using react-toastify
+      toast.warning(
+        "To ensure swapping must completed 60x turnover of recharge volume. Once the criteria are met, funds may be moved to Earn-Wallet for withdrawal.",
+        {
+          autoClose: 6000,
+        },
+      );
+      return;
+    }
+
+    // Direction B -> E (Withdrawal -> Available)
+    if (Number(swapAmount) > withdrawableBalance) {
+      toast.error("Insufficient withdrawal balance");
+      return;
+    }
+
+    try {
+      setSwapLoading(true);
+      const res = await transferFunds(token, {
+        amount: Number(swapAmount),
+        direction: "BtoA",
+      });
+      toast.success(res.data.message || "Transfer successful");
+      setSwapAmount("");
+      setShowSwap(false);
+      if (onSuccess) onSuccess();
+    } catch (err) {
+      console.error(err);
+      toast.error(err.response?.data?.message || "Transfer failed");
+    } finally {
+      setSwapLoading(false);
+    }
+  };
+
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm z-50">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-md mx-4">
+      <div className="bg-white rounded-lg shadow-xl w-full max-w-md mx-4 overflow-y-auto max-h-[90vh]">
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b">
           <h2 className="text-lg font-semibold text-gray-900 flex items-center">
@@ -100,25 +152,83 @@ export default function WithdrawModal({
 
         {/* Form Content */}
         <div className="p-4 space-y-4">
-          {/* Dashboard Cards */}
-          <div className="grid grid-cols-2 gap-4">
-            <div className="bg-gray-50 p-4 rounded-xl border border-gray-100 flex flex-col items-center justify-center shadow-sm">
-              <span className="text-gray-500 text-sm mb-1 font-medium">
+          {/* Dashboard Cards with Swap Icon */}
+          <div className="flex items-center gap-1 sm:gap-4 w-full">
+            <div className="flex-1 bg-gray-50 p-2 sm:p-4 rounded-xl border border-gray-100 flex flex-col items-center justify-center shadow-sm min-w-0">
+              <span className="text-gray-500 text-[7.5px] min-[320px]:text-[9px] min-[380px]:text-[10.5px] sm:text-xs mb-1 font-semibold uppercase tracking-tighter sm:tracking-wider text-center leading-tight whitespace-nowrap w-full">
                 Available Amount
               </span>
-              <span className="text-2xl font-bold text-gray-900">
-                ${user?.balance?.toFixed(2) || "0.00"}
+              <span className="text-sm min-[320px]:text-base min-[400px]:text-xl sm:text-2xl font-bold text-gray-900 truncate">
+                ${rechargeBalance.toFixed(2)}
               </span>
             </div>
-            <div className="bg-gray-50 p-4 rounded-xl border border-gray-100 flex flex-col items-center justify-center shadow-sm">
-              <span className="text-gray-500 text-sm mb-1 font-medium">
+
+            {/* Swap Trigger Button */}
+            <div className="flex-shrink-0 bg-white p-0.5 sm:p-1 rounded-full shadow-sm border border-gray-200">
+              <button
+                onClick={() => setShowSwap(!showSwap)}
+                className={`p-1.5 sm:p-2 rounded-full transition-all ${
+                  showSwap
+                    ? "bg-green-500 text-white rotate-180"
+                    : "bg-gray-50 text-green-500 hover:bg-gray-100"
+                }`}
+                title="Swap funds between wallets"
+              >
+                <FaExchangeAlt className="w-3 h-3 sm:w-4 sm:h-4" />
+              </button>
+            </div>
+
+            <div className="flex-1 bg-gray-50 p-2 sm:p-4 rounded-xl border border-gray-100 flex flex-col items-center justify-center shadow-sm min-w-0">
+              <span className="text-gray-500 text-[7.5px] min-[320px]:text-[9px] min-[380px]:text-[10.5px] sm:text-xs mb-1 font-semibold uppercase tracking-tighter sm:tracking-wider text-center leading-tight whitespace-nowrap w-full">
                 Withdrawal Amount
               </span>
-              <span className="text-2xl font-bold text-gray-900">
+              <span className="text-sm min-[320px]:text-base min-[400px]:text-xl sm:text-2xl font-bold text-gray-900 truncate">
                 ${withdrawableBalance?.toFixed(2) || "0.00"}
               </span>
             </div>
           </div>
+
+          {/* Swap UI Section */}
+          {showSwap && (
+            <div className="bg-green-50/50 border border-green-100 p-4 rounded-xl space-y-3 animate-in fade-in slide-in-from-top-2 duration-300">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-semibold text-green-700 uppercase tracking-tight">
+                  {swapDirection === "AtoB"
+                    ? "Transfer to Withdrawal"
+                    : "Transfer to Available"}
+                </span>
+                <button
+                  onClick={() =>
+                    setSwapDirection(swapDirection === "AtoB" ? "BtoA" : "AtoB")
+                  }
+                  className="text-[10px] font-bold text-green-600 hover:text-green-700 flex items-center gap-1 bg-white px-2 py-1 rounded-full shadow-sm border border-green-100"
+                >
+                  <FaExchangeAlt size={10} /> Switch Direction
+                </button>
+              </div>
+
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 font-medium">
+                  $
+                </span>
+                <input
+                  type="number"
+                  value={swapAmount}
+                  onChange={(e) => setSwapAmount(e.target.value)}
+                  placeholder="0.00"
+                  className="w-full border border-gray-200 rounded-lg pl-7 pr-3 py-2 outline-none text-gray-900 focus:border-green-500 focus:ring-1 focus:ring-green-500 transition-all"
+                />
+              </div>
+
+              <button
+                onClick={handleSwap}
+                disabled={swapLoading}
+                className="w-full py-2.5 bg-green-500 text-white rounded-lg font-semibold hover:bg-green-600 transition-colors shadow-sm disabled:opacity-50"
+              >
+                {swapLoading ? "Processing..." : "Confirm Transfer"}
+              </button>
+            </div>
+          )}
 
           {/* Withdrawal Address */}
           <div>

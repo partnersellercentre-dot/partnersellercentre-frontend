@@ -19,7 +19,7 @@ import Spinner from "../components/Spinner";
 import SocialLinksModal from "../components/SocialLinksModal";
 
 export default function Wallet() {
-  const { user, token } = useContext(AuthContext);
+  const { user, token, setUser } = useContext(AuthContext);
 
   const [activeTab, setActiveTab] = useState("account");
   const [showDepositModal, setShowDepositModal] = useState(false);
@@ -45,8 +45,11 @@ export default function Wallet() {
     try {
       const res = await getMyTransactions(token, { tab: activeTab, page: 1 });
 
-      if (res.data.user && typeof res.data.user.balance === "number") {
-        setUserBalance(res.data.user.balance);
+      if (res.data.user) {
+        if (typeof res.data.user.balance === "number") {
+          setUserBalance(res.data.user.balance);
+        }
+        setUser(res.data.user);
       }
 
       setWithdrawableBalance(res.data.withdrawableBalance ?? 0);
