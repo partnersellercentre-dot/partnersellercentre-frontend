@@ -31,9 +31,10 @@ export default function Header() {
   const { user, logout } = useContext(AuthContext);
 
   const copyUsername = async () => {
-    if (user?.name) {
+    const textToCopy = user?.username || user?.name;
+    if (textToCopy) {
       try {
-        await navigator.clipboard.writeText(user.name);
+        await navigator.clipboard.writeText(textToCopy);
         toast.success("Username copied to clipboard!");
       } catch (err) {
         console.error("Failed to copy username:", err);
@@ -165,19 +166,30 @@ export default function Header() {
                         {user?.name || "Guest"}
                       </h4>
                     </Link>
-                    {user?.name && (
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <p className="text-sm text-gray-500">
+                      {user?.username
+                        ? `@${user.username}`
+                        : user?.isKycApproved
+                          ? "Verified User"
+                          : "Unverified"}
+                    </p>
+                    {user?.username && (
                       <button
                         onClick={copyUsername}
-                        className="text-gray-500 hover:text-gray-700 transition-colors"
+                        className="text-gray-400 hover:text-gray-600 transition-colors"
                         title="Copy username"
                       >
-                        <FaCopy className="text-sm" />
+                        <FaCopy className="text-xs" />
                       </button>
                     )}
                   </div>
-                  <p className="text-sm text-gray-500">
-                    {user?.isKycApproved ? "Verified User" : "Unverified"}
-                  </p>
+                  {user?.username && (
+                    <p className="text-[10px] text-gray-400">
+                      {user?.isKycApproved ? "Verified User" : "Unverified"}
+                    </p>
+                  )}
                 </div>
               </div>
               <button

@@ -18,8 +18,10 @@ export default function Profile() {
   const { user, token, setUser } = useContext(AuthContext);
   const [isEditing, setIsEditing] = useState(false);
   const [name, setName] = useState(user?.name || "");
+  const [username, setUsername] = useState(user?.username || "");
   const [email, setEmail] = useState(user?.email || "");
   const [isEditingEmail, setIsEditingEmail] = useState(false);
+  const [isEditingUsername, setIsEditingUsername] = useState(false);
   const [profileImage, setProfileImage] = useState(null);
   const [loading, setLoading] = useState(false);
   if (!user) {
@@ -88,9 +90,28 @@ export default function Profile() {
     }
   };
 
+  const handleSaveUsername = async () => {
+    try {
+      setLoading(true);
+      const { data } = await updateProfile(token, { username });
+      setUser(data.user); // update AuthContext
+      setUsername(data.user.username); // sync local state
+      setIsEditingUsername(false);
+      toast.success("Username updated!");
+    } catch (err) {
+      console.error("Update username error:", err);
+      toast.error(
+        "Error updating username: " +
+          (err.response?.data?.error || err.message),
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const profileItems = [
     {
-      label: "Name",
+      label: "Full Name",
       value: isEditing ? (
         <div className="flex items-center gap-2">
           <input
@@ -112,6 +133,37 @@ export default function Profile() {
           <span>{user.name}</span>
           <button
             onClick={() => setIsEditing(true)}
+            className="text-green-600 hover:text-green-700"
+          >
+            <FaEdit />
+          </button>
+        </div>
+      ),
+      icon: <FaUser />,
+    },
+    {
+      label: "Username",
+      value: isEditingUsername ? (
+        <div className="flex items-center gap-2">
+          <input
+            type="text"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            className="border px-2 py-1 rounded-md text-sm w-full"
+          />
+          <button
+            onClick={handleSaveUsername}
+            disabled={loading}
+            className="px-3 py-1 text-white bg-green-600 hover:bg-green-700 rounded-md text-sm"
+          >
+            {loading ? "Saving..." : "Save"}
+          </button>
+        </div>
+      ) : (
+        <div className="flex items-center gap-2">
+          <span>{user.username}</span>
+          <button
+            onClick={() => setIsEditingUsername(true)}
             className="text-green-600 hover:text-green-700"
           >
             <FaEdit />

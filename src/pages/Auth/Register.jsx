@@ -18,6 +18,7 @@ export default function Register() {
   const [otpSent, setOtpSent] = useState(false);
 
   const [formData, setFormData] = useState({
+    name: "",
     email: "",
     verificationCode: "",
     username: "",
@@ -59,6 +60,8 @@ export default function Register() {
     if (activeTab === "Email") {
       if (!otpSent) return toast.error("Obtain OTP first");
       if (!formData.verificationCode) return toast.error("Enter OTP");
+      if (!formData.name) return toast.error("Enter full name");
+      if (!formData.username) return toast.error("Enter username");
       if (!formData.password) return toast.error("Set password");
       if (!agreed) return toast.error("Agree to terms");
 
@@ -67,6 +70,8 @@ export default function Register() {
           email: formData.email,
           otp: formData.verificationCode,
           password: formData.password,
+          name: formData.name,
+          username: formData.username,
           referralCode: formData.invitationCode || null, // <-- FIXED
         });
 
@@ -80,6 +85,7 @@ export default function Register() {
     }
 
     if (activeTab === "Account") {
+      if (!formData.name) return toast.error("Enter full name");
       if (!formData.username) return toast.error("Enter username");
       if (!formData.email) return toast.error("Enter email");
       // Basic email validation
@@ -91,6 +97,7 @@ export default function Register() {
 
       try {
         const res = await registerWithUsername({
+          name: formData.name,
           username: formData.username,
           email: formData.email,
           password: formData.password,
@@ -149,6 +156,23 @@ export default function Register() {
             {/* Account Form */}
             {activeTab === "Account" && (
               <>
+                {/* Full Name */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Full Name
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.name}
+                    onChange={(e) =>
+                      setFormData({ ...formData, name: e.target.value })
+                    }
+                    placeholder="Enter your full name"
+                    className="w-full px-3 py-3 bg-gray-50 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:bg-white"
+                    required
+                  />
+                </div>
+
                 {/* Username */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -259,16 +283,59 @@ export default function Register() {
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Verification Code
                   </label>
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={formData.verificationCode}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          verificationCode: e.target.value,
+                        })
+                      }
+                      placeholder="Enter OTP"
+                      className="flex-1 px-3 py-3 bg-gray-50 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:bg-white"
+                      required
+                    />
+                    <button
+                      type="button"
+                      onClick={handleObtainCode}
+                      className="px-4 py-2 bg-green-100 text-green-600 rounded-md hover:bg-green-200 transition-colors font-medium text-sm whitespace-nowrap"
+                    >
+                      {otpSent ? "Resend OTP" : "Get OTP"}
+                    </button>
+                  </div>
+                </div>
+
+                {/* Full Name for Email Tab */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Full Name
+                  </label>
                   <input
                     type="text"
-                    value={formData.verificationCode}
+                    value={formData.name}
                     onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        verificationCode: e.target.value,
-                      })
+                      setFormData({ ...formData, name: e.target.value })
                     }
-                    placeholder="Enter OTP"
+                    placeholder="Enter your full name"
+                    className="w-full px-3 py-3 bg-gray-50 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:bg-white"
+                    required
+                  />
+                </div>
+
+                {/* Username for Email Tab */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Username
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.username}
+                    onChange={(e) =>
+                      setFormData({ ...formData, username: e.target.value })
+                    }
+                    placeholder="Enter your username"
                     className="w-full px-3 py-3 bg-gray-50 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:bg-white"
                     required
                   />
@@ -303,14 +370,6 @@ export default function Register() {
                     </button>
                   </div>
                 </div>
-
-                <button
-                  type="button"
-                  onClick={handleObtainCode}
-                  className="px-4 py-3 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors w-full sm:w-auto"
-                >
-                  {otpSent ? "Resend OTP" : "Get OTP"}
-                </button>
               </>
             )}
 

@@ -221,7 +221,8 @@ export default function PaymentConfirmationModal({
                   )}
                 </div>
 
-                {/* TRX Option */}
+                {/* 
+                TRX Option
                 <div
                   className={`relative border text-gray-400 border-gray-200 p-4 rounded-md mb-3 cursor-not-allowed opacity-60 transition-all`}
                 >
@@ -236,7 +237,7 @@ export default function PaymentConfirmationModal({
                   </div>
                 </div>
 
-                {/* EasyPaisa SafePay */}
+                EasyPaisa SafePay
                 <div
                   onClick={() => setSelectedPayment("easypaisa")}
                   className={`relative border text-blue-600 border-blue-500 p-4 rounded-md mb-3 cursor-pointer transition-all ${
@@ -263,7 +264,7 @@ export default function PaymentConfirmationModal({
                   )}
                 </div>
 
-                {/* JazzCash SafePay */}
+                JazzCash SafePay
                 <div
                   onClick={() => setSelectedPayment("jazzcash")}
                   className={`relative border text-red-600 border-red-500 p-4 rounded-md mb-3 cursor-pointer transition-all ${
@@ -288,7 +289,7 @@ export default function PaymentConfirmationModal({
                   )}
                 </div>
 
-                {/* Card Options */}
+                Card Options
                 <div
                   className={`relative bg-gray-100 p-4 mb-3 cursor-not-allowed opacity-60 transition-all`}
                 >
@@ -300,6 +301,7 @@ export default function PaymentConfirmationModal({
                     (Temporarily Disabled)
                   </div>
                 </div>
+                */}
 
                 {/* Confirm Button */}
                 <button
