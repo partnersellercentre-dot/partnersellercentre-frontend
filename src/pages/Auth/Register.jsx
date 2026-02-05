@@ -18,7 +18,7 @@ export default function Register() {
   const [otpSent, setOtpSent] = useState(false);
 
   const [formData, setFormData] = useState({
-    name: "",
+    storeName: "",
     email: "",
     verificationCode: "",
     username: "",
@@ -60,7 +60,7 @@ export default function Register() {
     if (activeTab === "Email") {
       if (!otpSent) return toast.error("Obtain OTP first");
       if (!formData.verificationCode) return toast.error("Enter OTP");
-      if (!formData.name) return toast.error("Enter full name");
+      if (!formData.storeName) return toast.error("Enter store name");
       if (!formData.username) return toast.error("Enter username");
       if (!formData.password) return toast.error("Set password");
       if (!agreed) return toast.error("Agree to terms");
@@ -70,7 +70,7 @@ export default function Register() {
           email: formData.email,
           otp: formData.verificationCode,
           password: formData.password,
-          name: formData.name,
+          storeName: formData.storeName,
           username: formData.username,
           referralCode: formData.invitationCode || null, // <-- FIXED
         });
@@ -85,7 +85,7 @@ export default function Register() {
     }
 
     if (activeTab === "Account") {
-      if (!formData.name) return toast.error("Enter full name");
+      if (!formData.storeName) return toast.error("Enter store name");
       if (!formData.username) return toast.error("Enter username");
       if (!formData.email) return toast.error("Enter email");
       // Basic email validation
@@ -97,7 +97,7 @@ export default function Register() {
 
       try {
         const res = await registerWithUsername({
-          name: formData.name,
+          storeName: formData.storeName,
           username: formData.username,
           email: formData.email,
           password: formData.password,
@@ -156,18 +156,18 @@ export default function Register() {
             {/* Account Form */}
             {activeTab === "Account" && (
               <>
-                {/* Full Name */}
+                {/* Store Name */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Full Name
+                    Store Name
                   </label>
                   <input
                     type="text"
-                    value={formData.name}
+                    value={formData.storeName}
                     onChange={(e) =>
-                      setFormData({ ...formData, name: e.target.value })
+                      setFormData({ ...formData, storeName: e.target.value })
                     }
-                    placeholder="Enter your full name"
+                    placeholder="Enter your store name"
                     className="w-full px-3 py-3 bg-gray-50 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:bg-white"
                     required
                   />
@@ -307,18 +307,18 @@ export default function Register() {
                   </div>
                 </div>
 
-                {/* Full Name for Email Tab */}
+                {/* Store Name for Email Tab */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Full Name
+                    Store Name
                   </label>
                   <input
                     type="text"
-                    value={formData.name}
+                    value={formData.storeName}
                     onChange={(e) =>
-                      setFormData({ ...formData, name: e.target.value })
+                      setFormData({ ...formData, storeName: e.target.value })
                     }
-                    placeholder="Enter your full name"
+                    placeholder="Enter your store name"
                     className="w-full px-3 py-3 bg-gray-50 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:bg-white"
                     required
                   />

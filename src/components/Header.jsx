@@ -98,7 +98,9 @@ export default function Header() {
               />
             ) : (
               <div className="w-8 h-8 bg-green-100 text-green-600 flex items-center justify-center rounded-full text-sm font-bold cursor-pointer">
-                {user?.name?.charAt(0).toUpperCase() || "G"}
+                {(user?.storeName || user?.username || "G")
+                  .charAt(0)
+                  .toUpperCase()}
               </div>
             )}
             {user?.isKycApproved && (
@@ -150,7 +152,9 @@ export default function Header() {
                     />
                   ) : (
                     <div className="w-10 h-10 bg-green-100 text-green-600 flex items-center justify-center rounded-full text-lg font-bold">
-                      {user?.name?.charAt(0).toUpperCase() || "G"}
+                      {(user?.storeName || user?.username || "G")
+                        .charAt(0)
+                        .toUpperCase()}
                     </div>
                   )}
                   {user?.isKycApproved && (
@@ -163,7 +167,7 @@ export default function Header() {
                   <div className="flex items-center gap-2">
                     <Link to="/profile" onClick={() => setMenuOpen(false)}>
                       <h4 className="font-semibold text-gray-800">
-                        {user?.name || "Guest"}
+                        {user?.storeName || user?.username || "Guest"}
                       </h4>
                     </Link>
                   </div>

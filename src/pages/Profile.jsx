@@ -17,7 +17,7 @@ import {
 export default function Profile() {
   const { user, token, setUser } = useContext(AuthContext);
   const [isEditing, setIsEditing] = useState(false);
-  const [name, setName] = useState(user?.name || "");
+  const [storeName, setStoreName] = useState(user?.storeName || "");
   const [username, setUsername] = useState(user?.username || "");
   const [email, setEmail] = useState(user?.email || "");
   const [isEditingEmail, setIsEditingEmail] = useState(false);
@@ -53,11 +53,13 @@ export default function Profile() {
     toast.success("Referral code copied to clipboard!");
   };
 
-  const handleSaveName = async () => {
+  const handleSaveStoreName = async () => {
     try {
       setLoading(true);
-      const { data } = await updateProfile(token, { name, profileImage });
-      setUser(data.user); // update AuthContext      setName(data.user.name); // sync local state      setIsEditing(false);
+      const { data } = await updateProfile(token, { storeName, profileImage });
+      setUser(data.user); // update AuthContext
+      setStoreName(data.user.storeName); // sync local state
+      setIsEditing(false);
       toast.success("Profile updated!");
     } catch (err) {
       console.error("Update profile error:", err);
@@ -111,17 +113,17 @@ export default function Profile() {
 
   const profileItems = [
     {
-      label: "Full Name",
+      label: "Store Name",
       value: isEditing ? (
         <div className="flex items-center gap-2">
           <input
             type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            value={storeName}
+            onChange={(e) => setStoreName(e.target.value)}
             className="border px-2 py-1 rounded-md text-sm w-full"
           />
           <button
-            onClick={handleSaveName}
+            onClick={handleSaveStoreName}
             disabled={loading}
             className="px-3 py-1 text-white bg-green-600 hover:bg-green-700 rounded-md text-sm"
           >
@@ -130,7 +132,7 @@ export default function Profile() {
         </div>
       ) : (
         <div className="flex items-center gap-2">
-          <span>{user.name}</span>
+          <span>{user.storeName}</span>
           <button
             onClick={() => setIsEditing(true)}
             className="text-green-600 hover:text-green-700"
@@ -253,7 +255,9 @@ export default function Profile() {
               />
             ) : (
               <div className="w-16 h-16 bg-green-100 text-green-600 flex items-center justify-center rounded-full text-2xl font-bold">
-                {user.name.charAt(0).toUpperCase()}
+                {(user.storeName || user.username || "G")
+                  .charAt(0)
+                  .toUpperCase()}
               </div>
             )}
             {user.isKycApproved && (
@@ -272,9 +276,10 @@ export default function Profile() {
           </div>
           <div>
             <h2 className="text-xl font-semibold text-gray-800 capitalize">
-              {user.name}
+              {user.storeName || user.username}
             </h2>
-            <p className="text-gray-500 text-sm">
+            <p className="text-gray-500 text-sm">@{user.username}</p>
+            <p className="text-gray-500 text-[10px]">
               {user.isKycApproved ? "Verified User" : "Unverified"}
             </p>
           </div>

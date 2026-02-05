@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useContext } from "react";
 import { FaTimes } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { adminMenuItems } from "./AdminMenu";
+import { AuthContext } from "../../context/AuthContext";
 
 function AdminSidebar({ closeSidebar, setActiveLink, activeLink }) {
   const navigate = useNavigate();
+  const { logout } = useContext(AuthContext);
 
   const handleLinkClick = (linkName) => {
     setActiveLink(linkName);
@@ -12,8 +14,7 @@ function AdminSidebar({ closeSidebar, setActiveLink, activeLink }) {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("role");
+    logout();
     navigate("/admin-login");
   };
 
