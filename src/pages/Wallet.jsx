@@ -49,7 +49,7 @@ export default function Wallet() {
         if (typeof res.data.user.balance === "number") {
           setUserBalance(res.data.user.balance);
         }
-        setUser(res.data.user);
+        setUser((prev) => ({ ...prev, ...res.data.user }));
       }
 
       setWithdrawableBalance(res.data.withdrawableBalance ?? 0);
