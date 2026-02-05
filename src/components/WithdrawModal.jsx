@@ -68,9 +68,11 @@ export default function WithdrawModal({
       return;
     }
 
-    const maxAvailable = isRestricted ? withdrawableBalance : user?.balance;
+    const maxAvailable = withdrawableBalance;
     if (Number(amount) > maxAvailable) {
-      toast.error("Insufficient withdrawable balance");
+      toast.error(
+        "Insufficient withdrawal balance. You can only withdraw from withdrawable balance",
+      );
       return;
     }
 
@@ -87,7 +89,9 @@ export default function WithdrawModal({
       if (onSuccess) onSuccess();
     } catch (err) {
       console.error(err);
-      toast.error("Failed to submit withdrawal request");
+      const errorMsg =
+        err.response?.data?.message || "Failed to submit withdrawal request";
+      toast.error(errorMsg);
     } finally {
       setLoading(false);
     }
