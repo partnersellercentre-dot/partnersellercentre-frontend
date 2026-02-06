@@ -10,14 +10,15 @@ export const buyProduct = (token, data) =>
   });
 
 // User fetch own purchases
-export const getMyPurchases = (token) =>
+export const getMyPurchases = (token, params = {}) =>
   API.get("/purchases/my", {
     headers: { Authorization: `Bearer ${token}` },
+    params,
   });
 
 // Admin fetch all purchases
-export const getAllPurchases = (token) =>
-  API.get("/purchases/all", {
+export const getAllPurchases = (token, search = "") =>
+  API.get(`/purchases/all${search ? `?search=${search}` : ""}`, {
     headers: { Authorization: `Bearer ${token}` },
   });
 

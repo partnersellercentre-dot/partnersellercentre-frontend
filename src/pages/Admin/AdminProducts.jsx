@@ -16,22 +16,29 @@ function AdminProducts() {
   const [showModal, setShowModal] = useState(false);
   const [productToEdit, setProductToEdit] = useState(null);
   const [image, setImage] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const navigate = useNavigate();
 
+  const fetchProducts = async (search = "") => {
+    try {
+      setLoading(true);
+      const response = await getProducts(search);
+      setProducts(response.data);
+      setLoading(false);
+    } catch (err) {
+      setError("Error fetching products");
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const response = await getProducts();
-        setProducts(response.data);
-        setLoading(false);
-      } catch (err) {
-        setError("Error fetching products");
-        setLoading(false);
-      }
-    };
-    fetchProducts();
-  }, []);
+    const delayDebounceFn = setTimeout(() => {
+      fetchProducts(searchTerm);
+    }, 500);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [searchTerm]);
 
   const handleDeleteProduct = async (id) => {
     const token = localStorage.getItem("token");
@@ -95,10 +102,19 @@ function AdminProducts() {
   return (
     <div className="h-full flex flex-col px-4 sm:px-8 py-4 sm:py-6">
       <div className="max-w-full mx-auto w-full">
-        <div className="flex flex-col sm:flex-row justify-end items-end mb-8 space-y-4 sm:space-y-0">
+        <h2 className="text-2xl font-bold mb-6">Products Management</h2>
+
+        <div className="mb-6 flex flex-col sm:flex-row gap-4 justify-between items-center bg-white p-4 rounded-lg shadow-sm border border-gray-200">
+          <input
+            type="text"
+            placeholder="Search products by name or category..."
+            className="w-full sm:max-w-md px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-700 font-medium"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
           <button
             onClick={handleCreateProduct}
-            className="bg-green-600 text-xs sm:text-sm py-2 sm:py-3 px-6 sm:px-8 rounded-lg shadow-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 transition duration-300"
+            className="w-full sm:w-auto bg-green-600 text-white text-xs sm:text-sm py-2 sm:py-3 px-6 sm:px-8 rounded-lg shadow-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 transition duration-300 font-bold"
           >
             Create Product
           </button>
@@ -107,17 +123,21 @@ function AdminProducts() {
         {loading && <Spinner />}
         {error && <p className="text-red-500">{error}</p>}
 
-        <div className="overflow-x-auto bg-white shadow-md rounded-lg">
-          {products.length > 0 ? (
-            <Table
-              products={products}
-              onDelete={handleDeleteProduct}
-              onEdit={handleEditProduct}
-            />
-          ) : (
-            <p>No products available.</p>
-          )}
-        </div>
+        {!loading && !error && (
+          <div className="overflow-x-auto bg-white shadow-md rounded-lg">
+            {products.length > 0 ? (
+              <Table
+                products={products}
+                onDelete={handleDeleteProduct}
+                onEdit={handleEditProduct}
+              />
+            ) : (
+              <p className="p-6 text-center text-gray-500 italic">
+                No products found.
+              </p>
+            )}
+          </div>
+        )}
       </div>
 
       {showModal && (

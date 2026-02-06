@@ -24,22 +24,24 @@ export default function OrderCenter() {
   const navigate = useNavigate();
   const { token } = useContext(AuthContext);
 
-  const totalPages = 5;
+  const [totalPages, setTotalPages] = useState(1);
+
+  const fetchPurchases = async () => {
+    setLoading(true);
+    try {
+      const res = await getMyPurchases(token, { page: currentPage, limit: 10 });
+      setPurchases(res.data.purchases || []);
+      setTotalPages(res.data.totalPages || 1);
+    } catch (err) {
+      setPurchases([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchPurchases = async () => {
-      setLoading(true);
-      try {
-        const res = await getMyPurchases(token);
-        setPurchases(res.data.purchases || []);
-      } catch (err) {
-        setPurchases([]);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchPurchases();
-  }, [token]);
+  }, [token, currentPage]);
 
   // Timer to update remaining seconds for all purchases every second
   useEffect(() => {
@@ -84,8 +86,7 @@ export default function OrderCenter() {
       );
       toast.success(res.data.message || "Funds transferred to your wallet!");
       // Refresh purchases to update transfer button status
-      const refreshed = await getMyPurchases(token);
-      setPurchases(refreshed.data.purchases || []);
+      fetchPurchases();
     } catch (err) {
       toast.error(
         err.response?.data?.message || "Failed to transfer funds. Try again.",
@@ -101,8 +102,7 @@ export default function OrderCenter() {
       const res = await claimProfit(token, purchaseId);
       toast.success(res.data.message || "Profit claimed!");
       // Refresh purchases to update status and balance
-      const refreshed = await getMyPurchases(token);
-      setPurchases(refreshed.data.purchases || []);
+      fetchPurchases();
     } catch (err) {
       toast.error(
         err.response?.data?.message ||
@@ -247,50 +247,32 @@ export default function OrderCenter() {
       </div>
 
       {/* Pagination */}
-      {purchases.length > 0 && (
-        <div className="flex items-center justify-center space-x-1 sm:space-x-2">
-          <button
-            onClick={() => handlePageChange(1)}
-            disabled={currentPage === 1}
-            className="p-1 sm:p-2 text-gray-400 hover:text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <FaAngleDoubleLeft size={12} />
-          </button>
+      {totalPages > 1 && (
+        <div className="flex items-center justify-center space-x-4 mt-6">
           <button
             onClick={() => handlePageChange(currentPage - 1)}
             disabled={currentPage === 1}
-            className="p-1 sm:p-2 text-gray-400 hover:text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+            className={`px-3 py-1 sm:px-4 sm:py-2 rounded-md text-xs sm:text-sm transition-colors ${
+              currentPage === 1
+                ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                : "bg-green-500 text-white hover:bg-green-600"
+            }`}
           >
-            <FaChevronLeft size={12} />
+            Previous
           </button>
-
-          {[1, 2, 3, 4, 5].map((page) => (
-            <button
-              key={page}
-              onClick={() => handlePageChange(page)}
-              className={`w-6 h-6 sm:w-8 sm:h-8 rounded text-xs sm:text-sm font-medium transition-colors ${
-                currentPage === page
-                  ? "bg-green-500 text-white"
-                  : "text-gray-600 hover:bg-gray-100"
-              }`}
-            >
-              {page}
-            </button>
-          ))}
-
+          <span className="text-xs sm:text-sm font-medium text-gray-700">
+            Page {currentPage} of {totalPages}
+          </span>
           <button
             onClick={() => handlePageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
-            className="p-1 sm:p-2 text-gray-400 hover:text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+            className={`px-3 py-1 sm:px-4 sm:py-2 rounded-md text-xs sm:text-sm transition-colors ${
+              currentPage === totalPages
+                ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                : "bg-green-500 text-white hover:bg-green-600"
+            }`}
           >
-            <FaChevronRight size={12} />
-          </button>
-          <button
-            onClick={() => handlePageChange(totalPages)}
-            disabled={currentPage === totalPages}
-            className="p-1 sm:p-2 text-gray-400 hover:text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <FaAngleDoubleRight size={12} />
+            Next
           </button>
         </div>
       )}

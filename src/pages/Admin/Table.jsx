@@ -8,7 +8,7 @@ function Table({ products, onDelete, onEdit }) {
         <table className="min-w-full text-sm text-left text-gray-900">
           <thead className="bg-gray-100 text-gray-900 sticky top-0 z-10">
             <tr>
-              <th className="px-6 py-3">ID</th>
+              <th className="px-6 py-3">S.No</th>
               <th className="px-6 py-3">Product Name</th>
               <th className="px-6 py-3">Price</th>
               <th className="px-6 py-3">Category</th>
@@ -16,9 +16,9 @@ function Table({ products, onDelete, onEdit }) {
             </tr>
           </thead>
           <tbody>
-            {products.map((product) => (
+            {products.map((product, index) => (
               <tr key={product._id} className="border-b border-gray-200">
-                <td className="px-6 py-3">{product._id}</td>
+                <td className="px-6 py-3 font-medium">{index + 1}</td>
                 <td className="px-6 py-3">{product.name}</td>
                 <td className="px-6 py-3">${product.price}</td>
                 <td className="px-6 py-3">{product.category}</td>

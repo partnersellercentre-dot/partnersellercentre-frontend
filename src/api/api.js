@@ -40,8 +40,8 @@ export const registerAdmin = (data) => API.post("/admin/register", data); // { u
 // Admin Login using username + password
 export const loginAdmin = (data) => API.post("/admin/login", data); // { username, password }
 
-export const getUsers = (token) =>
-  API.get("/admin/users", {
+export const getUsers = (token, search = "") =>
+  API.get(`/admin/users${search ? `?search=${search}` : ""}`, {
     headers: { Authorization: `Bearer ${token}` }, // Pass token for authentication
   });
 
@@ -110,7 +110,12 @@ export const updateUserStatus = (token, userId, status) =>
     { status },
     { headers: { Authorization: `Bearer ${token}` } },
   );
-
+export const addBalanceToUser = (token, userId, amount) =>
+  API.post(
+    `/admin/users/${userId}/add-balance`,
+    { amount },
+    { headers: { Authorization: `Bearer ${token}` } },
+  );
 export const getSystemSettings = (token) =>
   API.get("/admin/settings", {
     headers: { Authorization: `Bearer ${token}` },

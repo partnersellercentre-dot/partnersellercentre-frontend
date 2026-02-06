@@ -10,7 +10,8 @@ export const createProduct = (data, token) =>
     headers: { Authorization: `Bearer ${token}` }, // REMOVE Content-Type
   });
 // Get all products
-export const getProducts = () => API.get("/products");
+export const getProducts = (search = "") =>
+  API.get(`/products${search ? `?search=${search}` : ""}`);
 // Get products by category
 export const getProductsByCategory = (category) =>
   API.get(`/products/category/${category}`);

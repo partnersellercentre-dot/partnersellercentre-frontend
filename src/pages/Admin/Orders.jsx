@@ -13,7 +13,7 @@ function Table({ orders, onDelete }) {
         <table className="min-w-full text-sm text-left text-gray-900">
           <thead className="bg-gray-100 text-gray-900 sticky top-0 z-10">
             <tr>
-              <th className="px-6 py-3">Order ID</th>
+              <th className="px-6 py-3">S.No</th>
               <th className="px-6 py-3">Customer</th>
               <th className="px-6 py-3">Product</th>
               <th className="px-6 py-3">Amount</th>
@@ -24,12 +24,12 @@ function Table({ orders, onDelete }) {
           </thead>
           <tbody>
             {orders.length > 0 ? (
-              orders.map((order) => (
+              orders.map((order, index) => (
                 <tr
                   key={order._id}
                   className="border-b border-gray-200 hover:bg-gray-50 transition-all duration-200"
                 >
-                  <td className="px-6 py-3">{order._id}</td>
+                  <td className="px-6 py-3 font-medium">{index + 1}</td>
                   <td className="px-6 py-3">{order.user?.name || "N/A"}</td>
                   <td className="px-6 py-3">{order.product?.name || "N/A"}</td>
                   <td className="px-6 py-3 font-medium text-green-400">
@@ -82,22 +82,30 @@ export default function Orders() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
 
   // ✅ Fetch all orders
+  const fetchOrders = async (search = "") => {
+    setLoading(true);
+    try {
+      const res = await getAllPurchases(token, search);
+      setOrders(res.data.purchases || []);
+    } catch (err) {
+      setError("Failed to load orders.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchOrders = async () => {
-      setLoading(true);
-      try {
-        const res = await getAllPurchases(token);
-        setOrders(res.data.purchases || []);
-      } catch (err) {
-        setError("Failed to load orders.");
-      } finally {
-        setLoading(false);
+    const delayDebounceFn = setTimeout(() => {
+      if (token) {
+        fetchOrders(searchTerm);
       }
-    };
-    fetchOrders();
-  }, [token]);
+    }, 500);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [token, searchTerm]);
 
   // ✅ Delete handler
   const handleDeleteOrder = async (id) => {
@@ -117,12 +125,25 @@ export default function Orders() {
     );
 
   return (
-    <div className="min-h-screen  flex flex-col justify-start items-center px-4 sm:px-6 md:px-8 py-8">
+    <div className="min-h-screen  flex flex-col justify-start items-center px-4 sm:px-6 md:px-8 py-8 text-black">
       <div className="max-w-7xl w-full space-y-6">
-        <h1 className="text-2xl font-semibold text-white mb-4">
-          Orders Overview
-        </h1>
-        <Table orders={orders} onDelete={handleDeleteOrder} />
+        <h1 className="text-2xl font-semibold mb-4">Orders Overview</h1>
+
+        <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
+          <input
+            type="text"
+            placeholder="Search orders by customer name, email or product..."
+            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-700 font-medium"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+
+        {loading ? (
+          <Spinner />
+        ) : (
+          <Table orders={orders} onDelete={handleDeleteOrder} />
+        )}
       </div>
     </div>
   );

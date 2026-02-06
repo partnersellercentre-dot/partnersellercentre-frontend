@@ -350,7 +350,7 @@ export default function WithdrawModal({
                 )}
               </div>
 
-              {/* Easypaisa Option */}
+              {/* Easypaisa Option
               <div
                 onClick={() => {
                   setSelectedPayment("easypaisa");
@@ -382,7 +382,7 @@ export default function WithdrawModal({
                 )}
               </div>
 
-              {/* JazzCash Option */}
+              JazzCash Option
               <div
                 onClick={() => {
                   setSelectedPayment("jazzcash");
@@ -413,6 +413,7 @@ export default function WithdrawModal({
                   </div>
                 )}
               </div>
+               */}
             </div>
           </div>
 

@@ -216,7 +216,7 @@ export default function PaymentConfirmationModal({
                   </div>
                   {selectedPayment === "bep20" && (
                     <div className="absolute top-2 right-2">
-                      <FaCheckCircle className="text-white" size={20} />
+                      <FaCheckCircle className="text-green-500" size={20} />
                     </div>
                   )}
                 </div>
@@ -319,7 +319,7 @@ export default function PaymentConfirmationModal({
                 <h3 className="text-sm font-medium text-gray-900 mb-3">
                   Select a method
                 </h3>
-                <div className="grid grid-cols-3 gap-3">
+                <div className="grid grid-cols-2 gap-3">
                   {offlineOptions.map((opt) => (
                     <div
                       key={opt.id}

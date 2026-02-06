@@ -1,8 +1,14 @@
 import React, { useEffect, useState, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getUsers, deleteUser, updateUserStatus } from "../../api/api";
+import {
+  getUsers,
+  deleteUser,
+  updateUserStatus,
+  addBalanceToUser,
+} from "../../api/api";
 import { AuthContext } from "../../context/AuthContext";
 import Spinner from "../../components/Spinner";
+import { toast } from "react-toastify";
 
 function Userdetails() {
   const { id } = useParams();
@@ -11,6 +17,7 @@ function Userdetails() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(false);
+  const [addAmount, setAddAmount] = useState("");
   const { token } = useContext(AuthContext);
 
   useEffect(() => {
@@ -45,6 +52,30 @@ function Userdetails() {
       }));
     } catch (err) {
       setError("Failed to update status");
+    }
+    setActionLoading(false);
+  };
+
+  const handleAddBalance = async () => {
+    if (!addAmount || isNaN(addAmount) || Number(addAmount) <= 0) {
+      toast.error("Please enter a valid amount");
+      return;
+    }
+    setActionLoading(true);
+    try {
+      await addBalanceToUser(token, id, addAmount);
+      setUser((prev) => ({
+        ...prev,
+        balance: (prev.balance || 0) + Number(addAmount),
+        balances: {
+          ...prev.balances,
+          recharge: (prev.balances?.recharge || 0) + Number(addAmount),
+        },
+      }));
+      setAddAmount("");
+      toast.success("Balance added successfully!");
+    } catch (err) {
+      toast.error("Failed to add balance");
     }
     setActionLoading(false);
   };
@@ -88,8 +119,12 @@ function Userdetails() {
           <span className="break-all">{user._id}</span>
         </div>
         <div className="break-all">
-          <span className="font-semibold text-green-300">Name:</span>{" "}
+          <span className="font-semibold text-green-300">Username:</span>{" "}
           <span className="break-all">{user.name}</span>
+        </div>
+        <div className="break-all">
+          <span className="font-semibold text-green-300">Full Name:</span>{" "}
+          <span className="break-all">{user.fullName || user.name}</span>
         </div>
         <div className="break-all">
           <span className="font-semibold text-green-300">Email:</span>{" "}
@@ -100,8 +135,46 @@ function Userdetails() {
           <span className="break-all">{user.phone || "N/A"}</span>
         </div>
         <div>
-          <span className="font-semibold text-green-300">Balance:</span> $
+          <span className="font-semibold text-green-300">Total Balance:</span> $
           {user.balance ?? 0}
+        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 bg-gray-700 p-3 rounded-lg text-sm border border-gray-600">
+          <div>
+            <span className="text-gray-400">Recharge:</span>
+            <span className="ml-1 text-green-300">
+              ${user.balances?.recharge ?? 0}
+            </span>
+          </div>
+          <div>
+            <span className="text-gray-400">Profit:</span>
+            <span className="ml-1 text-green-300">
+              ${user.balances?.profit ?? 0}
+            </span>
+          </div>
+          <div>
+            <span className="text-gray-400">Referral:</span>
+            <span className="ml-1 text-green-300">
+              ${user.balances?.referralBonus ?? 0}
+            </span>
+          </div>
+          <div>
+            <span className="text-gray-400">Team:</span>
+            <span className="ml-1 text-green-300">
+              ${user.balances?.teamCommission ?? 0}
+            </span>
+          </div>
+          <div>
+            <span className="text-gray-400">Self Bonus:</span>
+            <span className="ml-1 text-green-300">
+              ${user.balances?.selfBonus ?? 0}
+            </span>
+          </div>
+          <div>
+            <span className="text-gray-400">Signup:</span>
+            <span className="ml-1 text-green-300">
+              ${user.balances?.signupBonus ?? 0}
+            </span>
+          </div>
         </div>
         <div>
           <span className="font-semibold text-green-300">Status:</span>{" "}
@@ -117,6 +190,29 @@ function Userdetails() {
           <span className="font-semibold text-green-300">Account Status:</span>{" "}
           <span className="font-medium">{user.accountStatus || "active"}</span>
         </div>
+      </div>
+
+      <div className="mt-8 bg-gray-700 p-4 rounded-xl border border-gray-600">
+        <h3 className="text-xl font-bold mb-4 text-green-400">Add Balance</h3>
+        <div className="flex gap-3">
+          <input
+            type="number"
+            placeholder="Enter amount"
+            className="flex-1 bg-gray-800 border border-gray-600 rounded-md px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-green-400"
+            value={addAmount}
+            onChange={(e) => setAddAmount(e.target.value)}
+          />
+          <button
+            className="bg-green-600 hover:bg-green-700 px-6 py-2 rounded-md font-bold transition disabled:opacity-50"
+            onClick={handleAddBalance}
+            disabled={actionLoading}
+          >
+            {actionLoading ? "Adding..." : "Add"}
+          </button>
+        </div>
+        <p className="text-xs text-gray-400 mt-2">
+          Note: This balance will be added to the user's Recharge bucket.
+        </p>
       </div>
 
       <div className="flex flex-wrap gap-3 mt-8">

@@ -65,17 +65,24 @@ export const rejectWithdraw = (token, transactionId) =>
   );
 
 // Get all transactions (admin view)
-export const getAllTransactions = async (token, status) => {
+export const getAllTransactions = async (token, status, type) => {
   const res = await API.get("/wallet/transactions", {
     headers: { Authorization: `Bearer ${token}` },
-    params: { status },
+    params: { status, type },
   });
   return res.data; // ✅ ensures we get { success, transactions }
 };
 
 // Get pending transactions (admin view)
-export const getPendingTransactions = (token) =>
-  API.get("/wallet/transactions?status=pending", {
+export const getPendingTransactions = (token, type) =>
+  API.get("/wallet/transactions", {
+    headers: { Authorization: `Bearer ${token}` },
+    params: { status: "pending", type },
+  });
+
+// Delete transaction
+export const deleteTransaction = (token, transactionId) =>
+  API.delete(`/wallet/transactions/${transactionId}`, {
     headers: { Authorization: `Bearer ${token}` },
   });
 

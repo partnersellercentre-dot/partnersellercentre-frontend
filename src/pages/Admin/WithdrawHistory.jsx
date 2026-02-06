@@ -38,7 +38,7 @@ export default function WithdrawHistory() {
         <table className="min-w-full text-sm text-left text-gray-900">
           <thead className="bg-gray-100 text-gray-900 sticky top-0 z-10">
             <tr>
-              <th className="px-6 py-3">ID</th>
+              <th className="px-6 py-3">S.No</th>
               <th className="px-6 py-3">User</th>
               <th className="px-6 py-3">Requested</th>
               <th className="px-6 py-3">Net Payout</th>
@@ -68,7 +68,7 @@ export default function WithdrawHistory() {
                   key={tx._id || idx}
                   className="border-b border-gray-200 hover:bg-gray-50 transition"
                 >
-                  <td className="px-6 py-3">{tx._id}</td>
+                  <td className="px-6 py-3 font-medium">{idx + 1}</td>
                   <td className="px-6 py-3">
                     {tx.user?.name || tx.user || "N/A"}
                   </td>

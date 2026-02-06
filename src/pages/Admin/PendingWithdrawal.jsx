@@ -1,10 +1,11 @@
 import React, { useEffect, useState, useContext } from "react";
-import { FaCheck, FaTimes } from "react-icons/fa";
+import { FaCheck, FaTimes, FaTrash } from "react-icons/fa";
 import { AuthContext } from "../../context/AuthContext";
 import {
   getAllTransactions,
   approveWithdraw,
   rejectWithdraw,
+  deleteTransaction,
 } from "../../api/paymentApi";
 import { toast } from "react-toastify";
 import ConfirmationModal from "../../components/ConfirmationModal";
@@ -31,11 +32,10 @@ function PendingWithdrawal() {
   const fetchPendingWithdrawals = async () => {
     try {
       setLoading(true);
-      const res = await getAllTransactions(token, "pending");
-      const filtered =
-        res?.transactions?.filter((t) => t.type === "withdraw") || [];
+      const res = await getAllTransactions(token, "pending", "withdraw");
+      const txns = res.data?.transactions || res.transactions || [];
 
-      setWithdrawals(filtered);
+      setWithdrawals(txns);
     } catch (error) {
       console.error("Error fetching withdrawals:", error);
       toast.error("Failed to fetch withdrawals");
@@ -85,6 +85,27 @@ function PendingWithdrawal() {
     });
   };
 
+  // ✅ Delete handler
+  const handleDelete = (id) => {
+    setConfirmConfig({
+      isOpen: true,
+      title: "Delete Withdrawal",
+      message:
+        "Are you sure you want to permanently delete this withdrawal record?",
+      type: "danger",
+      onConfirm: async () => {
+        try {
+          await deleteTransaction(token, id);
+          toast.success("Withdrawal deleted successfully!");
+          fetchPendingWithdrawals();
+        } catch (error) {
+          console.error("Delete error:", error);
+          toast.error("Failed to delete withdrawal");
+        }
+      },
+    });
+  };
+
   return (
     <div className="w-full text-black p-4 sm:p-8">
       <ConfirmationModal
@@ -110,7 +131,7 @@ function PendingWithdrawal() {
             <table className="min-w-full text-sm text-left text-gray-900">
               <thead className="bg-gray-100 text-gray-900 sticky top-0 z-10">
                 <tr>
-                  <th className="px-6 py-3">ID</th>
+                  <th className="px-6 py-3">S.No</th>
                   <th className="px-6 py-3">User</th>
                   <th className="px-6 py-3">Requested</th>
                   <th className="px-6 py-3">Net Payout</th>
@@ -121,9 +142,9 @@ function PendingWithdrawal() {
                 </tr>
               </thead>
               <tbody>
-                {withdrawals.map((w) => (
+                {withdrawals.map((w, index) => (
                   <tr key={w._id} className="border-b border-gray-200">
-                    <td className="px-6 py-3 capitalize">{w._id}</td>
+                    <td className="px-6 py-3 font-medium">{index + 1}</td>
                     <td className="px-6 py-3 capitalize">
                       {w.user?.name || "N/A"}
                     </td>
@@ -148,6 +169,13 @@ function PendingWithdrawal() {
                         title="Reject"
                       >
                         <FaTimes />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(w._id)}
+                        className="text-gray-800 hover:text-black"
+                        title="Delete"
+                      >
+                        <FaTrash />
                       </button>
                     </td>
                   </tr>
