@@ -20,6 +20,7 @@ import {
   FaSignOutAlt,
   FaWallet,
   FaCopy,
+  FaLink,
 } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
@@ -52,6 +53,7 @@ export default function Header() {
       icon: <FaHeart />,
     },
     { name: "My Cart", href: "/cart", icon: <FaShoppingBag /> },
+    { name: "Link Integration", href: "/link-integration", icon: <FaLink /> },
     { name: "Partner Stores", href: "/referral", icon: <FaUsers /> },
     { name: "Store KYC Verification", href: "/kyc", icon: <FaCheckCircle /> },
     { name: "Chat with Us", href: "/chat-support", icon: <FaComments /> },

@@ -193,6 +193,52 @@ function Userdetails() {
       </div>
 
       <div className="mt-8 bg-gray-700 p-4 rounded-xl border border-gray-600">
+        <h3 className="text-xl font-bold mb-4 text-green-400">
+          Social Profile Links
+        </h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="flex flex-col bg-gray-800 p-3 rounded-lg border border-gray-600">
+            <span className="text-gray-400 text-xs uppercase font-bold">
+              WhatsApp
+            </span>
+            <span className="text-sm break-all mt-1">
+              {user.socialLinks?.whatsapp ? (
+                <a
+                  href={user.socialLinks.whatsapp}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-green-400 hover:underline"
+                >
+                  {user.socialLinks.whatsapp}
+                </a>
+              ) : (
+                "Not connected"
+              )}
+            </span>
+          </div>
+          <div className="flex flex-col bg-gray-800 p-3 rounded-lg border border-gray-600">
+            <span className="text-gray-400 text-xs uppercase font-bold">
+              Telegram
+            </span>
+            <span className="text-sm break-all mt-1">
+              {user.socialLinks?.telegram ? (
+                <a
+                  href={user.socialLinks.telegram}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-400 hover:underline"
+                >
+                  {user.socialLinks.telegram}
+                </a>
+              ) : (
+                "Not connected"
+              )}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div className="mt-8 bg-gray-700 p-4 rounded-xl border border-gray-600">
         <h3 className="text-xl font-bold mb-4 text-green-400">Add Balance</h3>
         <div className="flex gap-3">
           <input

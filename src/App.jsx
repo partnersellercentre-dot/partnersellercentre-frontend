@@ -21,6 +21,7 @@ import Messages from "./pages/MenuPages/Messages";
 import Returns from "./pages/MenuPages/Returns";
 import Cancellations from "./pages/MenuPages/Cancellations";
 import Settings from "./pages/MenuPages/Settings";
+import LinkIntegration from "./pages/LinkIntegration";
 import Feedback from "./pages/MenuPages/Feedback";
 import Help from "./pages/MenuPages/Help";
 import ProductDetails from "./components/Products/ProductDetails";
@@ -35,6 +36,7 @@ import AdminMessages from "./pages/Admin/AdminMessages";
 import AdminChat from "./pages/Admin/AdminChat";
 import AdminKYC from "./pages/Admin/AdminKYC";
 import SocialLinks from "./pages/Admin/SocialLinks";
+import ActivityLinks from "./pages/Admin/ActivityLinks";
 import Success from "./pages/Success";
 import Fail from "./pages/Fail";
 import Benefits from "./pages/Benefits";
@@ -112,6 +114,7 @@ function App() {
               <Route path="users" element={<Users />} />
               <Route path="users/:id" element={<Userdetails />} />{" "}
               {/* <-- Add this */}
+              <Route path="activity-links" element={<ActivityLinks />} />
               <Route path="orders" element={<Orders />} />
               <Route path="notifications" element={<Notifications />} />
               <Route path="pending-deposit" element={<PendingDeposit />} />
@@ -324,6 +327,17 @@ function App() {
                 <ProtectedRoute allowedRoles={["user"]}>
                   <DashboardLayout>
                     <Settings />
+                  </DashboardLayout>
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/link-integration"
+              element={
+                <ProtectedRoute allowedRoles={["user"]}>
+                  <DashboardLayout>
+                    <LinkIntegration />
                   </DashboardLayout>
                 </ProtectedRoute>
               }

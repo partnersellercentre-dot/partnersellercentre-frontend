@@ -146,6 +146,11 @@ export const updateProfile = (token, data) => {
   });
 };
 
+export const updateSocialLinks = (token, data) =>
+  API.put("/auth/update-social-links", data, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
 /* ---------------------- KYC APIs ---------------------- */
 
 // Create new KYC (uploads idFront + idBack to Cloudinary via backend)
