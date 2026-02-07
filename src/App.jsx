@@ -38,7 +38,7 @@ import SocialLinks from "./pages/Admin/SocialLinks";
 import ActivityLinks from "./pages/Admin/ActivityLinks";
 import Success from "./pages/Success";
 import Fail from "./pages/Fail";
-import Benefits from "./pages/Benefits";
+import Partners from "./pages/Partners";
 import Userdetails from "./pages/Admin/Userdetails";
 import ReferralLanding from "./pages/ReferralLanding";
 
@@ -143,11 +143,11 @@ function App() {
               }
             />
             <Route
-              path="/benefits"
+              path="/partners"
               element={
                 <ProtectedRoute allowedRoles={["user"]}>
                   <DashboardLayout>
-                    <Benefits />
+                    <Partners />
                   </DashboardLayout>
                 </ProtectedRoute>
               }

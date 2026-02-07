@@ -53,7 +53,7 @@ export default function Header() {
       icon: <FaHeart />,
     },
     { name: "My Cart", href: "/cart", icon: <FaShoppingBag /> },
-    { name: "Commission Benefits", href: "/benefits", icon: <FaLink /> },
+    { name: "Partners", href: "/partners", icon: <FaUsers /> },
     { name: "Partner Stores", href: "/referral", icon: <FaUsers /> },
     { name: "Store KYC Verification", href: "/kyc", icon: <FaCheckCircle /> },
     { name: "Chat with Us", href: "/chat-support", icon: <FaComments /> },
