@@ -21,7 +21,6 @@ import Messages from "./pages/MenuPages/Messages";
 import Returns from "./pages/MenuPages/Returns";
 import Cancellations from "./pages/MenuPages/Cancellations";
 import Settings from "./pages/MenuPages/Settings";
-import LinkIntegration from "./pages/LinkIntegration";
 import Feedback from "./pages/MenuPages/Feedback";
 import Help from "./pages/MenuPages/Help";
 import ProductDetails from "./components/Products/ProductDetails";
@@ -327,17 +326,6 @@ function App() {
                 <ProtectedRoute allowedRoles={["user"]}>
                   <DashboardLayout>
                     <Settings />
-                  </DashboardLayout>
-                </ProtectedRoute>
-              }
-            />
-
-            <Route
-              path="/link-integration"
-              element={
-                <ProtectedRoute allowedRoles={["user"]}>
-                  <DashboardLayout>
-                    <LinkIntegration />
                   </DashboardLayout>
                 </ProtectedRoute>
               }

@@ -31,7 +31,7 @@ const SocialLinks = ({
   };
 
   const iconClasses =
-    "transition-all hover:scale-105 flex items-center gap-3 px-4 py-2 rounded-full border shadow-sm hover:shadow-md";
+    "transition-all hover:scale-105 flex items-center gap-3 px-4 py-2 rounded-lg border shadow-sm hover:shadow-md";
 
   return (
     <div className="flex flex-col items-center">
@@ -54,7 +54,7 @@ const SocialLinks = ({
           </a>
         ) : (
           <span
-            className={`text-gray-400 border-gray-200 bg-gray-50 flex items-center gap-3 px-4 py-2 rounded-full border cursor-not-allowed`}
+            className={`text-gray-400 border-gray-200 bg-gray-50 flex items-center gap-3 px-4 py-2 rounded-lg border cursor-not-allowed`}
           >
             <span className="font-semibold text-sm">WhatsApp</span>
             <FaWhatsapp size={size} />
@@ -73,7 +73,7 @@ const SocialLinks = ({
           </a>
         ) : (
           <span
-            className={`text-gray-400 border-gray-200 bg-gray-50 flex items-center gap-3 px-4 py-2 rounded-full border cursor-not-allowed`}
+            className={`text-gray-400 border-gray-200 bg-gray-50 flex items-center gap-3 px-4 py-2 rounded-lg border cursor-not-allowed`}
           >
             <span className="font-semibold text-sm">Telegram</span>
             <FaTelegram size={size} />

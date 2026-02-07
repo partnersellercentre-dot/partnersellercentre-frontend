@@ -169,56 +169,70 @@ export default function PaymentConfirmationModal({
                   Payment options
                 </h3>
 
-                {/* Tether TRC20 Option */}
-                <div
-                  onClick={() => setSelectedPayment("trc20")}
-                  className={`relative bg-green-500 rounded-md p-4 mb-3 cursor-pointer transition-all ${
-                    selectedPayment === "trc20" ? "ring-2 ring-green-600" : ""
-                  }`}
-                >
-                  <div className="flex items-center justify-between text-white">
-                    <div>
-                      <div className="font-semibold text-lg">Tether</div>
-                      <div className="text-sm opacity-90">USDT (TRC20)</div>
-                    </div>
-                    <img
-                      src="/tether-usdt-logo.png" // Existing logo
-                      alt="USDT TRC20"
-                      className="w-16 h-auto"
-                    />
-                  </div>
-                  {selectedPayment === "trc20" && (
-                    <div className="absolute top-2 right-2">
-                      <FaCheckCircle className="text-white" size={20} />
-                    </div>
-                  )}
-                </div>
-
-                {/* Tether BEP20 Option */}
-                <div
-                  onClick={() => setSelectedPayment("bep20")}
-                  className={`relative border text-green-500 border-green-500 p-4 rounded-md mb-3 cursor-pointer transition-all ${
-                    selectedPayment === "bep20" ? "ring-2 ring-green-600" : ""
-                  }`}
-                >
-                  <div className="flex items-center justify-between text-black">
-                    <div>
-                      <div className="font-semibold text-lg">Tether</div>
-                      <div className="text-sm opacity-90">USDT (BEP20)</div>
-                    </div>
-                    <div className="w-8 h-8 border-2 border-white rounded flex items-center justify-center text-black text-xs">
+                <div className="grid grid-cols-2 gap-3 mb-4">
+                  {/* Tether TRC20 Option */}
+                  <div
+                    onClick={() => setSelectedPayment("trc20")}
+                    className={`relative border border-green-500 rounded-md p-2 sm:p-4 cursor-pointer transition-all ${
+                      selectedPayment === "trc20" ? "ring-2 ring-green-600" : ""
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <div className="font-semibold text-sm sm:text-lg leading-tight text-green-500">
+                          Tether
+                        </div>
+                        <div className="text-[10px] sm:text-sm text-gray-500 opacity-90">
+                          USDT (TRC20)
+                        </div>
+                      </div>
                       <img
-                        src="/bdep.webp" // Existing logo
-                        alt="USDT BEP20"
-                        className="w-32 "
-                      />{" "}
+                        src="/tether-usdt-logo.png"
+                        alt="USDT TRC20"
+                        className="w-10 sm:w-16 h-auto object-contain"
+                      />
                     </div>
+                    {selectedPayment === "trc20" && (
+                      <div className="absolute -top-1 -right-1">
+                        <FaCheckCircle
+                          className="text-green-500 bg-white rounded-full"
+                          size={14}
+                        />
+                      </div>
+                    )}
                   </div>
-                  {selectedPayment === "bep20" && (
-                    <div className="absolute top-2 right-2">
-                      <FaCheckCircle className="text-green-500" size={20} />
+
+                  {/* Tether BEP20 Option */}
+                  <div
+                    onClick={() => setSelectedPayment("bep20")}
+                    className={`relative border border-green-500 rounded-md p-2 sm:p-4 cursor-pointer transition-all ${
+                      selectedPayment === "bep20" ? "ring-2 ring-green-600" : ""
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <div className="font-semibold text-sm sm:text-lg leading-tight text-green-500">
+                          Tether
+                        </div>
+                        <div className="text-[10px] sm:text-sm text-gray-500 opacity-90">
+                          USDT (BEP20)
+                        </div>
+                      </div>
+                      <img
+                        src="/bdep.webp"
+                        alt="USDT BEP20"
+                        className="w-10 sm:w-16 h-auto object-contain"
+                      />
                     </div>
-                  )}
+                    {selectedPayment === "bep20" && (
+                      <div className="absolute -top-1 -right-1">
+                        <FaCheckCircle
+                          className="text-green-500 bg-white rounded-full"
+                          size={14}
+                        />
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 {/* 
@@ -323,17 +337,17 @@ export default function PaymentConfirmationModal({
                   {offlineOptions.map((opt) => (
                     <div
                       key={opt.id}
-                      className="border border-green-500  p-3 flex flex-col items-center justify-center rounded-lg cursor-pointer"
-                      onClick={() => handleOfflineDeposit(opt)} // <-- Call handler
+                      className="border border-green-500 p-2 sm:p-4 flex items-center justify-between rounded-lg cursor-pointer transition-all hover:bg-green-50"
+                      onClick={() => handleOfflineDeposit(opt)}
                     >
+                      <p className="text-sm sm:text-lg font-semibold text-green-500 truncate mr-2">
+                        {opt.name}
+                      </p>
                       <img
                         src={opt.img}
                         alt={opt.name}
-                        className="w-12 h-12 object-contain mb-2"
+                        className="w-10 sm:w-16 h-auto object-contain flex-shrink-0"
                       />
-                      <p className="text-xs font-normal text-green-500 text-center">
-                        {opt.name}
-                      </p>
                     </div>
                   ))}
                 </div>

@@ -281,9 +281,11 @@ export default function Wallet() {
               </div>
             </div>
             <div>
-              <div className="text-lg font-bold">${totalEscrow.toFixed(2)}</div>
+              <div className="text-lg font-bold">
+                ${withdrawableBalance.toFixed(2)}
+              </div>
               <div className="text-[10px] uppercase opacity-80">
-                In transaction
+                Store Income
               </div>
             </div>
           </div>
@@ -674,7 +676,7 @@ export default function Wallet() {
               <span className="mr-2 text-gray-500">$</span>
               <input
                 type="number"
-                placeholder="Enter amount"
+                placeholder="Enter recharge amount"
                 value={depositAmount}
                 onChange={(e) => setDepositAmount(e.target.value)}
                 className="w-full outline-none text-gray-900"
@@ -686,10 +688,10 @@ export default function Wallet() {
                   key={amt}
                   type="button"
                   onClick={() => setDepositAmount(amt)}
-                  className={`px-2 py-2 rounded-md font-semibold text-white ${
+                  className={`px-2 py-2 border rounded-md font-semibold transition-all ${
                     depositAmount == amt
-                      ? "bg-green-600"
-                      : "bg-green-500 hover:bg-green-600"
+                      ? "bg-green-600 text-white border-green-600"
+                      : "border-green-500 text-green-500 bg-white hover:bg-green-50"
                   }`}
                 >
                   {amt.toLocaleString()}

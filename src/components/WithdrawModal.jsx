@@ -292,28 +292,31 @@ export default function WithdrawModal({
                   setSelectedPayment("trc20");
                   setForm({ ...form, method: "USDT (TRC20)" });
                 }}
-                className={`relative bg-green-500 rounded-md p-2 sm:p-4 cursor-pointer transition-all ${
+                className={`relative border border-green-500 rounded-md p-2 sm:p-4 cursor-pointer transition-all ${
                   selectedPayment === "trc20" ? "ring-2 ring-green-600" : ""
                 }`}
               >
-                <div className="flex items-center justify-between text-white">
+                <div className="flex items-center justify-between">
                   <div>
-                    <div className="font-semibold text-sm sm:text-lg">
+                    <div className="font-semibold text-sm sm:text-lg leading-tight text-green-500">
                       Tether
                     </div>
-                    <div className="text-[10px] sm:text-sm opacity-90">
+                    <div className="text-[10px] sm:text-sm text-gray-500 opacity-90">
                       USDT (TRC20)
                     </div>
                   </div>
                   <img
                     src="/tether-usdt-logo.png"
                     alt="USDT TRC20"
-                    className="w-10 sm:w-16 h-auto"
+                    className="w-10 sm:w-16 h-auto object-contain"
                   />
                 </div>
                 {selectedPayment === "trc20" && (
-                  <div className="absolute top-1 right-1 sm:top-2 sm:right-2">
-                    <FaCheckCircle className="text-white" size={16} />
+                  <div className="absolute -top-1 -right-1">
+                    <FaCheckCircle
+                      className="text-green-500 bg-white rounded-full"
+                      size={14}
+                    />
                   </div>
                 )}
               </div>
@@ -324,28 +327,31 @@ export default function WithdrawModal({
                   setSelectedPayment("bep20");
                   setForm({ ...form, method: "USDT (BEP20)" });
                 }}
-                className={`relative border text-green-500 border-green-500 p-2 sm:p-4 rounded-md cursor-pointer transition-all ${
+                className={`relative border border-green-500 rounded-md p-2 sm:p-4 cursor-pointer transition-all ${
                   selectedPayment === "bep20" ? "ring-2 ring-green-600" : ""
                 }`}
               >
-                <div className="flex items-center justify-between text-black">
+                <div className="flex items-center justify-between">
                   <div>
-                    <div className="font-semibold text-sm sm:text-lg">
+                    <div className="font-semibold text-sm sm:text-lg leading-tight text-green-500">
                       Tether
                     </div>
-                    <div className="text-[10px] sm:text-sm opacity-90">
+                    <div className="text-[10px] sm:text-sm text-gray-500 opacity-90">
                       USDT (BEP20)
                     </div>
                   </div>
                   <img
                     src="/bdep.webp"
                     alt="USDT BEP20"
-                    className="w-10 sm:w-16 h-auto"
-                  />{" "}
+                    className="w-10 sm:w-16 h-auto object-contain"
+                  />
                 </div>
                 {selectedPayment === "bep20" && (
-                  <div className="absolute top-1 right-1 sm:top-2 sm:right-2">
-                    <FaCheckCircle className="text-green-600" size={16} />
+                  <div className="absolute -top-1 -right-1">
+                    <FaCheckCircle
+                      className="text-green-500 bg-white rounded-full"
+                      size={14}
+                    />
                   </div>
                 )}
               </div>
