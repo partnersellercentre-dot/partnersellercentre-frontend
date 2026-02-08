@@ -19,7 +19,7 @@ function AdminSidebar({ closeSidebar, setActiveLink, activeLink }) {
   };
 
   return (
-    <div className="sm:h-screen h-full bg-green-800 p-4 border-r text-white relative flex flex-col">
+    <div className="h-full bg-green-800 p-4 border-r text-white relative flex flex-col">
       {/* Close button (mobile) */}
       <button
         onClick={closeSidebar}
@@ -28,18 +28,16 @@ function AdminSidebar({ closeSidebar, setActiveLink, activeLink }) {
         <FaTimes />
       </button>
 
-      <h2 className="text-xl font-semibold mb-8 text-white">Admin Panel</h2>
-
       {/* Sidebar Links + Logout pinned bottom */}
-      <div className="flex flex-col justify-between flex-1">
+      <div className="flex flex-col flex-1 min-h-0">
         {/* Menu Items */}
-        <ul className="flex flex-col gap-2 overflow-auto">
+        <ul className="flex flex-col gap-2 overflow-y-auto flex-1 min-h-0 pr-2">
           {adminMenuItems
             .filter((item) => item.name !== "Logout")
             .map((item) => (
               <li
                 key={item.name}
-                className={`mb-2 rounded-lg w-full cursor-pointer ${
+                className={`mb-2 rounded-lg w-full cursor-pointer flex-shrink-0 ${
                   activeLink === item.name ? "bg-green-600" : "bg-green-800"
                 }`}
               >
@@ -55,7 +53,7 @@ function AdminSidebar({ closeSidebar, setActiveLink, activeLink }) {
         </ul>
 
         {/* Logout button fixed bottom */}
-        <div className="mt-2 mb-3">
+        <div className="mt-auto pt-4 pb-4">
           <button
             onClick={handleLogout}
             className="w-full bg-red-700 hover:bg-red-600 cursor-pointer rounded-lg p-2 text-white"

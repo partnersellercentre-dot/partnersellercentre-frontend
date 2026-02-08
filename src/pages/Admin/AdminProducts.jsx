@@ -100,7 +100,7 @@ function AdminProducts() {
   };
 
   return (
-    <div className="h-full flex flex-col px-4 sm:px-8 py-4 sm:py-6">
+    <div className="flex flex-col">
       <div className="max-w-full mx-auto w-full">
         <h2 className="text-2xl font-bold mb-6">Products Management</h2>
 

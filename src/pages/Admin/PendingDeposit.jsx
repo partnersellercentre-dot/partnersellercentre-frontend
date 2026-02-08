@@ -101,7 +101,7 @@ function PendingDeposit() {
   };
 
   return (
-    <div className="text-black w-full h-screen p-4 sm:p-8">
+    <div className="text-black w-full">
       <ConfirmationModal
         isOpen={confirmConfig.isOpen}
         onClose={() => setConfirmConfig({ ...confirmConfig, isOpen: false })}

@@ -52,37 +52,37 @@ function ActivityLinks() {
   if (loading) return <Spinner />;
 
   return (
-    <div className="p-6">
-      <h2 className="text-2xl font-bold mb-6 text-white text-center md:text-left">
+    <div className="">
+      <h2 className="text-2xl font-bold mb-6 text-gray-800 text-center md:text-left">
         Activity Submission History
       </h2>
 
       {error && <p className="text-red-500 mb-4">{error}</p>}
 
-      <div className="bg-gray-800 rounded-xl shadow-lg border border-gray-700 overflow-hidden">
+      <div className="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden">
         <div className="overflow-x-auto">
           {links.length > 0 ? (
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-gray-700 text-gray-300 border-b border-gray-600">
+                <tr className="bg-gray-50 text-gray-700 border-b border-gray-200">
                   <th className="p-4 text-sm font-bold min-w-[150px]">Date</th>
                   <th className="p-4 text-sm font-bold">User</th>
                   <th className="p-4 text-sm font-bold">Platform</th>
                   <th className="p-4 text-sm font-bold">Link</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-700">
+              <tbody className="divide-y divide-gray-100">
                 {links.map((item, index) => (
                   <tr
                     key={index}
-                    className="hover:bg-gray-750 transition-colors"
+                    className="hover:bg-gray-50 transition-colors"
                   >
-                    <td className="p-4 text-sm text-gray-300">
+                    <td className="p-4 text-sm text-gray-600">
                       {new Date(item.date).toLocaleString()}
                     </td>
                     <td className="p-4 text-sm">
                       <div className="flex flex-col">
-                        <span className="text-white font-medium">
+                        <span className="text-gray-900 font-medium">
                           {item.userName}
                         </span>
                         <span className="text-gray-500 text-xs">
@@ -90,18 +90,18 @@ function ActivityLinks() {
                         </span>
                       </div>
                     </td>
-                    <td className="p-4 text-sm text-gray-300 font-semibold uppercase">
+                    <td className="p-4 text-sm text-gray-600 font-semibold uppercase">
                       <span
                         className={`px-2 py-1 rounded text-[10px] ${
                           item.platform?.toLowerCase() === "youtube"
-                            ? "bg-red-900 text-red-100"
+                            ? "bg-red-100 text-red-700"
                             : item.platform?.toLowerCase() === "instagram"
-                              ? "bg-pink-900 text-pink-100"
+                              ? "bg-pink-100 text-pink-700"
                               : item.platform?.toLowerCase() === "tiktok"
-                                ? "bg-black text-gray-100 border border-gray-600"
+                                ? "bg-gray-900 text-white"
                                 : item.platform?.toLowerCase() === "facebook"
-                                  ? "bg-blue-900 text-blue-100"
-                                  : "bg-gray-700 text-gray-100"
+                                  ? "bg-blue-100 text-blue-700"
+                                  : "bg-gray-100 text-gray-700"
                         }`}
                       >
                         {item.platform || "N/A"}
@@ -112,7 +112,7 @@ function ActivityLinks() {
                         href={item.link}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-blue-400 hover:underline break-all"
+                        className="text-blue-600 hover:underline break-all"
                       >
                         {item.link}
                       </a>

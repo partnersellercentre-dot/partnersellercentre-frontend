@@ -59,7 +59,7 @@ function AdminDashboard() {
   }
 
   return (
-    <div className="flex-1 h-screen p-6 overflow-y-auto">
+    <div className="flex-1 p-4">
       <div className="flex items-center mb-6">
         {/* Display the admin's username */}
         <h2 className="text-3xl font-bold text-gray-700">

@@ -54,7 +54,7 @@ function AdminMessages() {
   };
 
   return (
-    <div className="p-3 min-h-screen text-black">
+    <div className="text-black">
       {/* Form Section */}
       <form
         onSubmit={handleCreate}

@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { FaBars, FaBell, FaUser } from "react-icons/fa";
 import { AuthContext } from "../../context/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { getNotifications } from "../../api/api";
 import { motion } from "framer-motion";
 
@@ -9,6 +9,7 @@ function AdminNavbar({ toggleSidebar }) {
   const { token, user } = useContext(AuthContext);
   const [notifications, setNotifications] = useState([]);
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     if (!token) return;
@@ -25,13 +26,18 @@ function AdminNavbar({ toggleSidebar }) {
       }
     };
 
+    // If we are on the notifications page, clear the count immediately
+    if (location.pathname === "/admin/notifications") {
+      setNotifications([]);
+    }
+
     fetchNoti();
-    // const interval = setInterval(fetchNoti, 10000); // refresh every 10s
-    // return () => clearInterval(interval);
-  }, [token]);
+    const interval = setInterval(fetchNoti, 10000); // refresh every 10s
+    return () => clearInterval(interval);
+  }, [token, location.pathname]);
 
   return (
-    <div className="bg-[#1f1b2e] p-4 text-white fixed top-0 left-0 right-0 z-40 flex items-center justify-between shadow-md">
+    <div className="bg-[#1f1b2e] p-4 text-white z-40 flex items-center justify-between shadow-md">
       <div className="flex items-center space-x-4">
         <button className="lg:hidden p-2" onClick={toggleSidebar}>
           <FaBars className="text-2xl" />
@@ -45,15 +51,16 @@ function AdminNavbar({ toggleSidebar }) {
           onClick={() => navigate("/admin/notifications")}
         >
           <FaBell className="text-2xl" />
-          {notifications.length > 0 && (
-            <motion.span
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              className="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center"
-            >
-              {notifications.length}
-            </motion.span>
-          )}
+          {notifications.length > 0 &&
+            location.pathname !== "/admin/notifications" && (
+              <motion.span
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                className="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center"
+              >
+                {notifications.length}
+              </motion.span>
+            )}
         </button>
 
         <button className="flex items-center space-x-2">

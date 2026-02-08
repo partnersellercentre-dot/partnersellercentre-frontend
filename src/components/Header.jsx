@@ -140,10 +140,10 @@ export default function Header() {
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ type: "spring", stiffness: 100, damping: 20 }}
-            className="fixed top-0 right-0 h-full w-4/5 max-w-sm bg-white shadow-lg z-50 flex flex-col"
+            className="fixed top-0 right-0 h-screen w-4/5 max-w-sm bg-white shadow-lg z-[100] flex flex-col"
           >
             {/* Header with Profile */}
-            <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-green-50">
+            <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-green-50 flex-shrink-0">
               <div className="flex items-center gap-3">
                 <div className="relative">
                   {user?.profileImage ? (
@@ -207,7 +207,7 @@ export default function Header() {
             </div>
 
             {/* Scrollable Nav Links */}
-            <div className="flex-1 overflow-y-auto p-4">
+            <div className="flex-1 overflow-y-auto p-4 min-h-0">
               <div className="flex flex-col gap-3">
                 {navLinks.map((link, index) => (
                   <Link
@@ -224,7 +224,7 @@ export default function Header() {
             </div>
 
             {/* Sign Out */}
-            <div className="border-t border-gray-200 p-4">
+            <div className="border-t border-gray-200 p-4 pb-10 flex-shrink-0">
               <button
                 onClick={() => {
                   logout();

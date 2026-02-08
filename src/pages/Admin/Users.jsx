@@ -69,7 +69,7 @@ function Users() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col justify-start items-center px-6">
+    <div className="flex flex-col justify-start items-center">
       <div className="max-w-7xl w-full">
         <h2 className="text-2xl font-bold mb-4">Users Management</h2>
 

@@ -63,6 +63,8 @@ export default function Register() {
       if (!formData.storeName) return toast.error("Enter store name");
       if (!formData.username) return toast.error("Enter username");
       if (!formData.password) return toast.error("Set password");
+      if (!formData.invitationCode)
+        return toast.error("Invitation code is required");
       if (!agreed) return toast.error("Agree to terms");
 
       try {
@@ -72,7 +74,7 @@ export default function Register() {
           password: formData.password,
           storeName: formData.storeName,
           username: formData.username,
-          referralCode: formData.invitationCode || null, // <-- FIXED
+          referralCode: formData.invitationCode,
         });
 
         toast.success("Registration successful!");
@@ -93,6 +95,8 @@ export default function Register() {
       if (!emailRegex.test(formData.email))
         return toast.error("Please enter a valid email address");
       if (!formData.password) return toast.error("Enter password");
+      if (!formData.invitationCode)
+        return toast.error("Invitation code is required");
       if (!agreed) return toast.error("Agree to terms");
 
       try {
@@ -101,7 +105,7 @@ export default function Register() {
           username: formData.username,
           email: formData.email,
           password: formData.password,
-          invitationCode: formData.invitationCode || null, // <-- FIXED
+          invitationCode: formData.invitationCode,
         });
 
         toast.success("Account registration successful!");
@@ -236,26 +240,6 @@ export default function Register() {
                     </button>
                   </div>
                 </div>
-
-                {/* Invitation Code */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Invitation code
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.invitationCode}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        invitationCode: e.target.value,
-                      })
-                    }
-                    placeholder="Enter 10-digit code"
-                    className="w-full px-3 py-3 bg-gray-50 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:bg-white"
-                    required
-                  />
-                </div>
               </>
             )}
 
@@ -372,6 +356,26 @@ export default function Register() {
                 </div>
               </>
             )}
+
+            {/* Invitation Code (Global) */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Invitation code <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                value={formData.invitationCode}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    invitationCode: e.target.value,
+                  })
+                }
+                placeholder="Enter 10-digit code"
+                className="w-full px-3 py-3 bg-gray-50 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:bg-white"
+                required
+              />
+            </div>
 
             <div className="flex items-start space-x-2 py-2">
               <input

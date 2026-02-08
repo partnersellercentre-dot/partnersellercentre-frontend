@@ -125,7 +125,7 @@ export default function Orders() {
     );
 
   return (
-    <div className="min-h-screen  flex flex-col justify-start items-center px-4 sm:px-6 md:px-8 py-8 text-black">
+    <div className="flex flex-col justify-start items-center text-black">
       <div className="max-w-7xl w-full space-y-6">
         <h1 className="text-2xl font-semibold mb-4">Orders Overview</h1>
 

@@ -12,7 +12,7 @@ const AdminLayout = () => {
 
   useEffect(() => {
     const currentItem = adminMenuItems.find(
-      (item) => item.path === location.pathname
+      (item) => item.path === location.pathname,
     );
     if (currentItem) {
       setActiveLink(currentItem.name);
@@ -28,12 +28,12 @@ const AdminLayout = () => {
   };
 
   return (
-    <div className="h-full text-white">
+    <div className="h-screen flex flex-col text-white bg-gray-50 overflow-hidden">
       <AdminNavbar toggleSidebar={toggleSidebar} />
-      <div className="flex">
+      <div className="flex flex-1 overflow-hidden">
         {/* Sidebar */}
         <div
-          className={`fixed top-0 left-0 h-full w-64 bg-green-800 overflow-auto text-white border-r border-zinc-700 transform transition-transform ${
+          className={`fixed top-0 left-0 h-full w-64 bg-green-800 overflow-y-auto text-white border-r border-zinc-700 transform transition-transform ${
             sidebarOpen ? "translate-x-0" : "-translate-x-full"
           } lg:translate-x-0 lg:static z-50`}
         >
@@ -45,8 +45,10 @@ const AdminLayout = () => {
         </div>
 
         {/* Main Content */}
-        <div className="w-full lg:w-4/5 pt-20 p-8">
-          <Outlet />
+        <div className="flex-1 overflow-y-auto overflow-x-hidden text-black">
+          <div className="p-4 sm:p-8">
+            <Outlet />
+          </div>
         </div>
       </div>
     </div>

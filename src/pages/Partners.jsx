@@ -251,38 +251,38 @@ export default function Partners() {
                   <div className="space-y-4 md:space-y-6">
                     {[
                       {
-                        id: "YouTube",
+                        id: "YouTube reels",
                         icon: <FaYoutube size={24} />,
                         color: "bg-red-600",
                       },
                       {
-                        id: "Facebook",
+                        id: "Facebook reels",
                         icon: <FaFacebook size={24} />,
                         color: "bg-blue-600",
                       },
                       {
-                        id: "Instagram",
+                        id: "Instagram reels",
                         icon: <FaInstagram size={24} />,
                         color:
                           "bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-600",
                       },
                       {
-                        id: "TikTok",
+                        id: "TikTok reels",
                         icon: <FaTiktok size={24} />,
                         color: "bg-black",
                       },
                     ].map((plat) => (
                       <div
                         key={plat.id}
-                        className="flex flex-col md:flex-row items-center gap-4 bg-gray-50 p-4 rounded-2xl border border-gray-100 hover:border-green-200 transition-all"
+                        className="flex flex-col md:flex-row items-center gap-4 bg-gray-50 p-4 rounded-2xl border border-gray-100 hover:border-green-200 transition-all font-semibold"
                       >
-                        <div className="flex items-center gap-4 w-full md:w-40">
+                        <div className="flex items-center gap-4 w-full md:w-52 flex-shrink-0">
                           <div
                             className={`${plat.color} w-10 h-10 md:w-12 md:h-12 rounded-xl flex items-center justify-center text-white shadow-sm flex-shrink-0`}
                           >
                             {plat.icon}
                           </div>
-                          <span className="font-bold text-gray-700">
+                          <span className="font-bold text-gray-700 whitespace-nowrap">
                             {plat.id}
                           </span>
                         </div>
@@ -290,7 +290,7 @@ export default function Partners() {
                         <div className="flex flex-col sm:flex-row flex-grow gap-2 w-full">
                           <input
                             type="text"
-                            placeholder={`Paste ${plat.id} link here...`}
+                            placeholder={`Paste PSC video link here...`}
                             className="flex-grow bg-white border border-gray-200 p-3 rounded-xl outline-none focus:border-green-400 transition-all text-sm"
                             value={platformLinks[plat.id]}
                             onChange={(e) =>

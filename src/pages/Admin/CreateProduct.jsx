@@ -64,7 +64,7 @@ function CreateProduct() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col justify-start py-8 items-center px-6">
+    <div className="flex flex-col justify-start items-center">
       <div className="max-w-7xl w-full">
         <button
           onClick={handleBack}
