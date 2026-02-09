@@ -293,13 +293,13 @@ export default function Wallet() {
           <div className="grid grid-cols-2 gap-4">
             <button
               onClick={() => setShowDepositModal(true)}
-              className="flex items-center justify-center bg-white text-black font-semibold py-3 px-4 transition-colors"
+              className="flex items-center justify-center bg-white rounded-lg text-black font-semibold py-3 px-4 transition-colors"
             >
               <PiHandDepositFill className="mr-2" /> Deposit
             </button>
             <button
               onClick={() => setShowWithdrawModal(true)} // <-- open withdraw modal
-              className="flex items-center justify-center bg-white text-black font-semibold py-3 px-4 transition-colors"
+              className="flex items-center justify-center bg-white rounded-lg text-black font-semibold py-3 px-4 transition-colors"
             >
               <FaMoneyBillWave className="mr-2" /> Withdrawal
             </button>
