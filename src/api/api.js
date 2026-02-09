@@ -10,14 +10,14 @@ const API = axios.create({
 export const sendOtp = (data) => API.post("/auth/send-otp", data); // { email }
 
 // Register using OTP + password
-export const registerWithOtp = (data) => API.post("/auth/register-otp", data); // { email, otp, password, referralCode }
+export const registerWithOtp = (data) => API.post("/auth/register-otp", data); // { email, otp, password, referralCode? }
 
 // Login using OTP
 export const loginWithOtp = (data) => API.post("/auth/login-otp", data); // { email, otp }
 
 // Register using username + password
 export const registerWithUsername = (data) =>
-  API.post("/auth/register-username", data); // { username, password, invitationCode, email }
+  API.post("/auth/register-username", data); // { username, password, invitationCode?, email }
 
 // Login using username + password
 export const loginWithUsername = (data) =>

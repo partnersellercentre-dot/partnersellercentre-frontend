@@ -63,19 +63,20 @@ export default function Register() {
       if (!formData.storeName) return toast.error("Enter store name");
       if (!formData.username) return toast.error("Enter username");
       if (!formData.password) return toast.error("Set password");
-      if (!formData.invitationCode)
-        return toast.error("Invitation code is required");
       if (!agreed) return toast.error("Agree to terms");
 
       try {
-        const res = await registerWithOtp({
+        const data = {
           email: formData.email,
           otp: formData.verificationCode,
           password: formData.password,
           storeName: formData.storeName,
           username: formData.username,
-          referralCode: formData.invitationCode,
-        });
+        };
+        if (formData.invitationCode) {
+          data.referralCode = formData.invitationCode;
+        }
+        const res = await registerWithOtp(data);
 
         toast.success("Registration successful!");
         login(res.data.token);
@@ -95,18 +96,19 @@ export default function Register() {
       if (!emailRegex.test(formData.email))
         return toast.error("Please enter a valid email address");
       if (!formData.password) return toast.error("Enter password");
-      if (!formData.invitationCode)
-        return toast.error("Invitation code is required");
       if (!agreed) return toast.error("Agree to terms");
 
       try {
-        const res = await registerWithUsername({
+        const data = {
           storeName: formData.storeName,
           username: formData.username,
           email: formData.email,
           password: formData.password,
-          invitationCode: formData.invitationCode,
-        });
+        };
+        if (formData.invitationCode) {
+          data.invitationCode = formData.invitationCode;
+        }
+        const res = await registerWithUsername(data);
 
         toast.success("Account registration successful!");
         login(res.data.token);
