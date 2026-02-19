@@ -122,7 +122,7 @@ export default function OrderCenter() {
         <p className="text-sm text-gray-600">
           Your products is selling estimated in{" "}
           <span className="font-bold text-orange-500">24 hour's</span> with{" "}
-          <span className="font-bold text-orange-500">4.2% profit</span>.
+          <span className="font-bold text-orange-500">3.2% profit</span>.
         </p>
         <div className="mt-4">
           <div className="relative pt-1">
