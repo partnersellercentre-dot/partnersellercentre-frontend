@@ -15,7 +15,7 @@ function AdminSidebar({ closeSidebar, setActiveLink, activeLink }) {
 
   const handleLogout = () => {
     logout();
-    navigate("/admin-login");
+    navigate("/psc-login");
   };
 
   return (

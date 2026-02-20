@@ -31,17 +31,17 @@ export const getProfile = (token) =>
   API.get("/auth/me", { headers: { Authorization: `Bearer ${token}` } });
 
 export const getAdminProfile = (token) =>
-  API.get("/admin/admin-profile", {
+  API.get("/psc/admin-profile", {
     headers: { Authorization: `Bearer ${token}` },
   });
 
-export const registerAdmin = (data) => API.post("/admin/register", data); // { username, password }
+export const registerAdmin = (data) => API.post("/psc/register", data); // { username, password }
 
 // Admin Login using username + password
-export const loginAdmin = (data) => API.post("/admin/login", data); // { username, password }
+export const loginAdmin = (data) => API.post("/psc/login", data); // { username, password }
 
 export const getUsers = (token, search = "") =>
-  API.get(`/admin/users${search ? `?search=${search}` : ""}`, {
+  API.get(`/psc/users${search ? `?search=${search}` : ""}`, {
     headers: { Authorization: `Bearer ${token}` }, // Pass token for authentication
   });
 
@@ -51,7 +51,7 @@ export const getMyReferrals = (token) =>
   });
 
 export const getAllOrders = (token) =>
-  API.get("/admin/orders", {
+  API.get("/psc/orders", {
     headers: { Authorization: `Bearer ${token}` },
   });
 
@@ -61,7 +61,7 @@ export const getBasicStats = (token) =>
   });
 // Get total revenue (admin)
 export const getTotalRevenue = (token) =>
-  API.get("/admin/revenue", {
+  API.get("/psc/revenue", {
     headers: { Authorization: `Bearer ${token}` },
   });
 
@@ -80,12 +80,12 @@ export const sendMessageToAdmin = (token, data) => {
 };
 
 export const getChatUsers = (token) =>
-  API.get("/chat/admin/users", {
+  API.get("/chat/psc/users", {
     headers: { Authorization: `Bearer ${token}` },
   });
 
 export const getAdminUserMessages = (token, userId) =>
-  API.get(`/chat/admin/${userId}`, {
+  API.get(`/chat/psc/${userId}`, {
     headers: { Authorization: `Bearer ${token}` },
   });
 
@@ -94,35 +94,35 @@ export const replyToUser = (token, userId, data) => {
   if (data.message) formData.append("message", data.message);
   if (data.image) formData.append("image", data.image);
 
-  return API.post(`/chat/admin/${userId}/reply`, formData, {
+  return API.post(`/chat/psc/${userId}/reply`, formData, {
     headers: { Authorization: `Bearer ${token}` },
   });
 };
 
 export const deleteUser = (token, userId) =>
-  API.delete(`/admin/users/${userId}`, {
+  API.delete(`/psc/users/${userId}`, {
     headers: { Authorization: `Bearer ${token}` },
   });
 
 export const updateUserStatus = (token, userId, status) =>
   API.put(
-    `/admin/users/${userId}/status`,
+    `/psc/users/${userId}/status`,
     { status },
     { headers: { Authorization: `Bearer ${token}` } },
   );
 export const addBalanceToUser = (token, userId, amount) =>
   API.post(
-    `/admin/users/${userId}/add-balance`,
+    `/psc/users/${userId}/add-balance`,
     { amount },
     { headers: { Authorization: `Bearer ${token}` } },
   );
 export const getSystemSettings = (token) =>
-  API.get("/admin/settings", {
+  API.get("/psc/settings", {
     headers: { Authorization: `Bearer ${token}` },
   });
 
 export const updateSystemSettings = (token, data) =>
-  API.put("/admin/settings", data, {
+  API.put("/psc/settings", data, {
     headers: { Authorization: `Bearer ${token}` },
   });
 
@@ -247,7 +247,7 @@ export const updateSettings = (token, data) =>
 // Approve or Reject a KYC (admin only)
 export const verifyOrRejectKYC = (token, id, status) =>
   API.put(
-    `/admin/verify/${id}`, // ✅ Correct endpoint
+    `/psc/verify/${id}`, // ✅ Correct endpoint
     { status },
     {
       headers: { Authorization: `Bearer ${token}` },
@@ -296,26 +296,26 @@ export const deleteNotification = (token, id) =>
   });
 
 // Get social links (public)
-export const getSocialLinks = () => API.get("/admin/social-links");
+export const getSocialLinks = () => API.get("/psc/social-links");
 
 /* ---------------------- Admin Management APIs ---------------------- */
 
 export const getAllAdmins = (token) =>
-  API.get("/admin/all-admins", {
+  API.get("/psc/all-admins", {
     headers: { Authorization: `Bearer ${token}` },
   });
 
 export const createAdmin = (token, data) =>
-  API.post("/admin/register", data, {
+  API.post("/psc/register", data, {
     headers: { Authorization: `Bearer ${token}` },
   });
 
 export const updateAdmin = (token, id, data) =>
-  API.put(`/admin/admins/${id}`, data, {
+  API.put(`/psc/admins/${id}`, data, {
     headers: { Authorization: `Bearer ${token}` },
   });
 
 export const deleteAdmin = (token, id) =>
-  API.delete(`/admin/admins/${id}`, {
+  API.delete(`/psc/admins/${id}`, {
     headers: { Authorization: `Bearer ${token}` },
   });

@@ -27,7 +27,7 @@ function AdminNavbar({ toggleSidebar }) {
     };
 
     // If we are on the notifications page, clear the count immediately
-    if (location.pathname === "/admin/notifications") {
+    if (location.pathname === "/psc/notifications") {
       setNotifications([]);
     }
 
@@ -48,11 +48,11 @@ function AdminNavbar({ toggleSidebar }) {
       <div className="flex items-center space-x-6">
         <button
           className="relative"
-          onClick={() => navigate("/admin/notifications")}
+          onClick={() => navigate("/psc/notifications")}
         >
           <FaBell className="text-2xl" />
           {notifications.length > 0 &&
-            location.pathname !== "/admin/notifications" && (
+            location.pathname !== "/psc/notifications" && (
               <motion.span
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}

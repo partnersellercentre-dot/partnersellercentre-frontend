@@ -82,7 +82,7 @@ function App() {
               }
             />
             <Route
-              path="/admin-login"
+              path="/psc-login"
               element={
                 <PublicRoute>
                   <AdminLogin />
@@ -100,7 +100,7 @@ function App() {
 
             {/* Admin Routes */}
             <Route
-              path="/admin"
+              path="/psc"
               element={
                 <ProtectedRoute allowedRoles={["admin"]}>
                   <AdminLayout />
@@ -121,7 +121,7 @@ function App() {
                 path="pending-withdrawal"
                 element={<PendingWithdrawal />}
               />
-              <Route path="/admin/kyc" element={<AdminKYC />} />
+              <Route path="kyc" element={<AdminKYC />} />
               <Route path="recharge-history" element={<RechargeHistory />} />
               <Route path="withdraw-history" element={<WithdrawHistory />} />
               <Route path="bonus" element={<Bonus />} />

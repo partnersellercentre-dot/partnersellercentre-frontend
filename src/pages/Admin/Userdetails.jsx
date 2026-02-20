@@ -86,7 +86,7 @@ function Userdetails() {
     setError("");
     try {
       await deleteUser(token, id);
-      navigate("/admin/users");
+      navigate("/psc/users");
     } catch (err) {
       setError("Failed to delete user");
     }

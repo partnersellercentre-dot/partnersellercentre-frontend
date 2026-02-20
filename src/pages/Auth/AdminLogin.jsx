@@ -32,7 +32,7 @@ export default function AdminLogin() {
       const userRole = res.data.admin.role;
       login(res.data.token, userRole);
       toast.success("Admin Login successful 🎉");
-      navigate("/admin");
+      navigate("/psc");
     } catch (err) {
       toast.error(err.response?.data?.error || "Admin login failed");
     }

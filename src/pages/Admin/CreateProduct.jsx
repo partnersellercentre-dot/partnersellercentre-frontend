@@ -51,7 +51,7 @@ function CreateProduct() {
     try {
       const response = await createProduct(productFormData, token);
       toast.success("✅ Product created successfully!");
-      navigate("/admin/admin-products");
+      navigate("/psc/admin-products");
     } catch (error) {
       // Show generic error message
       toast.error("❌ Failed to create product. Please try again.");
@@ -60,7 +60,7 @@ function CreateProduct() {
   };
 
   const handleBack = () => {
-    navigate("/admin/admin-products");
+    navigate("/psc/admin-products");
   };
 
   return (

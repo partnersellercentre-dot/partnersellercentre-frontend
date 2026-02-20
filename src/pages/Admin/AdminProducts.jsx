@@ -96,7 +96,7 @@ function AdminProducts() {
   };
 
   const handleCreateProduct = () => {
-    navigate("/admin/create-product");
+    navigate("/psc/create-product");
   };
 
   return (

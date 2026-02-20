@@ -110,7 +110,7 @@ function Users() {
                       <td className="px-6 py-3 capitalize">{user.role}</td>
                       <td className="px-6 py-3 flex space-x-4">
                         <button
-                          onClick={() => navigate(`/admin/users/${user._id}`)}
+                          onClick={() => navigate(`/psc/users/${user._id}`)}
                           className="text-blue-500 hover:text-blue-600"
                         >
                           View

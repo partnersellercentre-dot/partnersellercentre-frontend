@@ -13,7 +13,7 @@ export default function PublicRoute({ children }) {
   // If token exists, user is already logged in
   if (token) {
     if (role === "admin") {
-      return <Navigate to="/admin" replace />;
+      return <Navigate to="/psc" replace />;
     }
     return <Navigate to="/products" replace />;
   }
